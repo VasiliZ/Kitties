@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Kitties</string>
+    <string name="cats">Кошары</string>
+    <string name="favorites">Избранное</string>
 </resources>
