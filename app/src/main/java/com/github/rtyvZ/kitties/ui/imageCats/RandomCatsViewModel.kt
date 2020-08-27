@@ -15,6 +15,7 @@ class RandomCatsViewModel : ViewModel() {
     private var mutableRandomCatsError = MutableLiveData<Throwable>()
 
     var getRandomCats: LiveData<List<Cat>?> = mutableRandomCats
+        private set
     var getRandomCatsError: LiveData<Throwable> = mutableRandomCatsError
 
     private val randomCatsRepository = RandomCatsRepository()
@@ -42,10 +43,12 @@ class RandomCatsViewModel : ViewModel() {
     }
 
     private fun removeCat(cat: Cat) {
-        val listCats = mutableListOf<Cat>()
-        mutableRandomCats.value?.let { listCats.addAll(it) }
-        listCats.remove(cat)
-        mutableRandomCats.postValue(listCats)
+        val listWithCats = mutableListOf<Cat>()
+        mutableRandomCats.value?.let {
+            listWithCats.addAll(it)
+        }
+        listWithCats.remove(cat)
+        mutableRandomCats.value = listWithCats
     }
 
     fun vote(position: Int, direction: StateSwipe) {
