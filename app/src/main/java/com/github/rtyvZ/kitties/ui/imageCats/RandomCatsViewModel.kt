@@ -19,10 +19,6 @@ class RandomCatsViewModel : ViewModel() {
 
     private val randomCatsRepository = RandomCatsRepository()
 
-    private val removeCat: (Cat) -> Unit = {
-        removeCat(it)
-    }
-
     fun clear() {
         mutableRandomCats = MutableLiveData()
         getRandomCats = mutableRandomCats
@@ -52,19 +48,21 @@ class RandomCatsViewModel : ViewModel() {
         mutableRandomCats.postValue(listCats)
     }
 
-    fun vote(cat: Cat, direction: StateSwipe) {
+    fun vote(position: Int, direction: StateSwipe) {
         viewModelScope.launch {
-            when (val response = randomCatsRepository.voteForACat(cat, direction)) {
-                is MyResult.Success<VoteCatResponse?> -> {
-                    response.data?.let {
-                        if (it.message == SUCCESS_RESPONSE) {
-                            removeCat(cat)
+            mutableRandomCats.value?.let { list ->
+                when (val response = randomCatsRepository.voteForACat(list[position], direction)) {
+                    is MyResult.Success<VoteCatResponse?> -> {
+                        response.data?.let {
+                            if (it.message == SUCCESS_RESPONSE) {
+                                removeCat(list[position])
+                            }
                         }
                     }
-                }
 
-                is MyResult.Error -> {
-                    returnTheCat(cat)
+                    is MyResult.Error -> {
+                        returnTheCat(list[position])
+                    }
                 }
             }
         }
@@ -74,11 +72,7 @@ class RandomCatsViewModel : ViewModel() {
         val listCats = mutableListOf<Cat>()
         mutableRandomCats.value?.let { listCats.addAll(it) }
         listCats.add(tempCat)
-        mutableRandomCats.postValue(listCats)
-    }
-
-    fun addToFavorite() {
-
+        mutableRandomCats.value = listCats
     }
 
     companion object {

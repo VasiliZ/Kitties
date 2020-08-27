@@ -14,7 +14,7 @@ import com.github.rtyvZ.kitties.network.data.Cat
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.cat_item.*
 
-class RandomCatAdapter(private val swipeCallback: (Cat, StateSwipe) -> Unit) :
+class RandomCatAdapter(private val swipeCallback: (Int, StateSwipe) -> Unit) :
     ListAdapter<Cat, RandomCatAdapter.RandomCatViewHolder>(RandomCatsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomCatViewHolder =
@@ -27,28 +27,25 @@ class RandomCatAdapter(private val swipeCallback: (Cat, StateSwipe) -> Unit) :
         holder.setData(cat, swipeCallback)
     }
 
-    override fun onCurrentListChanged(
-        previousList: MutableList<Cat>,
-        currentList: MutableList<Cat>
-    ) {
-        notifyDataSetChanged()
-    }
-
     class RandomCatViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
-        fun setData(cat: Cat, swipeCallback: (Cat, StateSwipe) -> Unit) {
+        fun setData(cat: Cat, swipeCallback: (Int, StateSwipe) -> Unit) {
 
-            Glide.with(imageCat.context).load(cat.url).centerCrop().into(imageCat)
+            Glide
+                .with(imageCat.context)
+                .load(cat.url)
+                .centerCrop()
+                .into(imageCat)
 
             motionContainer.setTransitionListener(object : TransitionAdapter() {
                 override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
                     when (currentId) {
                         R.id.likeSet -> {
-                            swipeCallback(cat, StateSwipe.LIKE)
+                            swipeCallback(adapterPosition, StateSwipe.LIKE)
                         }
 
                         R.id.dislikeSet -> {
-                            swipeCallback(cat, StateSwipe.DISLIKE)
+                            swipeCallback(adapterPosition, StateSwipe.DISLIKE)
                         }
                     }
                 }

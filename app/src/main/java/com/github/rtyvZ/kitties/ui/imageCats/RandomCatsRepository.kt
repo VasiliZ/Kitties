@@ -51,7 +51,6 @@ class RandomCatsRepository {
                                 .votes(App.ApiKeyProvider.getKey(), VoteRequest(cat.id, 1))
                                 .execute().body()
                         )
-                    else -> MyResult.Error(IllegalStateException("Wrong direction"))
                 }
             } catch (e: java.lang.Exception) {
                 MyResult.Error(e)
