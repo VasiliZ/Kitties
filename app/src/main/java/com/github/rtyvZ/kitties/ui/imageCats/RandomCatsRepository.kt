@@ -27,11 +27,11 @@ class RandomCatsRepository {
         }
     }
 
-    suspend fun voteForACat(cat: Cat, direction: StateSwipe): MyResult<VoteCatResponse?> {
+    suspend fun voteForACat(cat: Cat, direction: Int): MyResult<VoteCatResponse?> {
         return withContext(Dispatchers.IO) {
             try {
                 when (direction) {
-                    StateSwipe.LIKE -> {
+                    4 -> {
                         val body = Api
                             .getApi()
                             .votes(
@@ -45,15 +45,18 @@ class RandomCatsRepository {
                                 body
                             )
                     }
-                    StateSwipe.DISLIKE ->
+                    8 ->
                         MyResult.Success(
                             Api.getApi()
                                 .votes(App.ApiKeyProvider.getKey(), VoteRequest(cat.id, 1))
                                 .execute().body()
                         )
+                    else -> {
+                        MyResult.Error(java.lang.Exception("sdas"))
+                    }
                 }
             } catch (e: java.lang.Exception) {
-                MyResult.Error(e)
+                MyResult.Error(java.lang.Exception("sdas"))
             }
         }
     }

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvZ.kitties.R
 
-class DragItemHelper(val function: (Int, Int) -> Unit, private val context: Context) :
+class DragItemHelper(val function: (Int, Int) -> Unit, context: Context) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
     private val likeItem = ContextCompat.getDrawable(context, R.drawable.thumb_up_green)

@@ -51,7 +51,7 @@ class RandomCatsViewModel : ViewModel() {
         mutableRandomCats.value = listWithCats
     }
 
-    fun vote(position: Int, direction: StateSwipe) {
+    fun vote(position: Int, direction: Int) {
         viewModelScope.launch {
             mutableRandomCats.value?.let { list ->
                 when (val response = randomCatsRepository.voteForACat(list[position], direction)) {
@@ -75,7 +75,7 @@ class RandomCatsViewModel : ViewModel() {
         val listCats = mutableListOf<Cat>()
         mutableRandomCats.value?.let { listCats.addAll(it) }
         listCats.add(tempCat)
-        mutableRandomCats.value = listCats
+        mutableRandomCats.postValue(listCats)
     }
 
     companion object {
