@@ -9,5 +9,7 @@ class VoteRequest(
     @SerializedName("image_id")
     val id: String,
     @SerializedName("value")
-    val value: Int
+    val value: Int,
+    @SerializedName("sub_id")
+    val userId: String
 ) : Parcelable

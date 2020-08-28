@@ -15,6 +15,7 @@ class RandomCatsRepository {
 
     private val checkConnectionProvider = App.ConnectionCheckerProvider
     private val resourcesProvider = App.ResourceProvider
+    private val session = App.SessionStorage.getSession()
 
     suspend fun getCats(): MyResult<List<Cat>?> {
         return withContext(Dispatchers.IO) {
@@ -38,46 +39,53 @@ class RandomCatsRepository {
 
     suspend fun voteForACat(cat: Cat, direction: Int): MyResult<VoteCatResponse?> {
         return withContext(Dispatchers.IO) {
-            if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
-                try {
-                    when (direction) {
-                        4 -> {
-                            val body = Api
-                                .getApi()
-                                .votes(
-                                    App.ApiKeyProvider.getKey(), VoteRequest(cat.id, 0)
-                                )
-                                .execute()
-                                .body()
+            session?.let {
+                if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
+                    try {
+                        when (direction) {
+                            4 -> {
+                                val body = Api
+                                    .getApi()
+                                    .votes(
+                                        App.ApiKeyProvider.getKey(),
+                                        VoteRequest(cat.id, 0, it.userId)
+                                    )
+                                    .execute()
+                                    .body()
 
-                            MyResult
-                                .Success(
-                                    body
+                                MyResult
+                                    .Success(
+                                        body
+                                    )
+                            }
+                            8 ->
+                                MyResult.Success(
+                                    Api.getApi()
+                                        .votes(
+                                            App.ApiKeyProvider.getKey(),
+                                            VoteRequest(cat.id, 1, it.userId)
+                                        )
+                                        .execute().body()
                                 )
+                            else -> {
+                                MyResult
+                                    .Error(Exception(resourcesProvider.getString(R.string.whats_happens)))
+                            }
                         }
-                        8 ->
-                            MyResult.Success(
-                                Api.getApi()
-                                    .votes(App.ApiKeyProvider.getKey(), VoteRequest(cat.id, 1))
-                                    .execute().body()
-                            )
-                        else -> {
-                            MyResult
-                                .Error(Exception(resourcesProvider.getString(R.string.whats_happens)))
-                        }
-                    }
-                } catch (e: java.lang.Exception) {
-                    MyResult.Error(
-                        Exception(
-                            resourcesProvider.getString(
-                                R.string.whats_happens
+                    } catch (e: java.lang.Exception) {
+                        MyResult.Error(
+                            Exception(
+                                resourcesProvider.getString(
+                                    R.string.whats_happens
+                                )
                             )
                         )
-                    )
+                    }
+                } else {
+                    MyResult.Error(NoConnectivityException())
                 }
-            } else {
-                MyResult.Error(NoConnectivityException())
             }
         }
+            ?: kotlin.run { MyResult.Error(IllegalStateException(resourcesProvider.getString(R.string.no_session))) }
     }
 }

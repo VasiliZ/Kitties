@@ -51,6 +51,8 @@ class App : Application() {
                 userSession = UserSession(userId)
             }
         }
+
+        fun getSession() = userSession
     }
 
     companion object {
