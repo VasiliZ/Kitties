@@ -1,8 +1,9 @@
-package com.github.rtyvZ.kitties
+package com.github.rtyvZ.kitties.common
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
 import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,7 +28,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
                 else -> {
                 }
-
             }
 
             currentSelectedItem = item.itemId

@@ -2,4 +2,10 @@
     <string name="app_name">Kitties</string>
     <string name="cats">Кошары</string>
     <string name="favorites">Избранное</string>
+    <string name="success">Успех</string>
+    <string name="fail_sing_in">Не удалось авторизироваться</string>
+    <string name="auth">Авторизация</string>
+    <string name="no_connection">Отсутствует соединение с интренетом</string>
+    <string name="whats_happens">Что то пошло не так</string>
+    <string name="empty">\"\"</string>
 </resources>

@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
+import com.github.rtyvZ.kitties.extantions.hide
+import com.github.rtyvZ.kitties.extantions.show
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.random_cats_fragment.*
 
 class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
@@ -25,12 +28,18 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        progress.show()
         viewModel.clear()
         viewModel.getCats()
 
         viewModel.getRandomCats.observe(viewLifecycleOwner, {
+            progress.hide()
             catAdapter.submitList(it)
+        })
+
+        viewModel.getRandomCatsError.observe(viewLifecycleOwner, {
+            progress.hide()
+            Snackbar.make(listRandomCats, it.message.toString(), Snackbar.LENGTH_LONG).show()
         })
 
         activity?.let {
