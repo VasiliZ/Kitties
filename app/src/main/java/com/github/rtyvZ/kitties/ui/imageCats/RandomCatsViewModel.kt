@@ -13,16 +13,23 @@ class RandomCatsViewModel : ViewModel() {
 
     private var mutableRandomCats = MutableLiveData<List<Cat>?>()
     private var mutableRandomCatsError = MutableLiveData<Throwable>()
+    private var mutableErrorVoteCats = MutableLiveData<Throwable>()
 
     var getRandomCats: LiveData<List<Cat>?> = mutableRandomCats
         private set
     var getRandomCatsError: LiveData<Throwable> = mutableRandomCatsError
+        private set
+    var getErrorVoteCat: LiveData<Throwable> = mutableErrorVoteCats
 
     private val randomCatsRepository = RandomCatsRepository()
 
     fun clear() {
         mutableRandomCats = MutableLiveData()
         getRandomCats = mutableRandomCats
+        mutableRandomCatsError = MutableLiveData()
+        getRandomCatsError = mutableRandomCatsError
+        mutableErrorVoteCats = MutableLiveData()
+        getErrorVoteCat = mutableErrorVoteCats
     }
 
     fun getCats() {
@@ -52,29 +59,31 @@ class RandomCatsViewModel : ViewModel() {
     }
 
     fun vote(position: Int, direction: Int) {
-        viewModelScope.launch {
-            mutableRandomCats.value?.let { list ->
+        mutableRandomCats.value?.let { list ->
+            removeCat(list[position])
+            viewModelScope.launch {
                 when (val response = randomCatsRepository.voteForACat(list[position], direction)) {
                     is MyResult.Success<VoteCatResponse?> -> {
                         response.data?.let {
                             if (it.message == SUCCESS_RESPONSE) {
-                                removeCat(list[position])
+                                // removeCat(list[position])
                             }
                         }
                     }
 
                     is MyResult.Error -> {
-                        returnTheCat(list[position])
+                        mutableErrorVoteCats.postValue(response.exception)
+                        returnACat(list[position], position)
                     }
                 }
             }
         }
     }
 
-    private fun returnTheCat(tempCat: Cat) {
+    private fun returnACat(tempCat: Cat, position: Int) {
         val listCats = mutableListOf<Cat>()
         mutableRandomCats.value?.let { listCats.addAll(it) }
-        listCats.add(tempCat)
+        listCats.add(position, tempCat)
         mutableRandomCats.postValue(listCats)
     }
 

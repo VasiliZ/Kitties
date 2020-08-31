@@ -42,6 +42,11 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
             Snackbar.make(listRandomCats, it.message.toString(), Snackbar.LENGTH_LONG).show()
         })
 
+        viewModel.getErrorVoteCat.observe(viewLifecycleOwner,
+            {
+            Snackbar.make(listRandomCats, it.message.toString(), Snackbar.LENGTH_LONG).show()
+        })
+
         activity?.let {
             itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback, it))
             itemTouchHelper.attachToRecyclerView(listRandomCats)
