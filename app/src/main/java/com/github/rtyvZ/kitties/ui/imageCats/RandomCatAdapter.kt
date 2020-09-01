@@ -14,12 +14,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.rtyvZ.kitties.R
+import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.extantions.hide
-import com.github.rtyvZ.kitties.network.data.Cat
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.cat_item.*
 
-class RandomCatAdapter(private val setLike: (Cat) -> Unit) :
+class RandomCatAdapter(private val setLike: (Cat, StateCatVote) -> Unit) :
     ListAdapter<Cat, RandomCatAdapter.RandomCatViewHolder>(RandomCatsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomCatViewHolder =
@@ -36,8 +36,8 @@ class RandomCatAdapter(private val setLike: (Cat) -> Unit) :
 
     class RandomCatViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
-        fun setData(cat: Cat, setLike: (Cat) -> Unit) {
-            if (cat.isSetLike) {
+        fun setData(cat: Cat, setLike: (Cat, StateCatVote) -> Unit) {
+            if (cat.choice == 1) {
                 thumb_up.background = ResourcesCompat.getDrawable(
                     containerView.context.resources,
                     R.drawable.thumb_up_green,
@@ -51,14 +51,26 @@ class RandomCatAdapter(private val setLike: (Cat) -> Unit) :
                 )
             }
 
+            if (cat.choice == 0) {
+                thumb_down.background = ResourcesCompat.getDrawable(
+                    containerView.context.resources,
+                    R.drawable.thumb_down_64,
+                    null
+                )
+            } else {
+                thumb_down.background = ResourcesCompat.getDrawable(
+                    containerView.context.resources,
+                    R.drawable.ic_baseline_thumb_down_without_vote,
+                    null
+                )
+            }
+
             thumb_up.setOnClickListener {
-                if (cat.isSetLike) {
-                    cat.isSetLike = false
-                    setLike(cat)
-                } else {
-                    cat.isSetLike = true
-                    setLike(cat)
-                }
+                setLike(cat, StateCatVote.LIKE)
+            }
+
+            thumb_down.setOnClickListener {
+                setLike(cat, StateCatVote.DISLIKE)
             }
 
             Glide

@@ -1,6 +1,6 @@
 package com.github.rtyvZ.kitties.common
 
-import com.github.rtyvZ.kitties.network.data.Cat
+import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.request.VoteRequest
 import com.github.rtyvZ.kitties.network.response.VoteCatResponse
 import okhttp3.OkHttpClient
@@ -16,7 +16,7 @@ import retrofit2.http.POST
 interface Api {
 
     @GET("images/search?limit=10")
-    fun getListKitties(): Call<List<Cat>>
+    fun getListKitties(): Call<List<CatResponse>>
 
     @POST("votes")
     fun votes(

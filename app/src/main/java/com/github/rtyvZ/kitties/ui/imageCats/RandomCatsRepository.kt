@@ -3,9 +3,9 @@ package com.github.rtyvZ.kitties.ui.imageCats
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.App
+import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.MyResult
 import com.github.rtyvZ.kitties.network.NoConnectivityException
-import com.github.rtyvZ.kitties.network.data.Cat
 import com.github.rtyvZ.kitties.network.request.VoteRequest
 import com.github.rtyvZ.kitties.network.response.VoteCatResponse
 import kotlinx.coroutines.Dispatchers
@@ -21,13 +21,19 @@ class RandomCatsRepository {
         return withContext(Dispatchers.IO) {
             if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
                 try {
-                    MyResult.Success(
-                        Api
-                            .getApi()
-                            .getListKitties()
-                            .execute()
-                            .body()
-                    )
+                    val responseCat = Api
+                        .getApi()
+                        .getListKitties()
+                        .execute()
+                        .body()
+                    val listCats = mutableListOf<Cat>()
+                    responseCat?.map {
+                        listCats.add(it.toCat())
+                    }
+                    responseCat?.forEach {
+                        it.toCat()
+                    }
+                    MyResult.Success(listCats)
                 } catch (e: Exception) {
                     MyResult.Error(e)
                 }
@@ -89,7 +95,7 @@ class RandomCatsRepository {
             ?: kotlin.run { MyResult.Error(IllegalStateException(resourcesProvider.getString(R.string.no_session))) }
     }
 
-    suspend fun setLikeVote(cat: Cat): MyResult<VoteCatResponse?>? {
+    suspend fun voteForCat(cat: Cat, yourChoice: Int): MyResult<VoteCatResponse?>? {
         return withContext(Dispatchers.IO) {
             session?.let {
                 if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
@@ -98,7 +104,7 @@ class RandomCatsRepository {
                             Api.getApi()
                                 .votes(
                                     App.ApiKeyProvider.getKey(),
-                                    VoteRequest(cat.id, 1, it.userId)
+                                    VoteRequest(cat.id, yourChoice, it.userId)
                                 )
                                 .execute().body()
                         )

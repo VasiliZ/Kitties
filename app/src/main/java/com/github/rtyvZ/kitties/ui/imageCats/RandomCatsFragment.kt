@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
+import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.extantions.hide
 import com.github.rtyvZ.kitties.extantions.show
-import com.github.rtyvZ.kitties.network.data.Cat
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.random_cats_fragment.*
 
@@ -22,13 +22,8 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
         viewModel.vote(position, direction)
     }
 
-    private val setLike: (Cat) -> Unit = { cat ->
-
-        if (cat.isSetLike) {
-            viewModel.setLike(cat)
-        } else {
-            viewModel.deleteVote(cat)
-        }
+    private val setLike: (Cat, StateCatVote) -> Unit = { cat, choice ->
+        viewModel.voteForCat(cat, choice)
     }
 
     private val catAdapter = RandomCatAdapter(setLike)
