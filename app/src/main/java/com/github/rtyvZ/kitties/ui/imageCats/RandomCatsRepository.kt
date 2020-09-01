@@ -88,4 +88,27 @@ class RandomCatsRepository {
         }
             ?: kotlin.run { MyResult.Error(IllegalStateException(resourcesProvider.getString(R.string.no_session))) }
     }
+
+    suspend fun setLikeVote(cat: Cat): MyResult<VoteCatResponse?>? {
+        return withContext(Dispatchers.IO) {
+            session?.let {
+                if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
+                    try {
+                        MyResult.Success(
+                            Api.getApi()
+                                .votes(
+                                    App.ApiKeyProvider.getKey(),
+                                    VoteRequest(cat.id, 1, it.userId)
+                                )
+                                .execute().body()
+                        )
+                    } catch (e: Exception) {
+                        MyResult.Error(e)
+                    }
+                } else {
+                    MyResult.Error(NoConnectivityException())
+                }
+            }
+        }
+    }
 }

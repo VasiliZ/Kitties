@@ -10,6 +10,7 @@ import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
 import com.github.rtyvZ.kitties.extantions.hide
 import com.github.rtyvZ.kitties.extantions.show
+import com.github.rtyvZ.kitties.network.data.Cat
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.random_cats_fragment.*
 
@@ -21,7 +22,16 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
         viewModel.vote(position, direction)
     }
 
-    private val catAdapter = RandomCatAdapter()
+    private val setLike: (Cat) -> Unit = { cat ->
+
+        if (cat.isSetLike) {
+            viewModel.setLike(cat)
+        } else {
+            viewModel.deleteVote(cat)
+        }
+    }
+
+    private val catAdapter = RandomCatAdapter(setLike)
 
     private lateinit var manager: LinearLayoutManager
     private lateinit var itemTouchHelper: ItemTouchHelper
@@ -39,13 +49,14 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
         viewModel.getRandomCatsError.observe(viewLifecycleOwner, {
             progress.hide()
-            Snackbar.make(listRandomCats, it.message.toString(), Snackbar.LENGTH_LONG).show()
+            Snackbar.make(randomCatConteiner, it.message.toString(), Snackbar.LENGTH_LONG).show()
         })
 
         viewModel.getErrorVoteCat.observe(viewLifecycleOwner,
             {
-            Snackbar.make(listRandomCats, it.message.toString(), Snackbar.LENGTH_LONG).show()
-        })
+                Snackbar.make(randomCatConteiner, it.message.toString(), Snackbar.LENGTH_LONG)
+                    .show()
+            })
 
         activity?.let {
             itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback, it))
@@ -55,6 +66,9 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
         listRandomCats.apply {
             activity?.let {
                 adapter = catAdapter
+
+                //disable blinks in recycler view
+                itemAnimator?.changeDuration = 0
                 manager = LinearLayoutManager(it)
                 layoutManager = manager
             }

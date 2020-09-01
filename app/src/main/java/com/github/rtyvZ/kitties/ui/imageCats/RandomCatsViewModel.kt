@@ -87,6 +87,50 @@ class RandomCatsViewModel : ViewModel() {
         mutableRandomCats.postValue(listCats)
     }
 
+    private fun restoreStateCat(cat: Cat) {
+        val listCats = mutableListOf<Cat>()
+        mutableRandomCats.value?.let {
+            listCats.addAll(it)
+        }
+        listCats.find {
+            it.id == cat.id
+        }?.isSetLike = !cat.isSetLike
+        mutableRandomCats.postValue(listCats)
+    }
+
+    private fun changeCat(cat: Cat) {
+        val listCat = mutableListOf<Cat>()
+        mutableRandomCats.value?.let {
+            listCat.addAll(it)
+        }
+        listCat.find {
+            it.id == cat.id
+        }?.isSetLike = cat.isSetLike
+        mutableRandomCats.postValue(listCat)
+    }
+
+    fun setLike(cat: Cat) {
+        changeCat(cat)
+        viewModelScope.launch {
+            when (val response = randomCatsRepository.setLikeVote(cat)) {
+                is MyResult.Error -> {
+                    response.exception.let {
+                        restoreStateCat(cat)
+                        mutableErrorVoteCats.postValue(it)
+                    }
+                }
+
+                is MyResult.Success -> {
+
+                }
+            }
+        }
+    }
+
+    fun deleteVote(cat: Cat) {
+        changeCat(cat)
+    }
+
     companion object {
         const val SUCCESS_RESPONSE = "SUCCESS"
     }

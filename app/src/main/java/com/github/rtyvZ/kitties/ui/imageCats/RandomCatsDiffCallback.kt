@@ -8,6 +8,6 @@ class RandomCatsDiffCallback : DiffUtil.ItemCallback<Cat>() {
     }
 
     override fun areContentsTheSame(oldItem: Cat, newItem: Cat): Boolean {
-        return oldItem == newItem
+        return oldItem.id == newItem.id && oldItem.isSetLike != newItem.isSetLike
     }
 }

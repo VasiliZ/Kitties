@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,7 +19,7 @@ import com.github.rtyvZ.kitties.network.data.Cat
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.cat_item.*
 
-class RandomCatAdapter() :
+class RandomCatAdapter(private val setLike: (Cat) -> Unit) :
     ListAdapter<Cat, RandomCatAdapter.RandomCatViewHolder>(RandomCatsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomCatViewHolder =
@@ -30,12 +31,35 @@ class RandomCatAdapter() :
 
     override fun onBindViewHolder(holder: RandomCatViewHolder, position: Int) {
         val cat = currentList[position]
-        holder.setData(cat)
+        holder.setData(cat, setLike)
     }
 
     class RandomCatViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
-        fun setData(cat: Cat) {
+        fun setData(cat: Cat, setLike: (Cat) -> Unit) {
+            if (cat.isSetLike) {
+                thumb_up.background = ResourcesCompat.getDrawable(
+                    containerView.context.resources,
+                    R.drawable.thumb_up_green,
+                    null
+                )
+            } else {
+                thumb_up.background = ResourcesCompat.getDrawable(
+                    containerView.context.resources,
+                    R.drawable.ic_baseline_thumb_without_vote,
+                    null
+                )
+            }
+
+            thumb_up.setOnClickListener {
+                if (cat.isSetLike) {
+                    cat.isSetLike = false
+                    setLike(cat)
+                } else {
+                    cat.isSetLike = true
+                    setLike(cat)
+                }
+            }
 
             Glide
                 .with(imageCat.context)
