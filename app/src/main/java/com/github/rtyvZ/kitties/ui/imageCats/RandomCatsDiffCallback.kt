@@ -1,4 +1,3 @@
-
 import androidx.recyclerview.widget.DiffUtil
 import com.github.rtyvZ.kitties.common.models.Cat
 
@@ -10,6 +9,6 @@ class RandomCatsDiffCallback : DiffUtil.ItemCallback<Cat>() {
 
     override fun areContentsTheSame(oldItem: Cat, newItem: Cat): Boolean {
         return oldItem.id == newItem.id
-                && (oldItem.choice != newItem.choice)
+                && (oldItem.choice != newItem.choice || oldItem.voteId != newItem.voteId)
     }
 }

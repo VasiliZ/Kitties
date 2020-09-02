@@ -68,12 +68,6 @@ class RandomCatsViewModel : ViewModel() {
                         mutableErrorVoteCats.postValue(response.exception)
                         returnACat(cat, position)
                     }
-                    is MyResult.Success -> {
-                        response.data?.let {
-                            cat.voteId = it.id
-                            changeCat(cat)
-                        }
-                    }
                 }
             }
         }
@@ -168,10 +162,6 @@ class RandomCatsViewModel : ViewModel() {
                 }
             }
         }
-    }
-
-    fun deleteVote(cat: Cat) {
-        changeCat(cat)
     }
 
     companion object {

@@ -28,6 +28,16 @@ class DragItemHelper(val function: (Int, Int) -> Unit, context: Context) :
         function(position, direction)
     }
 
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        if (viewHolder.itemViewType != 1) {
+            return 0
+        }
+        return super.getMovementFlags(recyclerView, viewHolder)
+    }
+
     override fun onChildDraw(
         c: Canvas,
         recyclerView: RecyclerView,

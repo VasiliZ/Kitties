@@ -22,16 +22,35 @@ import kotlinx.android.synthetic.main.cat_item.*
 class RandomCatAdapter(private val setLike: (Cat, StateCatVote) -> Unit) :
     ListAdapter<Cat, RandomCatAdapter.RandomCatViewHolder>(RandomCatsDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomCatViewHolder =
-        RandomCatViewHolder(
-            LayoutInflater
-                .from(parent.context)
-                .inflate(R.layout.cat_item, parent, false)
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomCatViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_WITH_SWIPE ->
+                RandomCatViewHolder(
+                    LayoutInflater
+                        .from(parent.context)
+                        .inflate(R.layout.cat_item, parent, false)
+                )
+            VIEW_TYPE_WITHOUT_SWIPE ->
+                RandomCatViewHolder(
+                    LayoutInflater
+                        .from(parent.context)
+                        .inflate(R.layout.cat_item, parent, false)
+                )
+            else -> throw IllegalStateException("Invalid view type")
+        }
+    }
 
     override fun onBindViewHolder(holder: RandomCatViewHolder, position: Int) {
         val cat = currentList[position]
         holder.setData(cat, setLike)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (currentList[position].choice == -1) {
+            VIEW_TYPE_WITH_SWIPE
+        } else {
+            VIEW_TYPE_WITHOUT_SWIPE
+        }
     }
 
     class RandomCatViewHolder(override val containerView: View) :
@@ -102,5 +121,10 @@ class RandomCatAdapter(private val setLike: (Cat, StateCatVote) -> Unit) :
                 })
                 .into(imageCat)
         }
+    }
+
+    companion object {
+        private const val VIEW_TYPE_WITHOUT_SWIPE = 0
+        private const val VIEW_TYPE_WITH_SWIPE = 1
     }
 }
