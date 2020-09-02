@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.github.rtyvZ.kitties.R
+import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
 import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -11,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private var currentSelectedItem = -1
+    private var isRotateFab = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +37,20 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             return@setOnNavigationItemSelectedListener true
         }
         navigation.selectedItemId = R.id.list_kitties
+
+        randomCatFab.setOnClickListener {
+            isRotateFab = RotateFabAnimation.rotateFab(it, !isRotateFab)
+            if (isRotateFab) {
+                RotateFabAnimation.showIn(takeAPhotoFab)
+                RotateFabAnimation.showIn(selectPhoto)
+            } else {
+                RotateFabAnimation.showOut(takeAPhotoFab)
+                RotateFabAnimation.showOut(selectPhoto)
+            }
+        }
+
+        RotateFabAnimation.init(takeAPhotoFab)
+        RotateFabAnimation.init(selectPhoto)
     }
 
     private fun replaceFragment(fragment: Fragment) {

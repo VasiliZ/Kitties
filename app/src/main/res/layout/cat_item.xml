@@ -37,8 +37,8 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/thumb_down_selector"
             android:clickable="true"
-            android:focusable="true"
             android:elevation="4dp"
+            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/thumb_up"
             app:layout_constraintHorizontal_chainStyle="spread"
@@ -51,10 +51,11 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/thumb_up_selector"
             android:clickable="true"
-            android:focusable="true"
             android:elevation="4dp"
+            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/thumb_down" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
