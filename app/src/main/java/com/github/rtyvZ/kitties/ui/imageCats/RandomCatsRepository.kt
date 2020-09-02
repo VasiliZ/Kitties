@@ -1,5 +1,6 @@
 package com.github.rtyvZ.kitties.ui.imageCats
 
+import android.util.Log
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.App
@@ -95,7 +96,7 @@ class RandomCatsRepository {
             ?: kotlin.run { MyResult.Error(IllegalStateException(resourcesProvider.getString(R.string.no_session))) }
     }
 
-    suspend fun voteForCat(cat: Cat, yourChoice: Int): MyResult<VoteCatResponse?>? {
+    suspend fun voteForCat(cat: Cat): MyResult<VoteCatResponse?>? {
         return withContext(Dispatchers.IO) {
             session?.let {
                 if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
@@ -104,11 +105,35 @@ class RandomCatsRepository {
                             Api.getApi()
                                 .votes(
                                     App.ApiKeyProvider.getKey(),
-                                    VoteRequest(cat.id, yourChoice, it.userId)
+                                    VoteRequest(cat.id, cat.choice, it.userId)
                                 )
                                 .execute().body()
                         )
                     } catch (e: Exception) {
+                        MyResult.Error(e)
+                    }
+                } else {
+                    MyResult.Error(NoConnectivityException())
+                }
+            }
+        }
+    }
+
+    suspend fun deleteVote(cat: Cat): MyResult<VoteCatResponse?>? {
+        return withContext(Dispatchers.IO) {
+            session?.let {
+                if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
+                    try {
+                        MyResult.Success(
+                            Api.getApi()
+                                .deleteVote(
+                                    App.ApiKeyProvider.getKey(),
+                                    cat.voteId.toString()
+                                )
+                                .execute().body()
+                        )
+                    } catch (e: Exception) {
+                        Log.d("error", e.localizedMessage!!)
                         MyResult.Error(e)
                     }
                 } else {

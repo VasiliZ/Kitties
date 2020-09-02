@@ -5,5 +5,6 @@ data class Cat(
     val url: String,
     val width: Int,
     val height: Int,
-    var choice: Int = -1
+    var choice: Int = -1,
+    var voteId: Int = -1
 )

@@ -7,5 +7,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class VoteCatResponse(
     @SerializedName("message")
-    val message: String
+    val message: String,
+    @SerializedName("id")
+    val id: Int
 ) : Parcelable

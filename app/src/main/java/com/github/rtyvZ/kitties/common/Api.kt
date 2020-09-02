@@ -8,10 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface Api {
 
@@ -22,6 +19,12 @@ interface Api {
     fun votes(
         @Header("x-api-key") apiKey: String,
         @Body voteRequest: VoteRequest
+    ): Call<VoteCatResponse>
+
+    @DELETE("votes/{vote_id}")
+    fun deleteVote(
+        @Header("x-api-key") apiKey: String,
+        @Path("vote_id") id: String
     ): Call<VoteCatResponse>
 
     companion object {
