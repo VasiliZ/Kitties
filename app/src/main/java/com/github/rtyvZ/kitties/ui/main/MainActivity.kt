@@ -1,7 +1,12 @@
-package com.github.rtyvZ.kitties.common
+package com.github.rtyvZ.kitties.ui.main
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
@@ -49,6 +54,23 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             }
         }
 
+        takeAPhotoFab.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_DENIED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    CAMERA_REQUEST_CODE
+                )
+            } else {
+                val takeAPhotoActivity = Intent(this, TakePhotoActivity::class.java)
+                startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
+            }
+        }
+
         RotateFabAnimation.init(takeAPhotoFab)
         RotateFabAnimation.init(selectPhoto)
     }
@@ -58,5 +80,29 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         transaction.replace(R.id.content_container, fragment)
         transaction.addToBackStack(fragment::class.java.canonicalName)
         transaction.commit()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_REQUEST_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            val takeAPhotoActivity = Intent(this, TakePhotoActivity::class.java)
+            startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == TakePhotoActivity.ACTIVITY_RESULT_CODE && resultCode == RESULT_OK) {
+
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    companion object {
+        const val CAMERA_REQUEST_CODE = 100
+        const val ACTIVITY_RESULT_CODE = 1
     }
 }
