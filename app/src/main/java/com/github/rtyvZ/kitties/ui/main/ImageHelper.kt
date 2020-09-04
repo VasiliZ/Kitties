@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage
 import java.io.File
@@ -13,8 +14,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 object ImageHelper {
-    const val DATE_FORMAT = "yyyyMMdd_HHmmss"
+    private const val DATE_FORMAT = "yyyyMMdd_HHmmss"
     private lateinit var currentPhotoPath: String
+
+    private const val MAX_IMAGE_SIZE = 57344
 
     fun createImageFile(context: Context): File {
         val timeStamp: String = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())
@@ -33,7 +36,7 @@ object ImageHelper {
         val targetWidth = view.width
 
         val bitmapOptions = BitmapFactory.Options().apply {
-            //inJustDecodeBounds = true
+            inJustDecodeBounds = true
 
             val photoWidth = outWidth
             val photoHeight = outHeight
@@ -41,14 +44,21 @@ object ImageHelper {
             val scaleFactor: Int =
                 max(1, min(photoWidth / targetWidth, photoHeight / targetHeight))
 
-            //  inJustDecodeBounds = false
+            inJustDecodeBounds = false
             inSampleSize = scaleFactor
         }
 
-        BitmapFactory.decodeFile(currentPhotoPath, bitmapOptions)?.also {
-            it.let {
-                view.setImageBitmap(rotateBitmap(it))
+        BitmapFactory
+            .decodeFile(currentPhotoPath, bitmapOptions).also {
+                it.let {
+                    view.setImageBitmap(rotateBitmap(it))
+                }
             }
+    }
+
+    private fun scaleBitmap(): Bitmap? {
+        return BitmapFactory.decodeFile(currentPhotoPath)?.also {
+            it.scale(500, 500)
         }
     }
 
@@ -71,7 +81,14 @@ object ImageHelper {
             ExifInterface.ORIENTATION_ROTATE_270 -> {
                 rotatedBitmap = rotateImage(bitmap, 270)
             }
+            else -> {
+                rotatedBitmap = bitmap
+            }
         }
         return rotatedBitmap
+    }
+
+    fun getPhoto(context: Context): File {
+        return File(context.filesDir, File(currentPhotoPath).name)
     }
 }

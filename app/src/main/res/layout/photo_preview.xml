@@ -17,11 +17,11 @@
         android:id="@+id/backToCatsFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:backgroundTint="@color/white"
         android:layout_margin="32dp"
         android:src="@drawable/ic_baseline_arrow_back_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/sendPhotoFab"
@@ -33,4 +33,17 @@
         app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/percentage"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/circled_background"
+        android:elevation="10dp"
+        android:padding="2dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/sendPhotoFab"
+        app:layout_constraintTop_toTopOf="@id/sendPhotoFab" />
 </androidx.constraintlayout.widget.ConstraintLayout>

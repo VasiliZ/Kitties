@@ -12,6 +12,7 @@ import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
 import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
+import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -62,7 +63,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             ) {
                 ActivityCompat.requestPermissions(
                     this,
-                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    arrayOf(
+                        Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ),
                     CAMERA_REQUEST_CODE
                 )
             } else {
@@ -88,7 +92,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_REQUEST_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == CAMERA_REQUEST_CODE
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            && grantResults[1] == PackageManager.PERMISSION_GRANTED
+            && grantResults[2] == PackageManager.PERMISSION_GRANTED
+        ) {
             val takeAPhotoActivity = Intent(this, TakePhotoActivity::class.java)
             startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
         }

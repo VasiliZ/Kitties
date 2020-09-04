@@ -2,7 +2,9 @@ package com.github.rtyvZ.kitties.common
 
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.request.VoteRequest
+import com.github.rtyvZ.kitties.network.response.UploadCatResponse
 import com.github.rtyvZ.kitties.network.response.VoteCatResponse
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -26,6 +28,14 @@ interface Api {
         @Header("x-api-key") apiKey: String,
         @Path("vote_id") id: String
     ): Call<VoteCatResponse>
+
+
+    @POST("images/upload")
+    @Multipart
+    fun uploadImage(
+        @Header("x-api-key") apiKey: String,
+        @Part body: MultipartBody.Part
+    ): Call<UploadCatResponse>
 
     companion object {
         private const val BASE_URL = "https://api.thecatapi.com/v1/"
