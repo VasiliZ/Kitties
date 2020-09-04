@@ -22,18 +22,38 @@ class RandomCatsRepository {
         return withContext(Dispatchers.IO) {
             if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
                 try {
+                    val listCats = mutableListOf<Cat>()
                     val responseCat = Api
                         .getApi()
                         .getListKitties()
                         .execute()
                         .body()
-                    val listCats = mutableListOf<Cat>()
+
                     responseCat?.map {
                         listCats.add(it.toCat())
                     }
-                    responseCat?.forEach {
-                        it.toCat()
+
+                    val getMyVotes =
+                        Api.getApi().getMyVotes(
+                            App.ApiKeyProvider.getKey(), session!!.userId
+                        )
+                            .execute().body()
+
+                    responseCat?.forEachIndexed { index, catResponce ->
+                        getMyVotes?.forEach { votes ->
+                            if (catResponce.id == votes.imageId) {
+                                listCats[index] = Cat(
+                                    catResponce.id,
+                                    catResponce.url,
+                                    catResponce.width,
+                                    catResponce.height,
+                                    votes.voteValue,
+                                    votes.idVote.toInt()
+                                )
+                            }
+                        }
                     }
+
                     MyResult.Success(listCats)
                 } catch (e: Exception) {
                     MyResult.Error(e)
@@ -46,7 +66,7 @@ class RandomCatsRepository {
 
     suspend fun voteForACat(cat: Cat, direction: Int): MyResult<VoteCatResponse?> {
         return withContext(Dispatchers.IO) {
-            session?.let {
+            session?.let { session ->
                 if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
                     try {
                         when (direction) {
@@ -55,7 +75,7 @@ class RandomCatsRepository {
                                     .getApi()
                                     .votes(
                                         App.ApiKeyProvider.getKey(),
-                                        VoteRequest(cat.id, 0, it.userId)
+                                        VoteRequest(cat.id, 0, session.userId)
                                     )
                                     .execute()
                                     .body()
@@ -70,7 +90,7 @@ class RandomCatsRepository {
                                     Api.getApi()
                                         .votes(
                                             App.ApiKeyProvider.getKey(),
-                                            VoteRequest(cat.id, 1, it.userId)
+                                            VoteRequest(cat.id, 1, session.userId)
                                         )
                                         .execute().body()
                                 )

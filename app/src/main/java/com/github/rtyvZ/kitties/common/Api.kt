@@ -2,6 +2,7 @@ package com.github.rtyvZ.kitties.common
 
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.request.VoteRequest
+import com.github.rtyvZ.kitties.network.response.MyVoteResponse
 import com.github.rtyvZ.kitties.network.response.UploadCatResponse
 import com.github.rtyvZ.kitties.network.response.VoteCatResponse
 import okhttp3.MultipartBody
@@ -36,6 +37,12 @@ interface Api {
         @Header("x-api-key") apiKey: String,
         @Part body: MultipartBody.Part
     ): Call<UploadCatResponse>
+
+    @GET("votes")
+    fun getMyVotes(
+        @Header("x-api-key") apiKey: String,
+        @Query("sub_id") id: String
+    ): Call<List<MyVoteResponse>>
 
     companion object {
         private const val BASE_URL = "https://api.thecatapi.com/v1/"

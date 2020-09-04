@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
 import com.github.rtyvZ.kitties.common.models.Cat
@@ -27,7 +28,11 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
     }
 
     private val catAdapter = RandomCatAdapter(setLike)
+    private var visibleItemCount: Int = 0
+    private var lastVisibleItem: Int = 0
+    private var totalItemCount: Int = 0
 
+    private var isLoading = true
     private lateinit var manager: LinearLayoutManager
     private lateinit var itemTouchHelper: ItemTouchHelper
 
@@ -39,6 +44,7 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
         viewModel.getRandomCats.observe(viewLifecycleOwner, {
             progress.hide()
+            isLoading = true
             catAdapter.submitList(it)
         })
 
@@ -66,6 +72,22 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
                 itemAnimator?.changeDuration = 0
                 manager = LinearLayoutManager(it)
                 layoutManager = manager
+
+                addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        if (dy > 0) {
+                            visibleItemCount = manager.childCount
+                            totalItemCount = manager.itemCount
+                            lastVisibleItem = manager.findLastVisibleItemPosition()
+                            if (isLoading) {
+                                if ((visibleItemCount + lastVisibleItem) >= totalItemCount) {
+                                    isLoading = false
+                                    viewModel.getCats()
+                                }
+                            }
+                        }
+                    }
+                })
             }
         }
     }
