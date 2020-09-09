@@ -20,7 +20,7 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
     private val viewModel: RandomCatsViewModel by viewModels()
 
     private val swipeCallback: (Int, Int) -> Unit = { position, direction ->
-        viewModel.vote(position, direction)
+        viewModel.addToFavorites(position)
     }
 
     private val setLike: (Cat, StateCatVote) -> Unit = { cat, choice ->
@@ -60,7 +60,7 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
             })
 
         activity?.let {
-            itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback, it))
+            itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback))
             itemTouchHelper.attachToRecyclerView(listRandomCats)
         }
 

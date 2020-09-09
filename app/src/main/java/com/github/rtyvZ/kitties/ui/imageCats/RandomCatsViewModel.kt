@@ -61,28 +61,6 @@ class RandomCatsViewModel : ViewModel() {
         mutableRandomCats.value = listWithCats
     }
 
-    fun vote(position: Int, direction: Int) {
-        mutableRandomCats.value?.let { list ->
-            removeCat(list[position])
-            val cat = list[position]
-            viewModelScope.launch {
-                when (val response = randomCatsRepository.voteForACat(cat, direction)) {
-                    is MyResult.Error -> {
-                        mutableErrorVoteCats.postValue(response.exception)
-                        returnACat(cat, position)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun returnACat(cat: Cat, position: Int) {
-        val listCats = mutableListOf<Cat>()
-        mutableRandomCats.value?.let { listCats.addAll(it) }
-        listCats.add(position, cat)
-        mutableRandomCats.postValue(listCats)
-    }
-
     private fun restoreStateCat(cat: Cat) {
         val listCats = mutableListOf<Cat>()
         mutableRandomCats.value?.let {
@@ -162,6 +140,20 @@ class RandomCatsViewModel : ViewModel() {
                     cat.choice = DISLIKE
                     sendVoteRequest(cat, choice)
                     changeCat(cat)
+                }
+            }
+        }
+    }
+
+    fun addToFavorites(position: Int) {
+        viewModelScope.launch {
+            mutableRandomCats?.value?.let {
+                removeCat(it[position])
+                when (val response = randomCatsRepository.addToFavorite(it[position].id)) {
+                    is MyResult.Error -> {
+                        restoreStateCat(it[position])
+                        mutableErrorVoteCats.postValue(response.exception)
+                    }
                 }
             }
         }

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class VoteCatResponse(
+data class CatResponseVoteAndFav(
     @SerializedName("message")
     val message: String,
     @SerializedName("id")

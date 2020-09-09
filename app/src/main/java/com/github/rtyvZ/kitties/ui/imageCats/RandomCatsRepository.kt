@@ -7,8 +7,9 @@ import com.github.rtyvZ.kitties.common.App
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.MyResult
 import com.github.rtyvZ.kitties.network.NoConnectivityException
+import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest
-import com.github.rtyvZ.kitties.network.response.VoteCatResponse
+import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -64,7 +65,7 @@ class RandomCatsRepository {
         }
     }
 
-    suspend fun voteForACat(cat: Cat, direction: Int): MyResult<VoteCatResponse?> {
+    suspend fun voteForACat(cat: Cat, direction: Int): MyResult<CatResponseVoteAndFav?> {
         return withContext(Dispatchers.IO) {
             session?.let { session ->
                 if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
@@ -116,7 +117,7 @@ class RandomCatsRepository {
             ?: kotlin.run { MyResult.Error(IllegalStateException(resourcesProvider.getString(R.string.no_session))) }
     }
 
-    suspend fun voteForCat(cat: Cat): MyResult<VoteCatResponse?>? {
+    suspend fun voteForCat(cat: Cat): MyResult<CatResponseVoteAndFav?>? {
         return withContext(Dispatchers.IO) {
             session?.let {
                 if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
@@ -139,7 +140,7 @@ class RandomCatsRepository {
         }
     }
 
-    suspend fun deleteVote(cat: Cat): MyResult<VoteCatResponse?>? {
+    suspend fun deleteVote(cat: Cat): MyResult<CatResponseVoteAndFav?>? {
         return withContext(Dispatchers.IO) {
             session?.let {
                 if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
@@ -154,6 +155,28 @@ class RandomCatsRepository {
                         )
                     } catch (e: Exception) {
                         Log.d("error", e.localizedMessage!!)
+                        MyResult.Error(e)
+                    }
+                } else {
+                    MyResult.Error(NoConnectivityException())
+                }
+            }
+        }
+    }
+
+    suspend fun addToFavorite(catId: String): MyResult<CatResponseVoteAndFav?>? {
+        return withContext(Dispatchers.IO) {
+            session?.let { session ->
+                if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
+                    try {
+                        MyResult.Success(
+                            Api.getApi().addCatToFavorites(
+                                App.ApiKeyProvider.getKey(),
+                                FavoritesRequest(session.userId, catId)
+                            ).execute()
+                                .body()
+                        )
+                    } catch (e: java.lang.Exception) {
                         MyResult.Error(e)
                     }
                 } else {

@@ -1,5 +1,5 @@
 package com.github.rtyvZ.kitties.ui.imageCats
 
 enum class StateCatVote(value: Int) {
-    LIKE(1), DISLIKE(0), DELETE_VOTE(-1)
+    LIKE(1), DISLIKE(0)
 }

@@ -1,10 +1,11 @@
 package com.github.rtyvZ.kitties.common
 
 import com.github.rtyvZ.kitties.network.data.CatResponse
+import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest
+import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav
 import com.github.rtyvZ.kitties.network.response.MyVoteResponse
 import com.github.rtyvZ.kitties.network.response.UploadCatResponse
-import com.github.rtyvZ.kitties.network.response.VoteCatResponse
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -22,13 +23,13 @@ interface Api {
     fun votes(
         @Header("x-api-key") apiKey: String,
         @Body voteRequest: VoteRequest
-    ): Call<VoteCatResponse>
+    ): Call<CatResponseVoteAndFav>
 
     @DELETE("votes/{vote_id}")
     fun deleteVote(
         @Header("x-api-key") apiKey: String,
         @Path("vote_id") id: String
-    ): Call<VoteCatResponse>
+    ): Call<CatResponseVoteAndFav>
 
 
     @POST("images/upload")
@@ -43,6 +44,12 @@ interface Api {
         @Header("x-api-key") apiKey: String,
         @Query("sub_id") id: String
     ): Call<List<MyVoteResponse>>
+
+    @POST("favourites")
+    fun addCatToFavorites(
+        @Header("x-api-key") apiKey: String,
+        @Body body: FavoritesRequest
+    ): Call<CatResponseVoteAndFav>
 
     companion object {
         private const val BASE_URL = "https://api.thecatapi.com/v1/"
