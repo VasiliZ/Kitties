@@ -7,7 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.extantions.replaceElement
 import com.github.rtyvZ.kitties.network.MyResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RandomCatsViewModel : ViewModel() {
 
@@ -23,6 +26,7 @@ class RandomCatsViewModel : ViewModel() {
     var getErrorVoteCat: LiveData<Throwable> = mutableErrorVoteCats
 
     private val randomCatsRepository = RandomCatsRepository()
+    private val randomCatsModel = RandomCatsModel(randomCatsRepository)
 
     fun clear() {
         listwithCats.clear()
@@ -36,19 +40,30 @@ class RandomCatsViewModel : ViewModel() {
 
     fun getCats() {
         viewModelScope.launch {
-
-            when (val getCats = randomCatsRepository.getCats()) {
-                is MyResult.Success<List<Cat>?> -> {
-                    getCats.data?.let {
-                        listwithCats.addAll(it)
-                        mutableRandomCats.postValue(listwithCats)
-                    }
+            try {
+                withContext(Dispatchers.IO) {
+                    randomCatsModel
+                        .execute()
+                        ?.collect {
+                            listwithCats.addAll(it)
+                            mutableRandomCats.postValue(listwithCats)
+                        }
                 }
-
-                is MyResult.Error -> {
-                    mutableRandomCatsError.value = getCats.exception
-                }
+            } catch (e: Exception) {
+                mutableRandomCatsError.postValue(e)
             }
+            /*  when (val getCats = randomCatsRepository.getCats()) {
+                  is MyResult.Success<List<Cat>?> -> {
+                      getCats.data?.let {
+                          listwithCats.addAll(it)
+                          mutableRandomCats.postValue(listwithCats)
+                      }
+                  }
+
+                  is MyResult.Error -> {
+                      mutableRandomCatsError.value = getCats.exception
+                  }
+              }*/
         }
     }
 
@@ -83,6 +98,7 @@ class RandomCatsViewModel : ViewModel() {
 
     private fun sendVoteRequest(cat: Cat, choice: StateCatVote) {
         viewModelScope.launch {
+
             when (val response = randomCatsRepository.voteForCat(cat)) {
                 is MyResult.Error -> {
                     response.exception.let {
@@ -147,7 +163,7 @@ class RandomCatsViewModel : ViewModel() {
 
     fun addToFavorites(position: Int) {
         viewModelScope.launch {
-            mutableRandomCats?.value?.let {
+            mutableRandomCats.value?.let {
                 removeCat(it[position])
                 when (val response = randomCatsRepository.addToFavorite(it[position].id)) {
                     is MyResult.Error -> {

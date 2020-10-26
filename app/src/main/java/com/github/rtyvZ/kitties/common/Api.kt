@@ -17,7 +17,7 @@ import retrofit2.http.*
 interface Api {
 
     @GET("images/search?limit=10")
-    fun getListKitties(): Call<List<CatResponse>>
+    suspend fun getListKitties(): List<CatResponse>
 
     @POST("votes")
     fun votes(
