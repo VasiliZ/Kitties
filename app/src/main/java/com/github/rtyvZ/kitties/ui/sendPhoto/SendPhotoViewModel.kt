@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.rtyvZ.kitties.network.MyResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class SendPhotoViewModel : ViewModel() {
@@ -17,14 +20,11 @@ class SendPhotoViewModel : ViewModel() {
 
     fun sendPhoto(file: File, listener: (Int) -> Unit) {
         viewModelScope.launch {
-
-            when (val answer = sendPhotoModel.uploadPhoto(file, listener)) {
-                is MyResult.Success -> {
-                    answer.data?.let {
-                        mutableSuccessSendPhoto.postValue(it.message)
-                    } ?: kotlin.run {
-                        mutableSuccessSendPhoto.postValue("500")
-                    }
+            withContext(Dispatchers.IO) {
+                sendPhotoModel.uploadPhoto(file, listener).catch { e ->
+                    mutableSuccessSendPhoto.postValue(e.message)
+                }.collect {
+                    mutableSuccessSendPhoto.postValue(it.message)
                 }
             }
         }

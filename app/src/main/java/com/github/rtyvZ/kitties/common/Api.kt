@@ -4,12 +4,12 @@ import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest
 import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav
+import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
 import com.github.rtyvZ.kitties.network.response.MyVoteResponse
 import com.github.rtyvZ.kitties.network.response.UploadCatResponse
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
@@ -36,8 +36,9 @@ interface Api {
     @Multipart
     suspend fun uploadImage(
         @Header("x-api-key") apiKey: String,
-        @Part body: MultipartBody.Part
-    ): Call<UploadCatResponse>
+        @Part body: MultipartBody.Part,
+        @Part("sub_id") id: String
+    ): UploadCatResponse
 
     @GET("votes")
     suspend fun getMyVotes(
@@ -50,6 +51,18 @@ interface Api {
         @Header("x-api-key") apiKey: String,
         @Body body: FavoritesRequest
     ): CatResponseVoteAndFav
+
+    @GET("favourites")
+    suspend fun getFavoritesCat(
+        @Header("x-api-key") apiKey: String,
+        @Query("sub_id") subId: String
+    ): List<FavoriteCatsResponse>
+
+    @DELETE("favourites/{favourite_id}")
+    suspend fun deleteFavoriteCat(
+        @Header("x-api-key") apiKey: String,
+        @Path("favourite_id") id: Int
+    ): Any
 
     companion object {
         private const val BASE_URL = "https://api.thecatapi.com/v1/"

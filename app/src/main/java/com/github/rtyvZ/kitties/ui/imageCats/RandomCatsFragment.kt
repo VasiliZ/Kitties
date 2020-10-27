@@ -67,7 +67,6 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
         listRandomCats.apply {
             activity?.let {
                 adapter = catAdapter
-
                 //disable blinks in recycler view
                 itemAnimator?.changeDuration = 0
                 manager = LinearLayoutManager(it)

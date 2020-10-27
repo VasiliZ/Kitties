@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.domain.randomCatsDomain
+package com.github.rtyvZ.kitties.domain.randomCat
 
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav

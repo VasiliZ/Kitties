@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.rtyvZ.kitties.common.models.Cat
-import com.github.rtyvZ.kitties.domain.randomCatsDomain.RandomCatsModel
+import com.github.rtyvZ.kitties.domain.randomCat.RandomCatsModel
 import com.github.rtyvZ.kitties.extentions.replaceElement
 import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.RandomCatsRepository
 import kotlinx.coroutines.Dispatchers
@@ -140,7 +140,7 @@ class RandomCatsViewModel : ViewModel() {
             listWithCats.addAll(it)
         }
         listWithCats.remove(cat)
-        mutableRandomCats.value = listWithCats
+        mutableRandomCats.postValue(listWithCats)
     }
 
     private fun restoreStateCat(cat: Cat) {

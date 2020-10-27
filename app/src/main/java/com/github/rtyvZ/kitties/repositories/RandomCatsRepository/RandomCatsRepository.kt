@@ -83,7 +83,7 @@ class RandomCatsRepository {
                 emit(
                     Api.getApi().addCatToFavorites(
                         App.ApiKeyProvider.getKey(),
-                        FavoritesRequest(session.userId, catId)
+                        FavoritesRequest(catId, session.userId)
                     )
                 )
             }
