@@ -17,39 +17,39 @@ import retrofit2.http.*
 interface Api {
 
     @GET("images/search?limit=10")
-    suspend fun getListKitties(): List<CatResponse>
+    suspend fun getListKitties(): List<CatResponse>?
 
     @POST("votes")
-    fun votes(
+    suspend fun votes(
         @Header("x-api-key") apiKey: String,
         @Body voteRequest: VoteRequest
-    ): Call<CatResponseVoteAndFav>
+    ): CatResponseVoteAndFav
 
     @DELETE("votes/{vote_id}")
-    fun deleteVote(
+    suspend fun deleteVote(
         @Header("x-api-key") apiKey: String,
         @Path("vote_id") id: String
-    ): Call<CatResponseVoteAndFav>
+    ): CatResponseVoteAndFav
 
 
     @POST("images/upload")
     @Multipart
-    fun uploadImage(
+    suspend fun uploadImage(
         @Header("x-api-key") apiKey: String,
         @Part body: MultipartBody.Part
     ): Call<UploadCatResponse>
 
     @GET("votes")
-    fun getMyVotes(
+    suspend fun getMyVotes(
         @Header("x-api-key") apiKey: String,
         @Query("sub_id") id: String
-    ): Call<List<MyVoteResponse>>
+    ): List<MyVoteResponse>?
 
     @POST("favourites")
-    fun addCatToFavorites(
+    suspend fun addCatToFavorites(
         @Header("x-api-key") apiKey: String,
         @Body body: FavoritesRequest
-    ): Call<CatResponseVoteAndFav>
+    ): CatResponseVoteAndFav
 
     companion object {
         private const val BASE_URL = "https://api.thecatapi.com/v1/"

@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.rtyvZ.kitties.network.MyResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LaunchViewModel : ViewModel() {
 
@@ -16,23 +19,17 @@ class LaunchViewModel : ViewModel() {
     val getUserUid: LiveData<String> = launchSuccess
     val error: LiveData<Throwable> = launchError
 
-    private val resultCallback: (MyResult<String>) -> Unit = { result ->
-        when (result) {
-            is MyResult.Success -> {
-                result.data.let {
-                    launchSuccess.postValue(it)
-                }
-            }
-
-            is MyResult.Error -> {
-                launchError.postValue(result.exception)
-            }
-        }
-    }
-
     fun requestUid() {
         viewModelScope.launch {
-            launchModel.getUserUid(resultCallback)
+            withContext(Dispatchers.IO) {
+                launchModel.getUserUid()
+                    .catch { e ->
+                        launchError.postValue(e)
+                    }
+                    .collect {
+                        launchSuccess.postValue(it)
+                    }
+            }
         }
     }
 }

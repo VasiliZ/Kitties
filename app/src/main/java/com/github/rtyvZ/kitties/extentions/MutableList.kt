@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.extantions
+package com.github.rtyvZ.kitties.extentions
 
 fun <T> MutableList<T>.replaceElement(element: T) {
     val indexOfElement = this.indexOf(element)

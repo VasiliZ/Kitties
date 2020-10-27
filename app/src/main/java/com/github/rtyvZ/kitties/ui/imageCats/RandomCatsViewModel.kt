@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.rtyvZ.kitties.common.models.Cat
-import com.github.rtyvZ.kitties.extantions.replaceElement
-import com.github.rtyvZ.kitties.network.MyResult
+import com.github.rtyvZ.kitties.domain.randomCatsDomain.RandomCatsModel
+import com.github.rtyvZ.kitties.extentions.replaceElement
+import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.RandomCatsRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,30 +42,95 @@ class RandomCatsViewModel : ViewModel() {
 
     fun getCats() {
         viewModelScope.launch {
-            try {
-                withContext(Dispatchers.IO) {
-                    randomCatsModel
-                        .execute()
-                        ?.collect {
-                            listwithCats.addAll(it)
-                            mutableRandomCats.postValue(listwithCats)
+            withContext(Dispatchers.IO) {
+                randomCatsModel
+                    .getKittiesFromNet()
+                    ?.catch { e ->
+                        mutableRandomCatsError.postValue(e)
+                    }?.collect {
+                        listwithCats.addAll(it)
+                        mutableRandomCats.postValue(listwithCats)
+                    }
+            }
+        }
+    }
+
+
+    private fun sendVoteRequest(cat: Cat) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                randomCatsModel.voteForCat(cat)
+                    .catch { e ->
+                        mutableErrorVoteCats.postValue(e)
+                    }
+                    .collect {
+                        cat.apply {
+                            voteId = it.id
+                        }
+                        changeCat(cat)
+                    }
+            }
+        }
+    }
+
+    private fun sendDeleteVoteRequest(cat: Cat) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                randomCatsModel.deleteVoteForCat(cat)
+                    .catch { e ->
+                        mutableErrorVoteCats.postValue(e)
+                    }
+                    .collect {
+                        cat.choice = -1
+                        changeCat(cat)
+
+                    }
+            }
+        }
+    }
+
+    fun voteForCat(cat: Cat, choice: StateCatVote) {
+        when (choice) {
+            StateCatVote.LIKE -> {
+                if (cat.choice == LIKE) {
+                    cat.choice = WITHOUT_VOTE
+                    changeCat(cat)
+                    sendDeleteVoteRequest(cat)
+                } else {
+                    cat.choice = LIKE
+                    sendVoteRequest(cat)
+                    changeCat(cat)
+                }
+            }
+
+            StateCatVote.DISLIKE -> {
+                if (cat.choice == DISLIKE) {
+                    cat.choice = WITHOUT_VOTE
+                    changeCat(cat)
+                    sendDeleteVoteRequest(cat)
+                } else {
+                    cat.choice = DISLIKE
+                    sendVoteRequest(cat)
+                    changeCat(cat)
+                }
+            }
+        }
+    }
+
+    fun addToFavorites(position: Int) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                mutableRandomCats.value?.let { localCat ->
+                    randomCatsModel.addCatToFavorite(localCat[position].id)
+                        .catch { e ->
+                            restoreStateCat(localCat[position])
+                            mutableErrorVoteCats.postValue(e)
+                        }
+                        .collect {
+                            removeCat(localCat[position])
                         }
                 }
-            } catch (e: Exception) {
-                mutableRandomCatsError.postValue(e)
             }
-            /*  when (val getCats = randomCatsRepository.getCats()) {
-                  is MyResult.Success<List<Cat>?> -> {
-                      getCats.data?.let {
-                          listwithCats.addAll(it)
-                          mutableRandomCats.postValue(listwithCats)
-                      }
-                  }
-
-                  is MyResult.Error -> {
-                      mutableRandomCatsError.value = getCats.exception
-                  }
-              }*/
         }
     }
 
@@ -96,84 +163,6 @@ class RandomCatsViewModel : ViewModel() {
         mutableRandomCats.postValue(listCat)
     }
 
-    private fun sendVoteRequest(cat: Cat, choice: StateCatVote) {
-        viewModelScope.launch {
-
-            when (val response = randomCatsRepository.voteForCat(cat)) {
-                is MyResult.Error -> {
-                    response.exception.let {
-                        restoreStateCat(cat)
-                        mutableErrorVoteCats.postValue(it)
-                    }
-                }
-                is MyResult.Success -> {
-                    response.data?.let {
-                        cat.apply {
-                            voteId = it.id
-                        }
-                        changeCat(cat)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun sendDeleteVoteRequest(cat: Cat) {
-        viewModelScope.launch {
-            when (val response = randomCatsRepository.deleteVote(cat)) {
-                is MyResult.Error -> {
-                    mutableErrorVoteCats.postValue(response.exception)
-                }
-
-                is MyResult.Success -> {
-                    cat.choice = -1
-                    changeCat(cat)
-                }
-            }
-        }
-    }
-
-    fun voteForCat(cat: Cat, choice: StateCatVote) {
-        when (choice) {
-            StateCatVote.LIKE -> {
-                if (cat.choice == LIKE) {
-                    cat.choice = WITHOUT_VOTE
-                    changeCat(cat)
-                    sendDeleteVoteRequest(cat)
-                } else {
-                    cat.choice = LIKE
-                    sendVoteRequest(cat, choice)
-                    changeCat(cat)
-                }
-            }
-
-            StateCatVote.DISLIKE -> {
-                if (cat.choice == DISLIKE) {
-                    cat.choice = WITHOUT_VOTE
-                    changeCat(cat)
-                    sendDeleteVoteRequest(cat)
-                } else {
-                    cat.choice = DISLIKE
-                    sendVoteRequest(cat, choice)
-                    changeCat(cat)
-                }
-            }
-        }
-    }
-
-    fun addToFavorites(position: Int) {
-        viewModelScope.launch {
-            mutableRandomCats.value?.let {
-                removeCat(it[position])
-                when (val response = randomCatsRepository.addToFavorite(it[position].id)) {
-                    is MyResult.Error -> {
-                        restoreStateCat(it[position])
-                        mutableErrorVoteCats.postValue(response.exception)
-                    }
-                }
-            }
-        }
-    }
 
     companion object {
         const val LIKE = 1

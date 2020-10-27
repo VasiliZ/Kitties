@@ -15,7 +15,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.models.Cat
-import com.github.rtyvZ.kitties.extantions.hide
+import com.github.rtyvZ.kitties.extentions.hide
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.cat_item.*
 

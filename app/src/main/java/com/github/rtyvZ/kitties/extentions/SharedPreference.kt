@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.extantions
+package com.github.rtyvZ.kitties.extentions
 
 import android.content.SharedPreferences
 

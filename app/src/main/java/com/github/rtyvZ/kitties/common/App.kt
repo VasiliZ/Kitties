@@ -3,8 +3,8 @@ package com.github.rtyvZ.kitties.common
 import android.app.Application
 import android.content.Context
 import com.github.rtyvZ.kitties.auth.UserSession
-import com.github.rtyvZ.kitties.extantions.getUserId
-import com.github.rtyvZ.kitties.extantions.saveUserId
+import com.github.rtyvZ.kitties.extentions.getUserId
+import com.github.rtyvZ.kitties.extentions.saveUserId
 import com.github.rtyvZ.kitties.network.ConnectionChecker
 
 class App : Application() {

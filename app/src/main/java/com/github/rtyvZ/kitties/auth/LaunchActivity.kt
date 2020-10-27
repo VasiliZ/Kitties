@@ -6,8 +6,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.App
-import com.github.rtyvZ.kitties.extantions.hide
-import com.github.rtyvZ.kitties.extantions.show
+import com.github.rtyvZ.kitties.extentions.hide
+import com.github.rtyvZ.kitties.extentions.show
 import com.github.rtyvZ.kitties.ui.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.launch_activity.*

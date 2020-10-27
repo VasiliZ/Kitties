@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
 import com.github.rtyvZ.kitties.common.models.Cat
-import com.github.rtyvZ.kitties.extantions.hide
-import com.github.rtyvZ.kitties.extantions.show
+import com.github.rtyvZ.kitties.extentions.hide
+import com.github.rtyvZ.kitties.extentions.show
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.random_cats_fragment.*
 
