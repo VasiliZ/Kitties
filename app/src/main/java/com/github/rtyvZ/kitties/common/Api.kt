@@ -32,6 +32,7 @@ interface Api {
     ): CatResponseVoteAndFav
 
 
+    @Headers(value = ["content-type:multipart/form-data;"])
     @POST("images/upload")
     @Multipart
     suspend fun uploadImage(

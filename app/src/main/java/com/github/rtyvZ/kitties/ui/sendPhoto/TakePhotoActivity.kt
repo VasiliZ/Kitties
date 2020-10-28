@@ -43,7 +43,7 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
         super.onCreate(savedInstanceState)
 
         sendPhotoFab.setOnClickListener {
-            viewModel.sendPhoto(ImageHelper.getPhoto(this), listener)
+            viewModel.sendPhoto(ImageHelper.getPhoto(this), listener, this.applicationContext)
         }
 
         takeFullPhoto()

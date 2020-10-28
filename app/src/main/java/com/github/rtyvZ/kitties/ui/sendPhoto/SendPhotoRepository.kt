@@ -1,31 +1,32 @@
 package com.github.rtyvZ.kitties.ui.sendPhoto
 
+import android.content.Context
+import android.net.Uri
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.App
-import com.github.rtyvZ.kitties.network.request.ProgressRequestBody
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody
 import java.io.File
 
-class SendPhotoModel {
+class SendPhotoRepository {
 
     private val session = App.SessionStorage.getSession()
 
     suspend fun uploadPhoto(
         file: File,
-        listener: (Int) -> Unit
+        listener: (Int) -> Unit,
+        context: Context
     ) = flow {
         session?.let {
-            val requestBody = ProgressRequestBody(
-                file, "multipart/form-data",
-                listener
-            )
-            file.asRequestBody("multipart/form-data".toMediaType())
+            val uri = Uri.fromFile(file)
+
+            val requestBody =
+                RequestBody.create(context.contentResolver.getType(uri)?.toMediaType(), file)
             val body =
                 MultipartBody.Part
-                    .create(requestBody)
+                    .createFormData("picture", file.name, requestBody)
             emit(
                 Api.getApi().uploadImage(
                     App.ApiKeyProvider.getKey(),
