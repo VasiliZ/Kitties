@@ -14,27 +14,21 @@ import kotlinx.android.synthetic.main.photo_preview.*
 import java.io.File
 
 class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
-    private val viewModel: SendPhotoViewModel by viewModels()
     private var resultIntent = Intent()
 
+    private val viewModel: SendPhotoViewModel by viewModels()
     private val listener: (Int) -> Unit = {
-        percentage.visibility = View.VISIBLE
-        percentage.text = it.toString()
         sendPhotoFab.isClickable = false
         backToCatsFAB.visibility = View.GONE
+        stateUpload.text = getString(R.string.uploading)
+
+        photoACat.setProgress(it)
 
         when (it) {
             100 -> {
-                percentage.visibility = View.GONE
+                sendPhotoFab.visibility = View.GONE
                 backToCatsFAB.visibility = View.VISIBLE
-                sendPhotoFab.isClickable = true
-            }
-
-            in 0..99 -> {
-                percentage.visibility = View.VISIBLE
-                percentage.text = it.toString()
-                sendPhotoFab.isClickable = false
-                backToCatsFAB.visibility = View.GONE
+                stateUpload.text = getString(R.string.uploaded)
             }
         }
     }
@@ -43,13 +37,13 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
         super.onCreate(savedInstanceState)
 
         sendPhotoFab.setOnClickListener {
-            viewModel.sendPhoto(ImageHelper.getPhoto(this), listener, this.applicationContext)
+            viewModel.sendPhoto(ImageHelper.getPhoto(this), listener)
         }
 
         takeFullPhoto()
 
         backToCatsFAB.setOnClickListener {
-            finish()
+
         }
 
         viewModel.getStateSendPhoto.observe(this, {
@@ -87,5 +81,6 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
 
     companion object {
         const val ACTIVITY_RESULT_CODE = 1
+        const val answer = "answer"
     }
 }

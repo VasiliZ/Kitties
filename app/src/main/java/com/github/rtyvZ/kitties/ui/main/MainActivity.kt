@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -12,6 +13,7 @@ import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
 import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
+import com.github.rtyvZ.kitties.ui.myCat.MyCatFragment
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
                 R.id.favorite_cats -> replaceFragment(FavoriteCatsFragment())
 
+                R.id.my_cats -> replaceFragment(MyCatFragment())
+
                 else -> {
                 }
             }
@@ -42,6 +46,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
             return@setOnNavigationItemSelectedListener true
         }
+
         navigation.selectedItemId = R.id.list_kitties
 
         randomCatFab.setOnClickListener {
@@ -104,7 +109,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == TakePhotoActivity.ACTIVITY_RESULT_CODE && resultCode == RESULT_OK) {
-
+            data?.let {
+                val resultData = it.getStringExtra("result")
+                resultData?.let { toastMessage ->
+                    Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show()
+                }
+            }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

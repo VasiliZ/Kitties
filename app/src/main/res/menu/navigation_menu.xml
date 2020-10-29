@@ -10,4 +10,9 @@
         android:enabled="true"
         android:icon="@drawable/ic_baseline_star_24"
         android:title="@string/favorites" />
+    <item
+        android:id="@+id/my_cats"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_star_24"
+        android:title="@string/my_cats" />
 </menu>

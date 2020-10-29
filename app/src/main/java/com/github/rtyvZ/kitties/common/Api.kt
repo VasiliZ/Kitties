@@ -31,14 +31,11 @@ interface Api {
         @Path("vote_id") id: String
     ): CatResponseVoteAndFav
 
-
-    @Headers(value = ["content-type:multipart/form-data;"])
     @POST("images/upload")
     @Multipart
     suspend fun uploadImage(
         @Header("x-api-key") apiKey: String,
-        @Part body: MultipartBody.Part,
-        @Part("sub_id") id: String
+        @Part body: MultipartBody.Part
     ): UploadCatResponse
 
     @GET("votes")

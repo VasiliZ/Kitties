@@ -1,6 +1,5 @@
 package com.github.rtyvZ.kitties.ui.sendPhoto
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,10 +18,10 @@ class SendPhotoViewModel : ViewModel() {
 
     val getStateSendPhoto: LiveData<String> = mutableSuccessSendPhoto
 
-    fun sendPhoto(file: File, listener: (Int) -> Unit, context: Context) {
+    fun sendPhoto(file: File, listener: (Int) -> Unit) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                sendPhotoModel.uploadPhoto(file, listener, context).catch { e ->
+                sendPhotoModel.uploadPhoto(file, listener).catch { e ->
                     mutableSuccessSendPhoto.postValue(e.message)
                 }.collect {
                     mutableSuccessSendPhoto.postValue(it.message)

@@ -3,7 +3,7 @@ package com.github.rtyvZ.kitties.network.request
 import android.os.Handler
 import android.os.Looper
 import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.File
@@ -11,12 +11,11 @@ import java.io.FileInputStream
 
 class ProgressRequestBody(
     private val file: File,
-    private val contentType: String,
     val listener: (Int) -> Unit
 ) : RequestBody() {
 
     override fun contentType(): MediaType? {
-        return contentType.toMediaTypeOrNull()
+        return "image/jpg".toMediaType()
     }
 
     override fun contentLength(): Long {

@@ -9,4 +9,7 @@
     <string name="whats_happens">Что то пошло не так</string>
     <string name="empty">\"\"</string>
     <string name="no_session">Пользователь не авторизирован</string>
+    <string name="my_cats">Мои коты</string>
+    <string name="uploading">Загрузка</string>
+    <string name="uploaded">Фото загружено</string>
 </resources>

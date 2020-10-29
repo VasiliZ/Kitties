@@ -17,8 +17,6 @@ object ImageHelper {
     private const val DATE_FORMAT = "yyyyMMdd_HHmmss"
     private lateinit var currentPhotoPath: String
 
-    private const val MAX_IMAGE_SIZE = 57344
-
     fun createImageFile(context: Context): File {
         val timeStamp: String = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())
         val storageDir: File = context.filesDir
