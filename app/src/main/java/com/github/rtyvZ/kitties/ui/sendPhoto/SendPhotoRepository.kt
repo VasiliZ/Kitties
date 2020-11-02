@@ -2,9 +2,10 @@ package com.github.rtyvZ.kitties.ui.sendPhoto
 
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.App
-import com.github.rtyvZ.kitties.network.request.ProgressRequestBody
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.io.File
 
 class SendPhotoRepository {
@@ -16,7 +17,6 @@ class SendPhotoRepository {
         listener: (Int) -> Unit
     ) = flow {
         session?.let {
-
             emit(
                 Api.getApi().uploadImage(
                     App.ApiKeyProvider.getKey(),
@@ -24,7 +24,7 @@ class SendPhotoRepository {
                         .createFormData(
                             nameForCreateFormData,
                             file.name,
-                            ProgressRequestBody(file, listener)
+                            RequestBody.create("image/jpg".toMediaType(), file)
                         )
                 )
             )
