@@ -37,7 +37,8 @@ class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
         viewModel.getUserUid.observe(this, {
             progress.hide()
             stateLaunch.text = this.getString(R.string.success)
-            sessionStorage.saveSession(UserSession(it))
+            if (!sessionStorage.hasSession())
+                sessionStorage.saveSession(UserSession(it))
             startMainActivity()
         })
 

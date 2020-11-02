@@ -27,21 +27,16 @@ class ProgressRequestBody(
         val byteArray = ByteArray(DEFAULT_BUFFER_SIZE)
         val inputStream = FileInputStream(file)
         var uploaded: Long = 0
-        var read = 0
-        while (read != -1) {
-            read = inputStream.read(byteArray)
-            // part of owno code replace this
-            if (read == -1) {
-                inputStream.close()
-                break
-            }
-            uploaded += read
+        inputStream.use { fileInputStream ->
+            var read: Int
             val handler = Handler(Looper.getMainLooper())
-            handler.post(ProgressUpdater(fileSize, uploaded))
-            sink.write(byteArray, 0, read)
+            while (fileInputStream.read().also { read = it } != -1) {
+                handler.post(ProgressUpdater(fileSize, uploaded))
+                uploaded += read
+                sink.write(byteArray, 0, read)
+            }
         }
     }
-
 
     companion object {
         private const val DEFAULT_BUFFER_SIZE = 2048

@@ -5,8 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -22,13 +21,15 @@ class LaunchViewModel : ViewModel() {
     fun requestUid() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                launchModel.getUserUid()
-                    .catch { e ->
-                        launchError.postValue(e)
-                    }
-                    .collect {
-                        launchSuccess.postValue(it)
-                    }
+                val channel = Channel<String>()
+                launchModel.getUserUid(channel)
+
+                try {
+                    launchSuccess.postValue(channel.receive())
+                } catch (e: Exception) {
+                    launchError.postValue(e)
+                }
+
             }
         }
     }
