@@ -39,7 +39,7 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         progress.show()
-        viewModel.clear()
+        //viewModel.clear()
         viewModel.getCats()
 
         viewModel.getRandomCats.observe(viewLifecycleOwner, {

@@ -4,12 +4,14 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.rtyvZ.kitties.R
+import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
 import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
@@ -50,14 +52,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         navigation.selectedItemId = R.id.list_kitties
 
         randomCatFab.setOnClickListener {
-            isRotateFab = RotateFabAnimation.rotateFab(it, !isRotateFab)
-            if (isRotateFab) {
-                RotateFabAnimation.showIn(takeAPhotoFab)
-                RotateFabAnimation.showIn(selectPhoto)
-            } else {
-                RotateFabAnimation.showOut(takeAPhotoFab)
-                RotateFabAnimation.showOut(selectPhoto)
-            }
+            rotateFab(it)
         }
 
         takeAPhotoFab.setOnClickListener {
@@ -108,15 +103,27 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == TakePhotoActivity.ACTIVITY_RESULT_CODE && resultCode == RESULT_OK) {
+        if (requestCode == TakePhotoActivity.ACTIVITY_RESULT_CODE && resultCode == RESULT_FIRST_USER) {
             data?.let {
-                val resultData = it.getStringExtra("result")
+                val resultData = it.getStringExtra(Strings.IntentExtras.EXTRA_SEND_UPLOAD)
                 resultData?.let { toastMessage ->
                     Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show()
                 }
             }
         }
+
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun rotateFab(view: View) {
+        isRotateFab = RotateFabAnimation.rotateFab(view, !isRotateFab)
+        if (isRotateFab) {
+            RotateFabAnimation.showIn(takeAPhotoFab)
+            RotateFabAnimation.showIn(selectPhoto)
+        } else {
+            RotateFabAnimation.showOut(takeAPhotoFab)
+            RotateFabAnimation.showOut(selectPhoto)
+        }
     }
 
     companion object {

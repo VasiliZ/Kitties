@@ -1,11 +1,12 @@
 package com.github.rtyvZ.kitties.ui.sendPhoto
 
+import android.net.Uri
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.App
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
 class SendPhotoRepository {
@@ -13,25 +14,28 @@ class SendPhotoRepository {
     private val session = App.SessionStorage.getSession()
 
     suspend fun uploadPhoto(
-        file: File,
-        listener: (Int) -> Unit
+        uri: Uri
     ) = flow {
         session?.let {
-            emit(
-                Api.getApi().uploadImage(
-                    App.ApiKeyProvider.getKey(),
-                    MultipartBody.Part
-                        .createFormData(
-                            nameForCreateFormData,
-                            file.name,
-                            RequestBody.create("image/jpg".toMediaType(), file)
-                        )
+            uri.path?.let { path ->
+                val file = File(path)
+                emit(
+                    Api.getApi().uploadImage(
+                        App.ApiKeyProvider.getKey(),
+                        MultipartBody.Part
+                            .createFormData(
+                                NAME_FOR_CREATE_FORM_DATA,
+                                file.name,
+                                file.asRequestBody(MEDIA_TYPE.toMediaType())
+                            )
+                    )
                 )
-            )
+            }
         }
     }
 
     companion object {
-        private const val nameForCreateFormData = "file"
+        private const val NAME_FOR_CREATE_FORM_DATA = "file"
+        private const val MEDIA_TYPE = "image/jpg"
     }
 }

@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 
 class RandomCatsViewModel : ViewModel() {
 
-    private val listwithCats = mutableListOf<Cat>()
+    private val listWithCats = mutableListOf<Cat>()
     private var mutableRandomCats = MutableLiveData<List<Cat>?>()
     private var mutableRandomCatsError = MutableLiveData<Throwable>()
     private var mutableErrorVoteCats = MutableLiveData<Throwable>()
@@ -30,15 +30,15 @@ class RandomCatsViewModel : ViewModel() {
     private val randomCatsRepository = RandomCatsRepository()
     private val randomCatsModel = RandomCatsModel(randomCatsRepository)
 
-    fun clear() {
-        listwithCats.clear()
-        mutableRandomCats = MutableLiveData()
-        getRandomCats = mutableRandomCats
-        mutableRandomCatsError = MutableLiveData()
-        getRandomCatsError = mutableRandomCatsError
-        mutableErrorVoteCats = MutableLiveData()
-        getErrorVoteCat = mutableErrorVoteCats
-    }
+    /* fun clear() {
+         listwithCats.clear()
+         mutableRandomCats = MutableLiveData()
+         getRandomCats = mutableRandomCats
+         mutableRandomCatsError = MutableLiveData()
+         getRandomCatsError = mutableRandomCatsError
+         mutableErrorVoteCats = MutableLiveData()
+         getErrorVoteCat = mutableErrorVoteCats
+     }*/
 
     fun getCats() {
         viewModelScope.launch {
@@ -48,8 +48,8 @@ class RandomCatsViewModel : ViewModel() {
                     ?.catch { e ->
                         mutableRandomCatsError.postValue(e)
                     }?.collect {
-                        listwithCats.addAll(it)
-                        mutableRandomCats.postValue(listwithCats)
+                        listWithCats.addAll(it)
+                        mutableRandomCats.postValue(listWithCats)
                     }
             }
         }

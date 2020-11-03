@@ -3,8 +3,8 @@ package com.github.rtyvZ.kitties.ui.main
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage
 import java.io.File
@@ -13,8 +13,8 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-object ImageHelper {
-    private const val DATE_FORMAT = "yyyyMMdd_HHmmss"
+class ImageHelper {
+    private val DATE_FORMAT = "yyyyMMdd_HHmmss"
     private lateinit var currentPhotoPath: String
 
     fun createImageFile(context: Context): File {
@@ -38,9 +38,19 @@ object ImageHelper {
 
             val photoWidth = outWidth
             val photoHeight = outHeight
+            var scaleFactor: Int = 0
+            try {
 
-            val scaleFactor: Int =
-                max(1, min(photoWidth / targetWidth, photoHeight / targetHeight))
+                scaleFactor = max(1, min(photoWidth / targetWidth, photoHeight / targetHeight))
+            } catch (e: Exception) {
+                Log.d(
+                    "arithmeticException", """with value " +
+                            "$photoWidth " +
+                            "$photoHeight" +
+                            "$targetHeight" +
+                            "$targetHeight"""
+                )
+            }
 
             inJustDecodeBounds = false
             inSampleSize = scaleFactor
@@ -54,12 +64,6 @@ object ImageHelper {
             }
     }
 
-    private fun scaleBitmap(): Bitmap? {
-        return BitmapFactory.decodeFile(currentPhotoPath)?.also {
-            it.scale(500, 500)
-        }
-    }
-
     private fun rotateBitmap(bitmap: Bitmap): Bitmap? {
         val exifInterface = ExifInterface(currentPhotoPath)
         val orientation = exifInterface.getAttributeInt(
@@ -69,18 +73,18 @@ object ImageHelper {
 
         var rotatedBitmap: Bitmap? = null
 
-        when (orientation) {
+        rotatedBitmap = when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> {
-                rotatedBitmap = rotateImage(bitmap, 90)
+                rotateImage(bitmap, 90)
             }
             ExifInterface.ORIENTATION_ROTATE_180 -> {
-                rotatedBitmap = rotateImage(bitmap, 180)
+                rotateImage(bitmap, 180)
             }
             ExifInterface.ORIENTATION_ROTATE_270 -> {
-                rotatedBitmap = rotateImage(bitmap, 270)
+                rotateImage(bitmap, 270)
             }
             else -> {
-                rotatedBitmap = bitmap
+                bitmap
             }
         }
         return rotatedBitmap
