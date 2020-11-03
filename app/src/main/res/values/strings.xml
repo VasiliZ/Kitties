@@ -12,7 +12,7 @@
     <string name="my_cats">Мои коты</string>
     <string name="uploading">Загрузка</string>
     <string name="uploaded">Фото загружено</string>
-    <string name="wrong_photo">На фото, позможно, нет кота</string>
+    <string name="wrong_photo">На фото, возможно, нет кота</string>
     <string name="some_kind_of_exception">Произошла ошибка при загрузке кота, попробуйте еще раз</string>
     <string name="data_sent">Фото отправлено</string>
     <string name="error">Ошибка</string>
