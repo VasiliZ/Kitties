@@ -16,4 +16,5 @@
     <string name="some_kind_of_exception">Произошла ошибка при загрузке кота, попробуйте еще раз</string>
     <string name="data_sent">Фото отправлено</string>
     <string name="error">Ошибка</string>
+    <string name="success_upload_photo">Фото успешно загружено</string>
 </resources>

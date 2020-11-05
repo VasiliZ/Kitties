@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -31,26 +32,7 @@ class SendCatService : Service() {
             createNotificationChannel()
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
-                    repo.uploadPhoto(uri)
-                        .catch { e ->
-                            if (e is HttpException) {
-                                buildNotification(
-                                    getString(R.string.error),
-                                    getString(R.string.wrong_photo)
-                                )
-                                // sendBroadCast(getString(R.string.wrong_photo))
-                            } else {
-                                buildNotification(
-                                    getString(R.string.error),
-                                    getString(R.string.some_kind_of_exception)
-                                )
-                            }
-                        }.collect {
-                            buildNotification(
-                                getString(R.string.success),
-                                getString(R.string.wrong_photo)
-                            )
-                        }
+                    execUpload(uri)
                 }
             }
         }
@@ -92,5 +74,27 @@ class SendCatService : Service() {
 
     companion object {
         const val KITTIES_UPLOAD_NOTIFY_ID = 1101
+    }
+
+    private suspend fun execUpload(uri: Uri) {
+        repo.uploadPhoto(uri)
+            .catch { e ->
+                if (e is HttpException) {
+                    buildNotification(
+                        getString(R.string.error),
+                        getString(R.string.wrong_photo)
+                    )
+                } else {
+                    buildNotification(
+                        getString(R.string.error),
+                        getString(R.string.some_kind_of_exception)
+                    )
+                }
+            }.collect {
+                buildNotification(
+                    getString(R.string.success),
+                    getString(R.string.success_upload_photo)
+                )
+            }
     }
 }

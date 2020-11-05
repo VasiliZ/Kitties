@@ -16,7 +16,6 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
     private var resultIntent = Intent()
     private val imageHelper = ImageHelper()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -3,12 +3,15 @@ package com.github.rtyvZ.kitties.ui.main
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
@@ -16,8 +19,10 @@ import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
 import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
 import com.github.rtyvZ.kitties.ui.myCat.MyCatFragment
+import com.github.rtyvZ.kitties.ui.sendPhoto.SendCatService
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
@@ -64,20 +69,47 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(
-                        Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     ),
                     CAMERA_REQUEST_CODE
                 )
             } else {
-                val takeAPhotoActivity = Intent(this, TakePhotoActivity::class.java)
-                startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
+                startActivityFromUpload()
+                rotateFab(randomCatFab)
+            }
+        }
+
+        selectPhoto.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_DENIED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ),
+                    CAMERA_REQUEST_CODE
+                )
+            } else {
+                rotateFab(randomCatFab)
+
+                Intent().also {
+                    it.type = "image/jpg"
+                    it.action = Intent.ACTION_PICK
+                    startActivityForResult(Intent.createChooser(it, "select picture"), PICK_IMAGE)
+                }
             }
         }
 
         RotateFabAnimation.init(takeAPhotoFab)
         RotateFabAnimation.init(selectPhoto)
     }
+
 
     private fun replaceFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
@@ -112,6 +144,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             }
         }
 
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
+            data?.dataString?.let {
+                startService(getPathFromUri(it.toUri()))
+            }
+        }
+
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -126,8 +164,43 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
+
+    private fun startService(path: String?) {
+        Intent(this, SendCatService::class.java).also { intent ->
+            path?.let {
+                intent.data = path.toUri()
+                startService(intent)
+            }
+
+        }
+    }
+
+    private fun startActivityFromUpload() {
+        val takeAPhotoActivity = Intent(this, TakePhotoActivity::class.java)
+        startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
+    }
+
+    //todo move to another place
+    //todo escape deprecated methods
+    private fun getPathFromUri(uri: Uri): String? {
+        val cursor: Cursor?
+        val columnIndexID: Int
+        val projection = arrayOf(DATA)
+        var path: String? = ""
+        cursor = contentResolver.query(uri, projection, null, null, null)
+        cursor?.let {
+            it.moveToFirst()
+            columnIndexID = cursor.getColumnIndexOrThrow(DATA)
+            path = cursor.getString(columnIndexID)
+        }
+        cursor?.close()
+        return path
+    }
+
     companion object {
         const val CAMERA_REQUEST_CODE = 100
         const val ACTIVITY_RESULT_CODE = 1
+        const val PICK_IMAGE = 1
+        const val DATA = "_data"
     }
 }
