@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.ui.sendPhoto
+package com.github.rtyvZ.kitties.repositories.sendPhoto
 
 import android.net.Uri
 import com.github.rtyvZ.kitties.common.Api

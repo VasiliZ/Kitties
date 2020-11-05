@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
+import com.github.rtyvZ.kitties.extentions.toggleVisibility
 import kotlinx.android.synthetic.main.favorite_cats_fragment.*
 
 class FavoriteCatsFragment : Fragment(R.layout.favorite_cats_fragment) {
@@ -21,6 +22,7 @@ class FavoriteCatsFragment : Fragment(R.layout.favorite_cats_fragment) {
         super.onViewCreated(view, savedInstanceState)
         val adapterForFavCats = FavoriteCatsAdapter()
 
+        progressFavCat.toggleVisibility()
         viewModel.getFavoriteCats()
         itemTouchHelper.attachToRecyclerView(listFavoriteCat)
 
@@ -32,6 +34,7 @@ class FavoriteCatsFragment : Fragment(R.layout.favorite_cats_fragment) {
         }
 
         viewModel.getMyFavoriteCats.observe(viewLifecycleOwner, {
+            progressFavCat.toggleVisibility()
             adapterForFavCats.submitList(it)
         })
     }
