@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 class SendPhotoRepository {
@@ -16,9 +17,15 @@ class SendPhotoRepository {
     suspend fun uploadPhoto(
         uri: Uri
     ) = flow {
-        session?.let {
+        session?.let { userSession ->
             uri.path?.let { path ->
                 val file = File(path)
+                val uidAsRequestBody = session
+                    .userId
+                    .toRequestBody(
+                        "text/plain"
+                            .toMediaType()
+                    )
                 emit(
                     Api.getApi().uploadImage(
                         App.ApiKeyProvider.getKey(),
@@ -27,7 +34,7 @@ class SendPhotoRepository {
                                 NAME_FOR_CREATE_FORM_DATA,
                                 file.name,
                                 file.asRequestBody(MEDIA_TYPE.toMediaType())
-                            )
+                            ), uidAsRequestBody
                     )
                 )
             }
