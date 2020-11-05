@@ -14,6 +14,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class ImageHelper {
+
     private val DATE_FORMAT = "yyyyMMdd_HHmmss"
     private lateinit var currentPhotoPath: String
 

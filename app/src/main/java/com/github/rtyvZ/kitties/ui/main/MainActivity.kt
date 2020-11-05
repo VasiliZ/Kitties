@@ -3,8 +3,6 @@ package com.github.rtyvZ.kitties.ui.main
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -13,9 +11,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
+import com.github.rtyvZ.kitties.extentions.app
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
 import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
 import com.github.rtyvZ.kitties.ui.myCat.MyCatFragment
@@ -29,9 +29,15 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private var currentSelectedItem = -1
     private var isRotateFab = false
 
+    private lateinit var viewModel: MainActivityViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = ViewModelProvider(
+            this,
+            MainViewModelFactory(this.app)
+        ).get(MainActivityViewModel::class.java)
         navigation.setOnNavigationItemSelectedListener { item ->
             if (item.itemId == currentSelectedItem) {
                 return@setOnNavigationItemSelectedListener false
@@ -53,6 +59,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
             return@setOnNavigationItemSelectedListener true
         }
+
+        viewModel.getREalPath.observe(this, {
+            startService(it)
+        })
 
         navigation.selectedItemId = R.id.list_kitties
 
@@ -99,9 +109,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 rotateFab(randomCatFab)
 
                 Intent().also {
-                    it.type = "image/jpg"
+                    it.type = Strings.IntentConsts.INTENT_TYPE_IMAGE
                     it.action = Intent.ACTION_PICK
-                    startActivityForResult(Intent.createChooser(it, "select picture"), PICK_IMAGE)
+                    startActivityForResult(
+                        Intent.createChooser(
+                            it,
+                            getString(R.string.select_picture_label)
+                        ), PICK_IMAGE
+                    )
                 }
             }
         }
@@ -137,7 +152,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == TakePhotoActivity.ACTIVITY_RESULT_CODE && resultCode == RESULT_FIRST_USER) {
             data?.let {
-                val resultData = it.getStringExtra(Strings.IntentExtras.EXTRA_SEND_UPLOAD)
+                val resultData = it.getStringExtra(Strings.IntentConsts.EXTRA_SEND_UPLOAD)
                 resultData?.let { toastMessage ->
                     Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show()
                 }
@@ -146,7 +161,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             data?.dataString?.let {
-                startService(getPathFromUri(it.toUri()))
+                viewModel.getRealPathForImage(it.toUri())
             }
         }
 
@@ -178,23 +193,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun startActivityFromUpload() {
         val takeAPhotoActivity = Intent(this, TakePhotoActivity::class.java)
         startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
-    }
-
-    //todo move to another place
-    //todo escape deprecated methods
-    private fun getPathFromUri(uri: Uri): String? {
-        val cursor: Cursor?
-        val columnIndexID: Int
-        val projection = arrayOf(DATA)
-        var path: String? = ""
-        cursor = contentResolver.query(uri, projection, null, null, null)
-        cursor?.let {
-            it.moveToFirst()
-            columnIndexID = cursor.getColumnIndexOrThrow(DATA)
-            path = cursor.getString(columnIndexID)
-        }
-        cursor?.close()
-        return path
     }
 
     companion object {

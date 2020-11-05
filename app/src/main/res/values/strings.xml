@@ -17,4 +17,5 @@
     <string name="data_sent">Фото отправлено</string>
     <string name="error">Ошибка</string>
     <string name="success_upload_photo">Фото успешно загружено</string>
+    <string name="select_picture_label">Выберите изображение с котом</string>
 </resources>

@@ -31,6 +31,8 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == ACTIVITY_RESULT_CODE && resultCode == RESULT_OK) {
             imageHelper.setPick(photoACat)
+        } else {
+            finish()
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -46,7 +48,7 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
                 }
                 file?.also {
                     val photoURI = FileProvider.getUriForFile(
-                        this, "com.github.rtyvZ.kitties.fileprovider", it
+                        this, Strings.Const.AUTHORITY, it
                     )
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(intent, ACTIVITY_RESULT_CODE)
@@ -64,7 +66,7 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
     private fun sendResult() {
         val resultIntent = Intent()
         resultIntent.putExtra(
-            Strings.IntentExtras.EXTRA_SEND_UPLOAD,
+            Strings.IntentConsts.EXTRA_SEND_UPLOAD,
             getString(R.string.data_sent)
         )
         setResult(ACTIVITY_RESULT_CODE, resultIntent)
