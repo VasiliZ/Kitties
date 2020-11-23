@@ -6,27 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainActivity">
 
-    <androidx.fragment.app.FragmentContainerView
+    <fragment
         android:id="@+id/content_container"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/navigation"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        app:navGraph="@navigation/nav_graph" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/takeAPhotoFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="4dp"
         android:backgroundTint="@color/white"
         android:src="@drawable/ic_add_photo"
         android:tint="@color/white"
         app:borderWidth="0dp"
-        android:layout_marginBottom="4dp"
         app:fabSize="mini"
-        android:layout_marginEnd="36dp"
         app:layout_constraintBottom_toTopOf="@id/selectPhoto"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/black" />
@@ -35,9 +38,9 @@
         android:id="@+id/selectPhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
         android:layout_marginEnd="36dp"
         android:layout_marginBottom="4dp"
+        android:backgroundTint="@color/white"
         android:src="@drawable/ic_select_photo"
         android:tint="@color/white"
         app:borderWidth="0dp"
@@ -55,12 +58,12 @@
         android:src="@drawable/ic_add"
         android:tint="@color/white"
         app:borderWidth="0dp"
-        app:layout_constraintBottom_toTopOf="@id/navigation"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/black" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navigation"
+        android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

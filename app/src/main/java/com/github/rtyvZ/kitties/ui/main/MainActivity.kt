@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
@@ -23,10 +25,8 @@ import com.github.rtyvZ.kitties.ui.sendPhoto.SendCatService
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-    private var currentSelectedItem = -1
     private var isRotateFab = false
 
     private lateinit var viewModel: MainActivityViewModel
@@ -43,13 +43,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 return@setOnNavigationItemSelectedListener false
             }
 
-            when (item.itemId) {
+        val host = supportFragmentManager
+            .findFragmentById(R.id.content_container) as NavHostFragment
 
-                R.id.list_kitties -> replaceFragment(RandomCatsFragment())
+        bottomNavigationView.setupWithNavController(host.navController)
 
                 R.id.favorite_cats -> replaceFragment(FavoriteCatsFragment())
-
-                R.id.my_cats -> replaceFragment(MyCatFragment())
 
                 else -> {
                 }
@@ -123,14 +122,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         RotateFabAnimation.init(takeAPhotoFab)
         RotateFabAnimation.init(selectPhoto)
-    }
-
-
-    private fun replaceFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.content_container, fragment)
-        transaction.addToBackStack(fragment::class.java.canonicalName)
-        transaction.commit()
     }
 
     override fun onRequestPermissionsResult(
