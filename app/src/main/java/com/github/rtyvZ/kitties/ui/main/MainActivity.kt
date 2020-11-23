@@ -3,46 +3,46 @@ package com.github.rtyvZ.kitties.ui.main
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
-import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
-import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : AppCompatActivity() {
 
-    private var currentSelectedItem = -1
     private var isRotateFab = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        navigation.setOnNavigationItemSelectedListener { item ->
-            if (item.itemId == currentSelectedItem) {
-                return@setOnNavigationItemSelectedListener false
+        val host = supportFragmentManager
+            .findFragmentById(R.id.content_container) as NavHostFragment
+
+        bottomNavigationView.setupWithNavController(host.navController)
+
+        host.navController.addOnDestinationChangedListener { _, destination, _ ->
+            val dest: String = try {
+                resources.getResourceName(destination.id)
+            } catch (e: Resources.NotFoundException) {
+                Integer.toString(destination.id)
             }
 
-            when (item.itemId) {
-
-                R.id.list_kitties -> replaceFragment(RandomCatsFragment())
-
-                R.id.favorite_cats -> replaceFragment(FavoriteCatsFragment())
-
-                else -> {
-                }
-            }
-
-            currentSelectedItem = item.itemId
-
-            return@setOnNavigationItemSelectedListener true
+            Toast.makeText(
+                this@MainActivity, "Navigated to $dest",
+                Toast.LENGTH_SHORT
+            ).show()
+            Log.d("NavigationActivity", "Navigated to $dest")
         }
-        navigation.selectedItemId = R.id.list_kitties
 
         randomCatFab.setOnClickListener {
             isRotateFab = RotateFabAnimation.rotateFab(it, !isRotateFab)
@@ -77,13 +77,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         RotateFabAnimation.init(takeAPhotoFab)
         RotateFabAnimation.init(selectPhoto)
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.content_container, fragment)
-        transaction.addToBackStack(fragment::class.java.canonicalName)
-        transaction.commit()
     }
 
     override fun onRequestPermissionsResult(

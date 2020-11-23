@@ -12,7 +12,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
-class SendPhotoModel() {
+class SendPhotoModel {
 
     private val session = App.SessionStorage.getSession()
 
