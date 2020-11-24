@@ -49,7 +49,7 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
         viewModel.getRandomCatsError.observe(viewLifecycleOwner, {
             progress.toggleVisibility()
-            Snackbar.make(randomCatConteiner, it.message.toString(), Snackbar.LENGTH_LONG).show()
+            Snackbar.make(listRandomCats, it.message.toString(), Snackbar.LENGTH_LONG).show()
         })
 
         viewModel.getErrorVoteCat.observe(viewLifecycleOwner,

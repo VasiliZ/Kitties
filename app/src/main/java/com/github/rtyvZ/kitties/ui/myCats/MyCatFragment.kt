@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.ui.myCat
+package com.github.rtyvZ.kitties.ui.myCats
 
 import android.os.Bundle
 import android.view.View

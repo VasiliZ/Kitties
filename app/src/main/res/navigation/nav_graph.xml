@@ -14,4 +14,9 @@
         android:name="com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment"
         android:label="FavoriteCatsFragment"
         tools:layout="@layout/favorite_cats_fragment" />
+    <fragment
+        android:id="@+id/my_cats"
+        tools:layout="@layout/my_cat_fragment"
+        android:name="com.github.rtyvZ.kitties.ui.myCats.MyCatFragment"
+        android:label="MyCatFragment" />
 </navigation>

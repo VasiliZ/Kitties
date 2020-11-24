@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -18,9 +17,6 @@ import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.extentions.app
-import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
-import com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment
-import com.github.rtyvZ.kitties.ui.myCat.MyCatFragment
 import com.github.rtyvZ.kitties.ui.sendPhoto.SendCatService
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -38,32 +34,15 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             this,
             MainViewModelFactory(this.app)
         ).get(MainActivityViewModel::class.java)
-        navigation.setOnNavigationItemSelectedListener { item ->
-            if (item.itemId == currentSelectedItem) {
-                return@setOnNavigationItemSelectedListener false
-            }
 
         val host = supportFragmentManager
             .findFragmentById(R.id.content_container) as NavHostFragment
 
         bottomNavigationView.setupWithNavController(host.navController)
 
-                R.id.favorite_cats -> replaceFragment(FavoriteCatsFragment())
-
-                else -> {
-                }
-            }
-
-            currentSelectedItem = item.itemId
-
-            return@setOnNavigationItemSelectedListener true
-        }
-
         viewModel.getREalPath.observe(this, {
             startService(it)
         })
-
-        navigation.selectedItemId = R.id.list_kitties
 
         randomCatFab.setOnClickListener {
             rotateFab(it)
