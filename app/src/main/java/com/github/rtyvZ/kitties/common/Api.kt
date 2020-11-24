@@ -1,5 +1,6 @@
 package com.github.rtyvZ.kitties.common
 
+import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest
@@ -64,6 +65,19 @@ interface Api {
         @Path("favourite_id") id: Int
     ): Any
 
+    @GET("images")
+    suspend fun getUploadedCats(
+        @Header("x-api-key") apiKey: String,
+        @Query("sub_id") userId: String,
+        @Query("limit") limitCats: Int
+    ): List<Cat>
+
+    @DELETE("images/{image_id}")
+    suspend fun deleteUploadedImage(
+        @Header("x-api-key") apiKey: String,
+        @Path("image_id") id: String
+    )
+
     companion object {
         private const val BASE_URL = "https://api.thecatapi.com/v1/"
 
@@ -76,6 +90,7 @@ interface Api {
             val okHttpClient = OkHttpClient
                 .Builder()
                 .addInterceptor(interceptor)
+                .addInterceptor(ErrorInterceptor())
                 .build()
 
             val appApi = Retrofit.Builder()
