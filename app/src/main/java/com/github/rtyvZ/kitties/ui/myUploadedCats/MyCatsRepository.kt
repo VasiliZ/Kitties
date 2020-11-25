@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.ui.myCats
+package com.github.rtyvZ.kitties.ui.myUploadedCats
 
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.App

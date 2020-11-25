@@ -1,8 +1,8 @@
 package com.github.rtyvZ.kitties.common
 
+import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.NetworkResponseFactory
-import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest
@@ -72,13 +72,13 @@ interface Api {
         @Header("x-api-key") apiKey: String,
         @Query("sub_id") userId: String,
         @Query("limit") limitCats: Int
-    ): List<Cat>
+    ): NetworkResponse<List<Cat>, Any>
 
     @DELETE("images/{image_id}")
     suspend fun deleteUploadedImage(
         @Header("x-api-key") apiKey: String,
         @Path("image_id") id: String
-    )
+    ): NetworkResponse<Any, Any>
 
     companion object {
         private const val BASE_URL = "https://api.thecatapi.com/v1/"

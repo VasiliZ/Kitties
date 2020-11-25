@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.ui.myCats
+package com.github.rtyvZ.kitties.ui.myUploadedCats
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +11,7 @@ import com.github.rtyvZ.kitties.common.models.Cat
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.uploaded_cat.*
 
-class UploadedCatAdapter(private val longClick: (idImage: String) -> Unit) :
+class UploadedCatAdapter(private val longClick: (cat: Cat, position: Int) -> Unit) :
     ListAdapter<Cat, UploadedCatAdapter.UploadCatViewHolder>(UploadedCatDiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UploadCatViewHolder {
@@ -27,7 +27,7 @@ class UploadedCatAdapter(private val longClick: (idImage: String) -> Unit) :
 
     class UploadCatViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
-        fun setData(cat: Cat?, longClick: (idImage: String) -> Unit) {
+        fun setData(cat: Cat?, longClick: (cat: Cat, position: Int) -> Unit) {
             Glide.with(uploadedCat.context)
                 .load(cat?.url)
                 .centerCrop()
@@ -35,7 +35,7 @@ class UploadedCatAdapter(private val longClick: (idImage: String) -> Unit) :
 
             uploadedCat.setOnLongClickListener { view ->
                 cat?.let {
-                    longClick.invoke(cat.id)
+                    longClick.invoke(cat, adapterPosition)
                 }
                 true
             }

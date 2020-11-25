@@ -25,7 +25,7 @@
     <fragment
         android:id="@+id/my_cats"
         tools:layout="@layout/my_cat_fragment"
-        android:name="com.github.rtyvZ.kitties.ui.myCats.MyCatFragment"
+        android:name="com.github.rtyvZ.kitties.ui.myUploadedCats.MyCatFragment"
         android:label="MyCatFragment">
         <action
             android:id="@+id/action_my_cats_to_noInternetFragment"

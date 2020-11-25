@@ -1,20 +1,22 @@
-package com.github.rtyvZ.kitties.ui.myCats
+package com.github.rtyvZ.kitties.ui.myUploadedCats
 
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.itemDecorators.RecyclerViewMargin
+import com.github.rtyvZ.kitties.common.models.Cat
 import kotlinx.android.synthetic.main.my_cat_fragment.*
 
 class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
 
     private val viewModel: MyCatsViewModel by viewModels()
-    private val longClick: (idImage: String) -> (Unit) = {
-        viewModel.deleteUploadedCat(it)
+    private val longClick: (cat: Cat, position: Int) -> (Unit) = { cat, position ->
+        viewModel.deleteUploadedCat(cat, position)
     }
     private val uploadedAdapter = UploadedCatAdapter(longClick)
 
@@ -27,8 +29,12 @@ class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
             uploadedAdapter.submitList(it)
         })
 
-        viewModel.getStatusDeleteUploadedCat.observe(viewLifecycleOwner, {
-            Toast.makeText(activity, R.string.image_deleted, Toast.LENGTH_LONG).show()
+        viewModel.errorWhileDeletingCat.observe(viewLifecycleOwner, {
+            Toast.makeText(activity, R.string.no_connection, Toast.LENGTH_LONG).show()
+        })
+
+        viewModel.getErrorMyCats.observe(viewLifecycleOwner, {
+            findNavController().navigate(R.id.action_my_cats_to_noInternetFragment)
         })
     }
 
