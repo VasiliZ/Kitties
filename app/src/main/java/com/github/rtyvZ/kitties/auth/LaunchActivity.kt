@@ -6,7 +6,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.App
-import com.github.rtyvZ.kitties.extentions.toggleVisibility
+import com.github.rtyvZ.kitties.extentions.hide
+import com.github.rtyvZ.kitties.extentions.show
 import com.github.rtyvZ.kitties.ui.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.launch_activity.*
@@ -22,11 +23,11 @@ class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
         super.onCreate(savedInstanceState)
 
         App.SessionStorage.restoreSession()
-        progress.toggleVisibility()
+        progress.show()
 
 
         if (sessionStorage.hasSession()) {
-            progress.toggleVisibility()
+            progress.hide()
             startMainActivity()
         } else {
             stateLaunch.text = this.getString(R.string.auth)
@@ -34,7 +35,7 @@ class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
         }
 
         viewModel.getUserUid.observe(this, {
-            progress.toggleVisibility()
+            progress.hide()
             stateLaunch.text = this.getString(R.string.success)
             if (!sessionStorage.hasSession())
                 sessionStorage.saveSession(UserSession(it))
@@ -44,7 +45,7 @@ class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
         viewModel.error.observe(this, {
             it?.let { throwable ->
                 val charSequence: CharSequence = throwable.message.toString()
-                progress.toggleVisibility()
+                progress.hide()
                 stateLaunch.text = this.getString(R.string.empty)
                 Snackbar.make(progress, charSequence, Snackbar.LENGTH_LONG).show()
             }

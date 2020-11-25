@@ -5,8 +5,6 @@ import com.github.rtyvZ.kitties.common.App
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest
-import com.github.rtyvZ.kitties.network.response.MyVoteResponse
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class RandomCatsRepository {
@@ -14,54 +12,33 @@ class RandomCatsRepository {
     private val checkConnectionProvider = App.ConnectionCheckerProvider
     private val session = App.SessionStorage.getSession()
 
-    fun getKitties(): Flow<List<Cat>>? = flow {
-        var getMyVotes: List<MyVoteResponse>? = null
-        val listCats = mutableListOf<Cat>()
-        val responseCat = Api
+    fun getKitties() = flow {
+        val responseRandomCats = Api
             .getApi()
             .getListKitties()
+        emit(responseRandomCats)
+    }
 
-        responseCat?.map {
-            listCats.add(it.toCat())
-        }
-
+    fun getVotes() = flow {
         session?.let {
-            getMyVotes =
+            val responseVotes =
                 Api.getApi().getMyVotes(
                     App.ApiKeyProvider.getKey(), session.userId
                 )
+            emit(responseVotes)
         }
-
-        responseCat?.forEachIndexed { index, catResponce ->
-            getMyVotes?.forEach { votes ->
-                if (catResponce.id == votes.imageId) {
-                    listCats[index] = Cat(
-                        catResponce.id,
-                        catResponce.url,
-                        catResponce.width,
-                        catResponce.height,
-                        votes.voteValue,
-                        votes.idVote.toInt()
-                    )
-                }
-            }
-        }
-        emit(listCats)
     }
 
     fun voteForCat(cat: Cat) = flow {
 
         session?.let {
-            if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
-
-                emit(
-                    Api.getApi()
-                        .votes(
-                            App.ApiKeyProvider.getKey(),
-                            VoteRequest(cat.id, cat.choice, it.userId)
-                        )
-                )
-            }
+            emit(
+                Api.getApi()
+                    .votes(
+                        App.ApiKeyProvider.getKey(),
+                        VoteRequest(cat.id, cat.choice, it.userId)
+                    )
+            )
         }
     }
 
@@ -78,15 +55,12 @@ class RandomCatsRepository {
     fun addToFavorite(catId: String) = flow {
 
         session?.let { session ->
-            if (checkConnectionProvider.checkConnection().isNetworkConnected()) {
-
-                emit(
-                    Api.getApi().addCatToFavorites(
-                        App.ApiKeyProvider.getKey(),
-                        FavoritesRequest(catId, session.userId)
-                    )
+            emit(
+                Api.getApi().addCatToFavorites(
+                    App.ApiKeyProvider.getKey(),
+                    FavoritesRequest(catId, session.userId)
                 )
-            }
+            )
         }
     }
 }

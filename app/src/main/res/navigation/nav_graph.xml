@@ -6,17 +6,34 @@
     app:startDestination="@id/list_kitties">
     <fragment
         android:id="@+id/list_kitties"
-        android:name="com.github.rtyvZ.kitties.ui.imageCats.RandomCatsFragment"
+        android:name="com.github.rtyvZ.kitties.ui.randomCats.RandomCatsFragment"
         android:label="RandomCatsFragment"
-        tools:layout="@layout/random_cats_fragment" />
+        tools:layout="@layout/random_cats_fragment">
+        <action
+            android:id="@+id/action_list_kitties_to_noInternetFragment"
+            app:destination="@id/noInternetFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favorite_cats"
         android:name="com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment"
         android:label="FavoriteCatsFragment"
-        tools:layout="@layout/favorite_cats_fragment" />
+        tools:layout="@layout/favorite_cats_fragment">
+        <action
+            android:id="@+id/action_favorite_cats_to_noInternetFragment"
+            app:destination="@id/noInternetFragment" />
+    </fragment>
     <fragment
         android:id="@+id/my_cats"
         tools:layout="@layout/my_cat_fragment"
         android:name="com.github.rtyvZ.kitties.ui.myCats.MyCatFragment"
-        android:label="MyCatFragment" />
+        android:label="MyCatFragment">
+        <action
+            android:id="@+id/action_my_cats_to_noInternetFragment"
+            app:destination="@id/noInternetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/noInternetFragment"
+        tools:layout="@layout/no_connection_fragment"
+        android:name="com.github.rtyvZ.kitties.network.NoInternetFragment"
+        android:label="NoInternetFragment" />
 </navigation>

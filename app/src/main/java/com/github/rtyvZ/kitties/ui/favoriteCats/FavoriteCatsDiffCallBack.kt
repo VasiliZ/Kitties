@@ -15,6 +15,6 @@ class FavoriteCatsDiffCallBack : DiffUtil.ItemCallback<FavoriteCatsResponse>() {
         oldItem: FavoriteCatsResponse,
         newItem: FavoriteCatsResponse
     ): Boolean {
-        return oldItem == newItem
+        return oldItem.id == newItem.id
     }
 }
