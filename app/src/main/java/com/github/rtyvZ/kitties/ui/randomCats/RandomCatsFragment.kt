@@ -1,17 +1,19 @@
-package com.github.rtyvZ.kitties.ui.imageCats
+package com.github.rtyvZ.kitties.ui.randomCats
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
 import com.github.rtyvZ.kitties.common.models.Cat
-import com.github.rtyvZ.kitties.extentions.toggleVisibility
-import com.google.android.material.snackbar.Snackbar
+import com.github.rtyvZ.kitties.extentions.hide
+import com.github.rtyvZ.kitties.extentions.show
 import kotlinx.android.synthetic.main.random_cats_fragment.*
 
 class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
@@ -37,25 +39,26 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        progress.toggleVisibility()
+        progress.show()
         viewModel.clear()
         viewModel.getCats()
 
         viewModel.getRandomCats.observe(viewLifecycleOwner, {
-            progress.toggleVisibility()
+            progress.hide()
             isLoading = true
             catAdapter.submitList(it)
         })
 
         viewModel.getRandomCatsError.observe(viewLifecycleOwner, {
-            progress.toggleVisibility()
-            Snackbar.make(listRandomCats, it.message.toString(), Snackbar.LENGTH_LONG).show()
+            progress.hide()
+            findNavController().navigate(R.id.action_list_kitties_to_noInternetFragment)
         })
 
-        viewModel.getErrorVoteCat.observe(viewLifecycleOwner,
+        viewModel.getErrorActionWithCat.observe(viewLifecycleOwner,
             {
-                Snackbar.make(randomCatContainer, it.message.toString(), Snackbar.LENGTH_LONG)
-                    .show()
+                activity?.let {
+                    Toast.makeText(it, R.string.no_connection, Toast.LENGTH_SHORT).show()
+                }
             })
 
         activity?.let {
