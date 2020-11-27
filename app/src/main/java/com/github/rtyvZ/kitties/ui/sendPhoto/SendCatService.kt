@@ -12,14 +12,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
+import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.repositories.sendPhoto.SendPhotoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
 
 class SendCatService : Service() {
     private val repo = SendPhotoRepository()
@@ -79,23 +78,39 @@ class SendCatService : Service() {
 
     private suspend fun execUpload(uri: Uri) {
         repo.uploadPhoto(uri)
-            .catch { e ->
-                if (e is HttpException) {
-                    buildNotification(
-                        getString(R.string.error),
-                        getString(R.string.wrong_photo)
-                    )
-                } else {
-                    buildNotification(
-                        getString(R.string.error),
-                        getString(R.string.some_kind_of_exception)
-                    )
+            .collect { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        buildNotification(
+                            getString(R.string.success),
+                            getString(R.string.success_upload_photo)
+                        )
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        response.error?.let {
+                            buildNotification(
+                                getString(R.string.error),
+                                getString(R.string.some_kind_of_exception)
+                            )
+                        }
+                    }
+                    is NetworkResponse.ApiError -> {
+                        buildNotification(
+                            getString(R.string.error),
+                            response.body.message
+                        )
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        sendBroadcast(createIntentForBroadcast(getString(R.string.no_connection)))
+                    }
                 }
-            }.collect {
-                buildNotification(
-                    getString(R.string.success),
-                    getString(R.string.success_upload_photo)
-                )
             }
+    }
+
+    private fun createIntentForBroadcast(message: String): Intent {
+        return Intent().also {
+            it.action = Strings.IntentConsts.SEND_NO_CONNECTIVITY_INTENT_ACTION
+            it.putExtra(Strings.IntentConsts.SEND_NO_CONNECTIVITY_KEY, message)
+        }
     }
 }

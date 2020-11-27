@@ -6,10 +6,7 @@ import com.github.rtyvZ.kitties.network.NetworkResponseFactory
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest
-import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav
-import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
-import com.github.rtyvZ.kitties.network.response.MyVoteResponse
-import com.github.rtyvZ.kitties.network.response.UploadCatResponse
+import com.github.rtyvZ.kitties.network.response.*
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -41,7 +38,7 @@ interface Api {
         @Header("x-api-key") apiKey: String,
         @Part body: MultipartBody.Part,
         @Part("sub_id") userUid: RequestBody
-    ): NetworkResponse<UploadCatResponse, Any>
+    ): NetworkResponse<UploadCatResponse, ApiErrorResponse>
 
     @GET("votes")
     suspend fun getMyVotes(

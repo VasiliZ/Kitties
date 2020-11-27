@@ -2,6 +2,7 @@ package com.github.rtyvZ.kitties.ui.main
 
 import android.Manifest
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
@@ -17,6 +18,7 @@ import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.extentions.app
+import com.github.rtyvZ.kitties.receivers.NoConnectivityMessageReceiver
 import com.github.rtyvZ.kitties.ui.sendPhoto.SendCatService
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private var isRotateFab = false
 
     private lateinit var viewModel: MainActivityViewModel
+    private val noConnectivityMessageReceiver = NoConnectivityMessageReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -170,5 +173,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         const val ACTIVITY_RESULT_CODE = 1
         const val PICK_IMAGE = 1
         const val DATA = "_data"
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val filter = IntentFilter(Strings.IntentConsts.SEND_NO_CONNECTIVITY_INTENT_ACTION)
+        registerReceiver(noConnectivityMessageReceiver, filter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(noConnectivityMessageReceiver)
     }
 }

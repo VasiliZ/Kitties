@@ -23,7 +23,7 @@ class SendPhotoRepository {
                 val uidAsRequestBody = session
                     .userId
                     .toRequestBody(
-                        "text/plain"
+                        TEXT_MEDIA_TYPE
                             .toMediaType()
                     )
                 emit(
@@ -44,5 +44,6 @@ class SendPhotoRepository {
     companion object {
         private const val NAME_FOR_CREATE_FORM_DATA = "file"
         private const val MEDIA_TYPE = "image/jpg"
+        private const val TEXT_MEDIA_TYPE = "text/plain"
     }
 }

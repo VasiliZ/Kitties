@@ -5,6 +5,8 @@ object Strings {
     object IntentConsts {
         const val EXTRA_SEND_UPLOAD = "send.data"
         const val INTENT_TYPE_IMAGE = "image/jpg"
+        const val SEND_NO_CONNECTIVITY_INTENT_ACTION = "no.connection.action"
+        const val SEND_NO_CONNECTIVITY_KEY = "no_connectivity_message"
     }
 
     object Notification {

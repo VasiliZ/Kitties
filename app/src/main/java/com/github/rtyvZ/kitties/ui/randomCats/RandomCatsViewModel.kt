@@ -242,11 +242,11 @@ class RandomCatsViewModel : ViewModel() {
         when (likes) {
             is NetworkResponse.Success -> listVotes.addAll(likes.body)
             is NetworkResponse.NetworkError -> {
-                mutableErrorActionWithCat.postValue(likes.error)
+                //if kitties have got error here also will be error
             }
             is NetworkResponse.UnknownError -> {
                 likes.error?.let {
-                    mutableErrorActionWithCat.postValue(it)
+                    //here the same story like above
                 }
             }
             is NetworkResponse.ApiError -> {
