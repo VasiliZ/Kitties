@@ -18,7 +18,7 @@ import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.extentions.app
-import com.github.rtyvZ.kitties.receivers.NoConnectivityMessageReceiver
+import com.github.rtyvZ.kitties.ui.receivers.NoConnectivityMessageReceiver
 import com.github.rtyvZ.kitties.ui.sendPhoto.SendCatService
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     ),
                     CAMERA_REQUEST_CODE
                 )
+                rotateFab(randomCatFab)
             } else {
                 startActivityFromUpload()
                 rotateFab(randomCatFab)
@@ -84,21 +85,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     ),
-                    CAMERA_REQUEST_CODE
+                    GALERY_REQUEST_CODE
                 )
+                rotateFab(randomCatFab)
             } else {
                 rotateFab(randomCatFab)
-
-                Intent().also {
-                    it.type = Strings.IntentConsts.INTENT_TYPE_IMAGE
-                    it.action = Intent.ACTION_PICK
-                    startActivityForResult(
-                        Intent.createChooser(
-                            it,
-                            getString(R.string.select_picture_label)
-                        ), PICK_IMAGE
-                    )
-                }
+                startActivityFromGallery()
             }
         }
 
@@ -112,13 +104,27 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_REQUEST_CODE
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED
-            && grantResults[1] == PackageManager.PERMISSION_GRANTED
-            && grantResults[2] == PackageManager.PERMISSION_GRANTED
-        ) {
-            val takeAPhotoActivity = Intent(this, TakePhotoActivity::class.java)
-            startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
+        when (requestCode) {
+            CAMERA_REQUEST_CODE -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[2] == PackageManager.PERMISSION_GRANTED
+                ) {
+                    val takeAPhotoActivity =
+                        Intent(this, TakePhotoActivity::class.java)
+                    startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
+                }
+            }
+            GALERY_REQUEST_CODE -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                ) {
+                    startActivityFromGallery()
+                }
+            }
+            else -> {
+                Toast.makeText(this, R.string.no_permition, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -168,8 +174,20 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
     }
 
+    private fun startActivityFromGallery() = Intent().also {
+        it.type = Strings.IntentConsts.INTENT_TYPE_IMAGE
+        it.action = Intent.ACTION_PICK
+        startActivityForResult(
+            Intent.createChooser(
+                it,
+                getString(R.string.select_picture_label)
+            ), PICK_IMAGE
+        )
+    }
+
     companion object {
         const val CAMERA_REQUEST_CODE = 100
+        const val GALERY_REQUEST_CODE = 1000
         const val ACTIVITY_RESULT_CODE = 1
         const val PICK_IMAGE = 1
         const val DATA = "_data"

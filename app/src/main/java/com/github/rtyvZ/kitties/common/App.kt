@@ -3,9 +3,9 @@ package com.github.rtyvZ.kitties.common
 import android.app.Application
 import android.content.Context
 import com.github.rtyvZ.kitties.auth.UserSession
+import com.github.rtyvZ.kitties.dataBase.CatDatabase
 import com.github.rtyvZ.kitties.extentions.getUserId
 import com.github.rtyvZ.kitties.extentions.saveUserId
-import com.github.rtyvZ.kitties.network.ConnectionChecker
 
 class App : Application() {
 
@@ -14,12 +14,13 @@ class App : Application() {
         context = applicationContext
     }
 
-    object ApiKeyProvider {
-        fun getKey() = "0506e17c-e910-4a31-87ab-f68eace36b7d"
+    object DataBaseProvider {
+        fun getDataBase() =
+            CatDatabase.getDatabase(context)
     }
 
-    object ConnectionCheckerProvider {
-        fun checkConnection() = ConnectionChecker(context)
+    object ApiKeyProvider {
+        fun getKey() = "0506e17c-e910-4a31-87ab-f68eace36b7d"
     }
 
     object ResourceProvider {

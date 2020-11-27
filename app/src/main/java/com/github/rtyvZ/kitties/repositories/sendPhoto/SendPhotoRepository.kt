@@ -3,6 +3,7 @@ package com.github.rtyvZ.kitties.repositories.sendPhoto
 import android.net.Uri
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.App
+import com.github.rtyvZ.kitties.common.models.Cat
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -26,6 +27,7 @@ class SendPhotoRepository {
                         TEXT_MEDIA_TYPE
                             .toMediaType()
                     )
+
                 emit(
                     Api.getApi().uploadImage(
                         App.ApiKeyProvider.getKey(),
@@ -39,6 +41,10 @@ class SendPhotoRepository {
                 )
             }
         }
+    }
+
+    fun saveCat(cat: Cat) {
+        App.DataBaseProvider.getDataBase().getCatDao().insertCat(cat)
     }
 
     companion object {

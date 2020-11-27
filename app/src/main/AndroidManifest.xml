@@ -50,7 +50,7 @@
         <service android:name=".ui.sendPhoto.SendCatService" />
 
         <receiver
-            android:name=".receivers.NoConnectivityMessageReceiver"
+            android:name="com.github.rtyvZ.kitties.ui.receivers.NoConnectivityMessageReceiver"
             android:enabled="true"
             android:exported="false" />
     </application>

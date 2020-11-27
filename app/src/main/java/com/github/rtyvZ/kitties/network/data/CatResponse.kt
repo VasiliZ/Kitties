@@ -19,7 +19,7 @@ data class CatResponse(
     val height: Int,
 ) {
     fun toCat(): Cat {
-        return Cat(id, url, width, height)
+        return Cat(id = id, url = url, width = width, height = height)
     }
 }
 

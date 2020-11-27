@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.flow
 
 class RandomCatsRepository {
 
-    private val checkConnectionProvider = App.ConnectionCheckerProvider
     private val session = App.SessionStorage.getSession()
 
     fun getKitties() = flow {

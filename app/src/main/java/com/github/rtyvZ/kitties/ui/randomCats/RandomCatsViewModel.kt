@@ -258,12 +258,12 @@ class RandomCatsViewModel : ViewModel() {
             listVotes.forEach { votes ->
                 if (catResponse.id == votes.imageId) {
                     listKitties[index] = Cat(
-                        catResponse.id,
-                        catResponse.url,
-                        catResponse.width,
-                        catResponse.height,
-                        votes.voteValue,
-                        votes.idVote.toInt()
+                        id = catResponse.id,
+                        url = catResponse.url,
+                        width = catResponse.width,
+                        height = catResponse.height,
+                        choice = votes.voteValue,
+                        voteId = votes.idVote.toInt()
                     )
                 }
             }

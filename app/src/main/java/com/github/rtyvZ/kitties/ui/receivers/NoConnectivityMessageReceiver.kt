@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.receivers
+package com.github.rtyvZ.kitties.ui.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context

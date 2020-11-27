@@ -17,5 +17,6 @@ object Strings {
 
     object Const {
         const val AUTHORITY = "com.github.rtyvZ.kitties.fileprovider"
+        const val DB_NAME = "CatDB"
     }
 }

@@ -19,4 +19,5 @@
     <string name="success_upload_photo">Фото успешно загружено</string>
     <string name="select_picture_label">Выберите изображение с котом</string>
     <string name="image_deleted">Фотография удалена</string>
+    <string name="no_permition">Нет прав</string>
 </resources>

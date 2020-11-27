@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.rtyvZ.kitties.R
+import com.github.rtyvZ.kitties.common.App
 import com.github.rtyvZ.kitties.common.itemDecorators.RecyclerViewMargin
 import com.github.rtyvZ.kitties.common.models.Cat
 import kotlinx.android.synthetic.main.my_cat_fragment.*
@@ -23,11 +24,6 @@ class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
-        viewModel.getMyCatsFromRemoteApi()
-
-        viewModel.getMyCats.observe(viewLifecycleOwner, {
-            uploadedAdapter.submitList(it)
-        })
 
         viewModel.errorWhileDeletingCat.observe(viewLifecycleOwner, {
             Toast.makeText(activity, R.string.no_connection, Toast.LENGTH_LONG).show()
@@ -36,6 +32,17 @@ class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
         viewModel.getErrorMyCats.observe(viewLifecycleOwner, {
             findNavController().navigate(R.id.action_my_cats_to_noInternetFragment)
         })
+
+        App.DataBaseProvider.getDataBase()
+            .getCatDao().let { dao ->
+                dao.getAllCats()?.let {
+                    it.observe(viewLifecycleOwner, { cats ->
+                        cats?.let {
+                            uploadedAdapter.submitList(cats)
+                        }
+                    })
+                }
+            }
     }
 
     private fun setUpRecyclerView() {

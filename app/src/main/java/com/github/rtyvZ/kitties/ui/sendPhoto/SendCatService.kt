@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
+import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.repositories.sendPhoto.SendPhotoRepository
 import kotlinx.coroutines.Dispatchers
@@ -81,6 +82,14 @@ class SendCatService : Service() {
             .collect { response ->
                 when (response) {
                     is NetworkResponse.Success -> {
+                        val responseCat = response.body
+                        val cat = Cat(
+                            id = responseCat.id,
+                            url = uri.toString(),
+                            width = responseCat.width,
+                            height = responseCat.height
+                        )
+                        saveKitty(cat)
                         buildNotification(
                             getString(R.string.success),
                             getString(R.string.success_upload_photo)
@@ -111,6 +120,12 @@ class SendCatService : Service() {
         return Intent().also {
             it.action = Strings.IntentConsts.SEND_NO_CONNECTIVITY_INTENT_ACTION
             it.putExtra(Strings.IntentConsts.SEND_NO_CONNECTIVITY_KEY, message)
+        }
+    }
+
+    private fun saveKitty(cat: Cat) {
+        GlobalScope.launch {
+            repo.saveCat(cat)
         }
     }
 }
