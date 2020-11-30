@@ -47,7 +47,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name=".ui.sendPhoto.SendCatService" />
+        <service android:name=".ui.services.SendCatService" />
+        <service android:name=".ui.services.ImageDownloadService" />
 
         <receiver
             android:name="com.github.rtyvZ.kitties.ui.receivers.NoConnectivityMessageReceiver"

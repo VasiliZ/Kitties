@@ -9,7 +9,7 @@ import com.github.rtyvZ.kitties.common.App
 
 class MainActivityViewModel(app: App) : AndroidViewModel(app) {
     private val mutableImagePath = MutableLiveData<String>()
-    val getREalPath: LiveData<String> = mutableImagePath
+    val getRealPath: LiveData<String> = mutableImagePath
 
     fun getRealPathForImage(uri: Uri) {
         val cursor: Cursor?

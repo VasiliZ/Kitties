@@ -19,8 +19,12 @@ import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.extentions.hide
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.cat_item.*
+import kotlinx.android.synthetic.main.cat_item.view.*
 
-class RandomCatAdapter(private val setLike: (Cat, StateCatVote) -> Unit) :
+class RandomCatAdapter(
+    private val setLike: (Cat, StateCatVote) -> Unit,
+    private val openContextMenu: (cat: Cat, view: View) -> Unit
+) :
     ListAdapter<Cat, RandomCatAdapter.RandomCatViewHolder>(RandomCatsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomCatViewHolder {
@@ -34,12 +38,23 @@ class RandomCatAdapter(private val setLike: (Cat, StateCatVote) -> Unit) :
 
     override fun onBindViewHolder(holder: RandomCatViewHolder, position: Int) {
         val cat = currentList[position]
-        holder.setData(cat, setLike)
+        holder.setData(cat, setLike, openContextMenu)
     }
 
-    class RandomCatViewHolder(override val containerView: View) :
+    class RandomCatViewHolder(
+        override val containerView: View
+    ) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
-        fun setData(cat: Cat, setLike: (Cat, StateCatVote) -> Unit) {
+
+        fun setData(
+            cat: Cat,
+            setLike: (Cat, StateCatVote) -> Unit,
+            openContextMenu: (cat: Cat, view: View) -> Unit
+        ) {
+            containerView.imageCat.setOnLongClickListener {
+                openContextMenu.invoke(cat, it)
+                true
+            }
             if (cat.choice == 1) {
                 thumb_up.background = ResourcesCompat.getDrawable(
                     containerView.context.resources,

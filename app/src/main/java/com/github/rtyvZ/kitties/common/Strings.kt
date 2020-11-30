@@ -7,6 +7,7 @@ object Strings {
         const val INTENT_TYPE_IMAGE = "image/jpg"
         const val SEND_NO_CONNECTIVITY_INTENT_ACTION = "no.connection.action"
         const val SEND_NO_CONNECTIVITY_KEY = "no_connectivity_message"
+        const val DOWNLOAD_IMAGE_KEY = "com.github.rtyvZ.kitties.DOWNLOAD_IMAGE_KEY"
     }
 
     object Notification {

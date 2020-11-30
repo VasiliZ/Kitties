@@ -19,8 +19,8 @@ import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.extentions.app
 import com.github.rtyvZ.kitties.ui.receivers.NoConnectivityMessageReceiver
-import com.github.rtyvZ.kitties.ui.sendPhoto.SendCatService
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
+import com.github.rtyvZ.kitties.ui.services.SendCatService
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         bottomNavigationView.setupWithNavController(host.navController)
 
-        viewModel.getREalPath.observe(this, {
+        viewModel.getRealPath.observe(this, {
             startService(it)
         })
 
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     ),
-                    GALERY_REQUEST_CODE
+                    GALLERY_REQUEST_CODE
                 )
                 rotateFab(randomCatFab)
             } else {
@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
                 }
             }
-            GALERY_REQUEST_CODE -> {
+            GALLERY_REQUEST_CODE -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED
                 ) {
@@ -165,7 +165,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 intent.data = path.toUri()
                 startService(intent)
             }
-
         }
     }
 
@@ -187,7 +186,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     companion object {
         const val CAMERA_REQUEST_CODE = 100
-        const val GALERY_REQUEST_CODE = 1000
+        const val GALLERY_REQUEST_CODE = 1000
         const val ACTIVITY_RESULT_CODE = 1
         const val PICK_IMAGE = 1
         const val DATA = "_data"

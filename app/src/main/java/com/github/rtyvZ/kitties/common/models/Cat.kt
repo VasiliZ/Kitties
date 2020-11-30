@@ -1,11 +1,14 @@
 package com.github.rtyvZ.kitties.common.models
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 @Entity
+@Parcelize
 data class Cat(
     @PrimaryKey(autoGenerate = true)
     val tableId: Long = 0L,
@@ -22,4 +25,4 @@ data class Cat(
     val height: Int,
     var choice: Int = -1,
     var voteId: Int = -1
-)
+) : Parcelable

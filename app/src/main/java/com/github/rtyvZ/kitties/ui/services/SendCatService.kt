@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.ui.sendPhoto
+package com.github.rtyvZ.kitties.ui.services
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

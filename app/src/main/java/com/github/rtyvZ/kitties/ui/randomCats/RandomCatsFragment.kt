@@ -1,6 +1,9 @@
 package com.github.rtyvZ.kitties.ui.randomCats
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -10,16 +13,18 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvZ.kitties.R
+import com.github.rtyvZ.kitties.common.Strings.IntentConsts.DOWNLOAD_IMAGE_KEY
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
+import com.github.rtyvZ.kitties.ui.services.ImageDownloadService
 import kotlinx.android.synthetic.main.random_cats_fragment.*
 
 class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
     private val viewModel: RandomCatsViewModel by viewModels()
-
+    private lateinit var catForDownloadImage: Cat
     private val swipeCallback: (Int, Int) -> Unit = { position, direction ->
         viewModel.addToFavorites(position)
     }
@@ -28,7 +33,14 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
         viewModel.voteForCat(cat, choice)
     }
 
-    private val catAdapter = RandomCatAdapter(setLike)
+    private val openContextMenu: (cat: Cat, view: View) -> Unit = { cat, view ->
+        activity?.let { activity ->
+            catForDownloadImage = cat
+            activity.openContextMenu(view)
+        }
+    }
+
+    private val catAdapter = RandomCatAdapter(setLike, openContextMenu)
     private var visibleItemCount: Int = 0
     private var lastVisibleItem: Int = 0
     private var totalItemCount: Int = 0
@@ -42,6 +54,7 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
         progress.show()
         viewModel.clear()
         viewModel.getCats()
+        this.registerForContextMenu(listRandomCats)
 
         viewModel.getRandomCats.observe(viewLifecycleOwner, {
             progress.hide()
@@ -91,5 +104,35 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
                 })
             }
         }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        activity?.let {
+            it.menuInflater.inflate(R.menu.download_menu, menu)
+        }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        activity?.let { activity ->
+
+            when (item.itemId) {
+                R.id.download_item -> {
+                    val intent = Intent(activity, ImageDownloadService::class.java)
+                    intent.apply {
+                        this.putExtra(DOWNLOAD_IMAGE_KEY, catForDownloadImage)
+                    }
+                    activity.startService(intent)
+                }
+                else -> {
+                    //nothing to call there at this moment
+                }
+            }
+        }
+
+        return super.onContextItemSelected(item)
     }
 }

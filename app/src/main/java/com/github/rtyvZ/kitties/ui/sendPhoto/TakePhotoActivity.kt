@@ -9,6 +9,7 @@ import androidx.core.net.toUri
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.ui.main.ImageHelper
+import com.github.rtyvZ.kitties.ui.services.SendCatService
 import kotlinx.android.synthetic.main.photo_preview.*
 import java.io.File
 
