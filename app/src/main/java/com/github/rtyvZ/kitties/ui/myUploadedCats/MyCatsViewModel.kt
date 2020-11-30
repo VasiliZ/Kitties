@@ -20,7 +20,6 @@ class MyCatsViewModel : ViewModel() {
     private val errorDeletingMyCats = MutableLiveData<Throwable>()
     val errorWhileDeletingCat = errorDeletingMyCats
     val getErrorMyCats = errorWhileGetsMyCats
-
     fun deleteUploadedCat(cat: Cat, position: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -47,4 +46,8 @@ class MyCatsViewModel : ViewModel() {
             }
         }
     }
+
+    fun getKittiesFromDB() =
+        myCatsRepository.getSavedCats()
+
 }

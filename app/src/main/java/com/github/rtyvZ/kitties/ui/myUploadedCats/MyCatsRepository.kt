@@ -13,4 +13,8 @@ class MyCatsRepository {
             emit(Api.getApi().deleteUploadedImage(keyProvider, idImage))
         }
     }
+
+    fun getSavedCats() =
+        App.DataBaseProvider.getDataBase().getCatDao().getAllCats()
+
 }
