@@ -20,4 +20,9 @@
     <string name="select_picture_label">Выберите изображение с котом</string>
     <string name="image_deleted">Фотография удалена</string>
     <string name="no_permition">Нет прав</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="confirm_delete">Вы действительно хотите удалить кота?</string>
+    <string name="alert">Внимание</string>
+    <string name="cat_was_deleted">Кот успешно удален</string>
 </resources>

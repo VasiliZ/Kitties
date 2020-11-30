@@ -18,8 +18,10 @@ class MyCatsViewModel : ViewModel() {
     private val myCatsModel = MyCatsModel(myCatsRepository)
     private val errorWhileGetsMyCats = MutableLiveData<Throwable>()
     private val errorDeletingMyCats = MutableLiveData<Throwable>()
+    private val mutableSuccessDeleteCat = MutableLiveData<Unit>()
     val errorWhileDeletingCat = errorDeletingMyCats
     val getErrorMyCats = errorWhileGetsMyCats
+    val getSuccessDeleteCat = mutableSuccessDeleteCat
     fun deleteUploadedCat(cat: Cat, position: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -39,6 +41,7 @@ class MyCatsViewModel : ViewModel() {
                                 errorDeletingMyCats.postValue(error)
                             } ?: kotlin.run {
                                 App.DataBaseProvider.getDataBase().getCatDao().delete(cat)
+                                mutableSuccessDeleteCat.postValue(Unit)
                             }
                         }
                     }

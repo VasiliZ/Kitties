@@ -1,5 +1,6 @@
 package com.github.rtyvZ.kitties.ui.myUploadedCats
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -16,7 +17,7 @@ class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
 
     private val viewModel: MyCatsViewModel by viewModels()
     private val longClick: (cat: Cat, position: Int) -> (Unit) = { cat, position ->
-        viewModel.deleteUploadedCat(cat, position)
+        createDialog(cat, position)
     }
     private val uploadedAdapter = UploadedCatAdapter(longClick)
 
@@ -37,6 +38,9 @@ class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
                 uploadedAdapter.submitList(cats)
             }
         })
+        viewModel.getSuccessDeleteCat.observe(viewLifecycleOwner, {
+            Toast.makeText(activity, R.string.cat_was_deleted, Toast.LENGTH_SHORT).show()
+        })
     }
 
     private fun setUpRecyclerView() {
@@ -47,6 +51,23 @@ class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
                 adapter = uploadedAdapter
                 layoutManager = GridLayoutManager(activity, 2)
             }
+        }
+    }
+
+    private fun createDialog(cat: Cat, position: Int) {
+        activity?.let { activity ->
+            AlertDialog.Builder(activity)
+                .setTitle(R.string.alert)
+                .setPositiveButton(R.string.yes)
+                { dialog, which ->
+                    viewModel.deleteUploadedCat(cat, position)
+                }
+                .setNegativeButton(R.string.no) { dialog, which ->
+                    dialog.dismiss()
+                }
+                .setMessage(R.string.confirm_delete)
+                .create()
+                .show()
         }
     }
 }
