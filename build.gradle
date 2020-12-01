@@ -5,6 +5,7 @@ buildscript {
         kotlin_version = "1.4.0"
         navigationVersion = "2.1.0"
         room_version = "2.2.5"
+        dagger_2_version = "2.30.1"
     }
 
 
