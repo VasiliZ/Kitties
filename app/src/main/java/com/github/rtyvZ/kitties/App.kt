@@ -1,17 +1,25 @@
-package com.github.rtyvZ.kitties.common
+package com.github.rtyvZ.kitties
 
-import android.app.Application
 import android.content.Context
 import com.github.rtyvZ.kitties.auth.UserSession
 import com.github.rtyvZ.kitties.dataBase.CatDatabase
+import com.github.rtyvZ.kitties.di.DaggerAppComponent
 import com.github.rtyvZ.kitties.extentions.getUserId
 import com.github.rtyvZ.kitties.extentions.saveUserId
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 
-class App : Application() {
+class App : DaggerApplication() {
+    private lateinit var injector: AndroidInjector<App>
 
     override fun onCreate() {
+        injector = DaggerAppComponent.builder().application(this).build()
         super.onCreate()
         context = applicationContext
+    }
+
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return injector
     }
 
     object DataBaseProvider {
@@ -25,14 +33,14 @@ class App : Application() {
 
     object ResourceProvider {
 
-        private val context = App.context
+        private val context = Companion.context
 
         fun getString(resourceId: Int) = context.getString(resourceId)
     }
 
     object SessionStorage {
         private const val SESSION_STORAGE = "SESSION_STORAGE"
-        private val context = App.context
+        private val context = Companion.context
         private var userSession: UserSession? = null
 
         private fun getSp() =

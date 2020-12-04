@@ -1,7 +1,7 @@
 package com.github.rtyvZ.kitties.network
 
+import com.github.rtyvZ.kitties.App
 import com.github.rtyvZ.kitties.R
-import com.github.rtyvZ.kitties.common.App
 
 class NoConnectivityException : Throwable() {
     private val recourseProvider = App.ResourceProvider

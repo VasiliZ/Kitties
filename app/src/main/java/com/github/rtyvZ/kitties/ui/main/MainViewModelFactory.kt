@@ -2,7 +2,7 @@ package com.github.rtyvZ.kitties.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.github.rtyvZ.kitties.common.App
+import com.github.rtyvZ.kitties.App
 
 @Suppress("UNCHECKED_CAST")
 class MainViewModelFactory(private val app: App) : ViewModelProvider.Factory {

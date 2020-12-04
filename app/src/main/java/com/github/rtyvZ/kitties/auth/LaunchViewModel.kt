@@ -8,12 +8,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LaunchViewModel : ViewModel() {
+class LaunchViewModel @Inject constructor(val launchModel: LaunchModel) : ViewModel() {
 
     private val launchSuccess = MutableLiveData<String>()
     private val launchError = MutableLiveData<Throwable>()
-    private val launchModel = LaunchModel()
 
     val getUserUid: LiveData<String> = launchSuccess
     val error: LiveData<Throwable> = launchError
@@ -29,7 +29,6 @@ class LaunchViewModel : ViewModel() {
                 } catch (e: Exception) {
                     launchError.postValue(e)
                 }
-
             }
         }
     }

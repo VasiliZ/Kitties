@@ -1,7 +1,7 @@
 package com.github.rtyvZ.kitties.ui.myUploadedCats
 
+import com.github.rtyvZ.kitties.App
 import com.github.rtyvZ.kitties.common.Api
-import com.github.rtyvZ.kitties.common.App
 import kotlinx.coroutines.flow.flow
 
 class MyCatsRepository {

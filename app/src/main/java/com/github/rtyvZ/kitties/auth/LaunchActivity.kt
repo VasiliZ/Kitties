@@ -2,29 +2,31 @@ package com.github.rtyvZ.kitties.auth
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.github.rtyvZ.kitties.R
-import com.github.rtyvZ.kitties.common.App
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import com.github.rtyvZ.kitties.ui.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.launch_activity.*
+import javax.inject.Inject
 
 class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
 
-    private val viewModel: LaunchViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val sessionStorage = App.SessionStorage
-
+    @Inject
+    lateinit var sessionStorage: ProvideUserContract
+    private lateinit var viewModel: LaunchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-
-        App.SessionStorage.restoreSession()
+        viewModel = ViewModelProvider(this, viewModelFactory).get(LaunchViewModel::class.java)
         progress.show()
-
 
         if (sessionStorage.hasSession()) {
             progress.hide()

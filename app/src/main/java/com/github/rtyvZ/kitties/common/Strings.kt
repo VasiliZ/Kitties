@@ -1,6 +1,9 @@
 package com.github.rtyvZ.kitties.common
-
 object Strings {
+
+    object PreferenceConst {
+        const val AUTH_USER_PREFERENCE = "prefs.for.auth.user"
+    }
 
     object IntentConsts {
         const val EXTRA_SEND_UPLOAD = "send.data"
@@ -21,3 +24,4 @@ object Strings {
         const val DB_NAME = "CatDB"
     }
 }
+

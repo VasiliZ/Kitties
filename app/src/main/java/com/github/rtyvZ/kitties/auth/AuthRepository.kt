@@ -8,8 +8,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
-class AuthRepository {
+class AuthRepository @Inject constructor() {
     private lateinit var auth: FirebaseAuth
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
 

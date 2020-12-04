@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.github.rtyvZ.kitties.common.App
+import com.github.rtyvZ.kitties.App
 
 class MainActivityViewModel(app: App) : AndroidViewModel(app) {
     private val mutableImagePath = MutableLiveData<String>()

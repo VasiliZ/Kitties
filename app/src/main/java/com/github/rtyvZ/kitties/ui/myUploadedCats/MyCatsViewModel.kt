@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.rtyvZ.kitties.common.App
+import com.github.rtyvZ.kitties.App
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import kotlinx.coroutines.Dispatchers

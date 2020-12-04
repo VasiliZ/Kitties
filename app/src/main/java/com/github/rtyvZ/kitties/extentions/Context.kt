@@ -1,7 +1,7 @@
 package com.github.rtyvZ.kitties.extentions
 
 import android.content.Context
-import com.github.rtyvZ.kitties.common.App
+import com.github.rtyvZ.kitties.App
 
 fun Context.dpToPx(dp: Int): Float {
     return dp.toFloat() * this.resources.displayMetrics.density
