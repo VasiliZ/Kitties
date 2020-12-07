@@ -6,8 +6,9 @@ import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav
 import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.RandomCatsRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class RandomCatsModel(
+class RandomCatsModel @Inject constructor(
     private val repository: RandomCatsRepository
 ) : RandomCatsModelContract {
 

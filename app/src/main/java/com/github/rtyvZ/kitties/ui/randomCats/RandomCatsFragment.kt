@@ -6,8 +6,7 @@ import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,38 +18,42 @@ import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import com.github.rtyvZ.kitties.ui.services.ImageDownloadService
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.random_cats_fragment.*
+import javax.inject.Inject
 
-class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
+class RandomCatsFragment : DaggerFragment(R.layout.random_cats_fragment) {
 
-    private val viewModel: RandomCatsViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: RandomCatsViewModel
+    private lateinit var manager: LinearLayoutManager
+    private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var catForDownloadImage: Cat
+
     private val swipeCallback: (Int, Int) -> Unit = { position, direction ->
         viewModel.addToFavorites(position)
     }
-
     private val setLike: (Cat, StateCatVote) -> Unit = { cat, choice ->
         viewModel.voteForCat(cat, choice)
     }
-
     private val openContextMenu: (cat: Cat, view: View) -> Unit = { cat, view ->
         activity?.let { activity ->
             catForDownloadImage = cat
             activity.openContextMenu(view)
         }
     }
-
     private val catAdapter = RandomCatAdapter(setLike, openContextMenu)
+
     private var visibleItemCount: Int = 0
     private var lastVisibleItem: Int = 0
     private var totalItemCount: Int = 0
-
     private var isLoading = true
-    private lateinit var manager: LinearLayoutManager
-    private lateinit var itemTouchHelper: ItemTouchHelper
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(RandomCatsViewModel::class.java)
         progress.show()
         viewModel.clear()
         viewModel.getCats()

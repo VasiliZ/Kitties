@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class LaunchViewModel @Inject constructor(val launchModel: LaunchModel) : ViewModel() {
+class LaunchViewModel @Inject constructor(private val launchModel: LaunchModel) : ViewModel() {
 
     private val launchSuccess = MutableLiveData<String>()
     private val launchError = MutableLiveData<Throwable>()

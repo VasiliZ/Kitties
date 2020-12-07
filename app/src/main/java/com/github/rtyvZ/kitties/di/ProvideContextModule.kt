@@ -2,12 +2,8 @@ package com.github.rtyvZ.kitties.di
 
 import android.content.Context
 import com.github.rtyvZ.kitties.App
-import com.github.rtyvZ.kitties.auth.SessionStorage
 import com.github.rtyvZ.kitties.auth.UserInternalStorageContract
-import com.github.rtyvZ.kitties.common.AppPreference
-import com.github.rtyvZ.kitties.common.PreferenceHelper
-import com.github.rtyvZ.kitties.common.PreferenceInfo
-import com.github.rtyvZ.kitties.common.Strings
+import com.github.rtyvZ.kitties.common.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

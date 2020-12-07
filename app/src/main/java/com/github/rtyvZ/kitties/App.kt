@@ -1,7 +1,7 @@
 package com.github.rtyvZ.kitties
 
 import android.content.Context
-import com.github.rtyvZ.kitties.auth.UserSession
+import com.github.rtyvZ.kitties.common.models.UserSession
 import com.github.rtyvZ.kitties.dataBase.CatDatabase
 import com.github.rtyvZ.kitties.di.DaggerAppComponent
 import com.github.rtyvZ.kitties.extentions.getUserId

@@ -1,6 +1,7 @@
-package com.github.rtyvZ.kitties.auth
+package com.github.rtyvZ.kitties.common
 
-import com.github.rtyvZ.kitties.common.AppPreference
+import com.github.rtyvZ.kitties.auth.UserInternalStorageContract
+import com.github.rtyvZ.kitties.common.models.UserSession
 import javax.inject.Inject
 
 class SessionStorage @Inject constructor(val prefs: AppPreference) : UserInternalStorageContract {

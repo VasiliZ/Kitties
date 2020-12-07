@@ -1,26 +1,19 @@
 package com.github.rtyvZ.kitties.ui.main
 
-import android.database.Cursor
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.github.rtyvZ.kitties.App
+import androidx.lifecycle.ViewModel
+import javax.inject.Inject
 
-class MainActivityViewModel(app: App) : AndroidViewModel(app) {
+class MainActivityViewModel @Inject constructor() : ViewModel() {
     private val mutableImagePath = MutableLiveData<String>()
     val getRealPath: LiveData<String> = mutableImagePath
 
+    @Inject
+    lateinit var mainRepository: MainRepository
+
     fun getRealPathForImage(uri: Uri) {
-        val cursor: Cursor?
-        val columnIndexID: Int
-        val projection = arrayOf(MainActivity.DATA)
-        cursor = getApplication<App>().contentResolver.query(uri, projection, null, null, null)
-        cursor?.let {
-            it.moveToFirst()
-            columnIndexID = cursor.getColumnIndexOrThrow(MainActivity.DATA)
-            mutableImagePath.value = cursor.getString(columnIndexID)
-        }
-        cursor?.close()
+        mutableImagePath.postValue(mainRepository.getPath(uri))
     }
 }

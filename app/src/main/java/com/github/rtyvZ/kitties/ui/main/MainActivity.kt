@@ -17,25 +17,29 @@ import androidx.navigation.ui.setupWithNavController
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
-import com.github.rtyvZ.kitties.extentions.app
 import com.github.rtyvZ.kitties.ui.receivers.NoConnectivityMessageReceiver
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import com.github.rtyvZ.kitties.ui.services.SendCatService
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private var isRotateFab = false
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: MainActivityViewModel
     private val noConnectivityMessageReceiver = NoConnectivityMessageReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(
             this,
-            MainViewModelFactory(this.app)
+            viewModelFactory
         ).get(MainActivityViewModel::class.java)
 
         val host = supportFragmentManager

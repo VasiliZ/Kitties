@@ -8,7 +8,15 @@ import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AndroidSupportInjectionModule::class, ViewModelModule::class, ProvideContextModule::class, BuilderModule::class, FirebaseModule::class])
+@Component(
+    modules = [AndroidSupportInjectionModule::class,
+        ViewModelModule::class,
+        ProvideContextModule::class,
+        BuilderModule::class,
+        FirebaseModule::class,
+        MainModule::class,
+        RandomCatsFragmentModule::class]
+)
 interface AppComponent : AndroidInjector<App> {
     @Component.Builder
     interface Builder {

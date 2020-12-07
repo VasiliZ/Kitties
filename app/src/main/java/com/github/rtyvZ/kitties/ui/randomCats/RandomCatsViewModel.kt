@@ -10,15 +10,15 @@ import com.github.rtyvZ.kitties.extentions.replaceElement
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.response.MyVoteResponse
-import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.RandomCatsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class RandomCatsViewModel : ViewModel() {
+class RandomCatsViewModel @Inject constructor() : ViewModel() {
 
     private var mutableRandomCats = MutableLiveData<List<Cat>?>()
     private var mutableRandomCatsError = MutableLiveData<Throwable>()
@@ -30,8 +30,8 @@ class RandomCatsViewModel : ViewModel() {
         private set
     var getErrorActionWithCat: LiveData<Throwable> = mutableErrorActionWithCat
 
-    private val randomCatsRepository = RandomCatsRepository()
-    private val randomCatsModel = RandomCatsModel(randomCatsRepository)
+    @Inject
+    lateinit var randomCatsModel: RandomCatsModel
 
     fun clear() {
         mutableRandomCats = MutableLiveData()
