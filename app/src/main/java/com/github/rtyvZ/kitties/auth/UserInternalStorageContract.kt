@@ -1,6 +1,6 @@
 package com.github.rtyvZ.kitties.auth
 
-interface ProvideUserContract {
+interface UserInternalStorageContract {
     fun saveSession(session: UserSession)
     fun hasSession(): Boolean
     fun restoreSession()

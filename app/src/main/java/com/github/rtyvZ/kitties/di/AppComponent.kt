@@ -8,7 +8,7 @@ import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AndroidSupportInjectionModule::class, ViewModelModule::class, ProvideContextModule::class, BuilderModule::class])
+@Component(modules = [AndroidSupportInjectionModule::class, ViewModelModule::class, ProvideContextModule::class, BuilderModule::class, FirebaseModule::class])
 interface AppComponent : AndroidInjector<App> {
     @Component.Builder
     interface Builder {

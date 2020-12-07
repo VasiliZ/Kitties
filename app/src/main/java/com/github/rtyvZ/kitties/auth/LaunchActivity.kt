@@ -18,8 +18,6 @@ class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    @Inject
-    lateinit var sessionStorage: ProvideUserContract
     private lateinit var viewModel: LaunchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,20 +25,11 @@ class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory).get(LaunchViewModel::class.java)
         progress.show()
-
-        if (sessionStorage.hasSession()) {
-            progress.hide()
-            startMainActivity()
-        } else {
-            stateLaunch.text = this.getString(R.string.auth)
-            viewModel.requestUid()
-        }
+        viewModel.requestUid()
 
         viewModel.getUserUid.observe(this, {
             progress.hide()
             stateLaunch.text = this.getString(R.string.success)
-            if (!sessionStorage.hasSession())
-                sessionStorage.saveSession(UserSession(it))
             startMainActivity()
         })
 

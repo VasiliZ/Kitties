@@ -1,40 +1,39 @@
 package com.github.rtyvZ.kitties.auth
 
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
-class AuthRepository @Inject constructor() {
-    private lateinit var auth: FirebaseAuth
-    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
+class AuthRepository @Inject constructor(
+    private val remoteUser: RemoteUser,
+    private val sessionStorage: UserInternalStorageContract
+) {
 
     @ExperimentalCoroutinesApi
-    fun getUserUid(chanel: Channel<String>) = runBlocking(Dispatchers.IO) {
-        auth = FirebaseAuth.getInstance()
-        launch {
-            getUserUID(auth, chanel)
+    fun getUser(channel: Channel<String>) {
+        if (getUserFromLocalStorage()) {
+            GlobalScope.launch {
+                sessionStorage.restoreSession()
+                channel.send(sessionStorage.getSession()?.userId.toString())
+            }
+        } else {
+            GlobalScope.launch(Dispatchers.IO) {
+                val user =
+                    remoteUser.getUserUid()
+                user?.let { firebaseUser ->
+                    saveUser(UserSession(firebaseUser.uid))
+                    channel.send(firebaseUser.uid)
+                }
+            }
         }
     }
 
-    private suspend fun getUserUID(auth: FirebaseAuth, chanel: Channel<String>) {
-        auth
-            .signInAnonymously()
-            .addOnCompleteListener(executor) { task ->
-                if (task.isSuccessful) {
+    private fun getUserFromLocalStorage(): Boolean = sessionStorage.hasSession()
 
-                    val user = auth.currentUser
-                    user?.let { nonNullUser ->
-                        runBlocking {
-                            chanel.send(nonNullUser.uid)
-                        }
-                    }
-                }
-            }
-    }
+    private fun saveUser(userSession: UserSession) = sessionStorage.saveSession(userSession)
+
 }
+

@@ -2,8 +2,8 @@ package com.github.rtyvZ.kitties.di
 
 import android.content.Context
 import com.github.rtyvZ.kitties.App
-import com.github.rtyvZ.kitties.auth.ProvideUserContract
 import com.github.rtyvZ.kitties.auth.SessionStorage
+import com.github.rtyvZ.kitties.auth.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.AppPreference
 import com.github.rtyvZ.kitties.common.PreferenceHelper
 import com.github.rtyvZ.kitties.common.PreferenceInfo
@@ -34,7 +34,7 @@ class ProvideContextModule {
 
     @Provides
     @Singleton
-    internal fun provideSessionStorage(preference: AppPreference): ProvideUserContract {
+    internal fun provideSessionStorage(preference: AppPreference): UserInternalStorageContract {
         return SessionStorage(preference)
     }
 }

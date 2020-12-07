@@ -3,7 +3,7 @@ package com.github.rtyvZ.kitties.auth
 import com.github.rtyvZ.kitties.common.AppPreference
 import javax.inject.Inject
 
-class SessionStorage @Inject constructor(val prefs: AppPreference) : ProvideUserContract {
+class SessionStorage @Inject constructor(val prefs: AppPreference) : UserInternalStorageContract {
     private var userSession: UserSession? = null
 
     override fun saveSession(session: UserSession) {
