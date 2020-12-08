@@ -21,7 +21,8 @@ import javax.inject.Singleton
         SendCatModule::class,
         TakeAPhotoModule::class,
         MainActivityModule::class,
-        NetworkModule::class]
+        NetworkModule::class,
+        DatabaseModule::class]
 )
 interface AppComponent : AndroidInjector<App> {
     @Component.Builder

@@ -5,6 +5,7 @@ import com.github.rtyvZ.kitties.App
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.models.Cat
+import com.github.rtyvZ.kitties.db.CatDatabase
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 class SendPhotoRepository @Inject constructor(
     private val sessionStorage: UserInternalStorageContract,
-    private val api: Api
+    private val api: Api,
+    private val db: CatDatabase
 ) {
 
     private val session = sessionStorage.getSession()
@@ -49,7 +51,7 @@ class SendPhotoRepository @Inject constructor(
     }
 
     fun saveCat(cat: Cat) {
-        App.DataBaseProvider.getDataBase().getCatDao().insertCat(cat)
+        db.getCatDao().insertCat(cat)
     }
 
     companion object {

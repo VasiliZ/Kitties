@@ -65,9 +65,9 @@ class MyCatFragment @Inject constructor() : DaggerFragment(R.layout.my_cat_fragm
                 .setTitle(R.string.alert)
                 .setPositiveButton(R.string.yes)
                 { dialog, which ->
-                    viewModel.deleteUploadedCat(cat, position)
+                    viewModel.deleteUploadedCat(cat)
                 }
-                .setNegativeButton(R.string.no) { dialog, which ->
+                .setNegativeButton(R.string.no) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .setMessage(R.string.confirm_delete)
