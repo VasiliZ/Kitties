@@ -20,8 +20,8 @@ class MyCatFragment @Inject constructor() : DaggerFragment(R.layout.my_cat_fragm
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: MyCatsViewModel
-    private val longClick: (cat: Cat, position: Int) -> (Unit) = { cat, position ->
-        createDialog(cat, position)
+    private val longClick: (cat: Cat) -> (Unit) = { cat ->
+        createDialog(cat)
     }
     private val uploadedAdapter = UploadedCatAdapter(longClick)
 
@@ -59,12 +59,12 @@ class MyCatFragment @Inject constructor() : DaggerFragment(R.layout.my_cat_fragm
         }
     }
 
-    private fun createDialog(cat: Cat, position: Int) {
+    private fun createDialog(cat: Cat) {
         activity?.let { activity ->
             AlertDialog.Builder(activity)
                 .setTitle(R.string.alert)
                 .setPositiveButton(R.string.yes)
-                { dialog, which ->
+                { _, _ ->
                     viewModel.deleteUploadedCat(cat)
                 }
                 .setNegativeButton(R.string.no) { dialog, _ ->
