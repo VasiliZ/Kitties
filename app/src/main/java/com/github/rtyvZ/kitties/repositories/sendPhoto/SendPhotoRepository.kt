@@ -13,7 +13,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import javax.inject.Inject
 
-class SendPhotoRepository @Inject constructor(private val sessionStorage: UserInternalStorageContract) {
+class SendPhotoRepository @Inject constructor(
+    private val sessionStorage: UserInternalStorageContract,
+    private val api: Api
+) {
 
     private val session = sessionStorage.getSession()
 
@@ -31,7 +34,7 @@ class SendPhotoRepository @Inject constructor(private val sessionStorage: UserIn
                     )
 
                 emit(
-                    Api.getApi().uploadImage(
+                    api.uploadImage(
                         App.ApiKeyProvider.getKey(),
                         MultipartBody.Part
                             .createFormData(

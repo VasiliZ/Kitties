@@ -1,6 +1,8 @@
 package com.github.rtyvZ.kitties.common
 object Strings {
 
+    const val BASE_URL: String = "https://api.thecatapi.com/v1/"
+
     object PreferenceConst {
         const val AUTH_USER_PREFERENCE = "prefs.for.auth.user"
     }

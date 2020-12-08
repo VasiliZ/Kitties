@@ -6,13 +6,16 @@ import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class MyCatsRepository @Inject constructor(sessionStorage: UserInternalStorageContract) {
+class MyCatsRepository @Inject constructor(
+    sessionStorage: UserInternalStorageContract,
+    private val api: Api
+) {
     private val session = sessionStorage.getSession()
     private val keyProvider = App.ApiKeyProvider.getKey()
 
     fun deleteCat(idImage: String) = flow {
         session?.let {
-            emit(Api.getApi().deleteUploadedImage(keyProvider, idImage))
+            emit(api.deleteUploadedImage(keyProvider, idImage))
         }
     }
 

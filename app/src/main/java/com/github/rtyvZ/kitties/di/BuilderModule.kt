@@ -13,7 +13,7 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class BuilderModule {
 
-    @ContributesAndroidInjector(modules = [LaunchActivityModule::class])
+    @ContributesAndroidInjector(modules = [LaunchModule::class])
     internal abstract fun bindLaunchActivity(): LaunchActivity
 
     @ContributesAndroidInjector(modules = [RandomCatsFragmentModule::class])

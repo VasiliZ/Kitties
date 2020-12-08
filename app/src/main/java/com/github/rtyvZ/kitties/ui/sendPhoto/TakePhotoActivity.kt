@@ -45,7 +45,7 @@ class TakePhotoActivity @Inject constructor() : AppCompatActivity(R.layout.photo
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
             intent.resolveActivity(packageManager)?.also {
                 val file = takePhotoRepository.createTempFile()
-                file?.also {
+                file.also {
                     val photoURI: Uri = takePhotoRepository.getPhotoUri(it)
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(intent, ACTIVITY_RESULT_CODE)

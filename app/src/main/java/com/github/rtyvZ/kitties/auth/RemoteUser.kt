@@ -2,15 +2,16 @@ package com.github.rtyvZ.kitties.auth
 
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.concurrent.Executor
 import javax.inject.Inject
 
 class RemoteUser @Inject constructor() {
 
     @Inject
     lateinit var auth: FirebaseAuth
-    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
+
+    @Inject
+    lateinit var executor: Executor
 
     @ExperimentalCoroutinesApi
     fun getUserUid() = getUserUIDFromFireBase(auth).result?.user

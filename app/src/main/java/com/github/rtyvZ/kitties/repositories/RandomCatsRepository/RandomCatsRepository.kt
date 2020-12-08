@@ -9,13 +9,15 @@ import com.github.rtyvZ.kitties.network.request.VoteRequest
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class RandomCatsRepository @Inject constructor(private val sessionStorage: UserInternalStorageContract) {
+class RandomCatsRepository @Inject constructor(
+    private val sessionStorage: UserInternalStorageContract,
+    private val api: Api
+) {
 
     private val session = sessionStorage.getSession()
 
     fun getKitties() = flow {
-        val responseRandomCats = Api
-            .getApi()
+        val responseRandomCats = api
             .getListKitties()
         emit(responseRandomCats)
     }
@@ -23,7 +25,7 @@ class RandomCatsRepository @Inject constructor(private val sessionStorage: UserI
     fun getVotes() = flow {
         session?.let {
             val responseVotes =
-                Api.getApi().getMyVotes(
+                api.getMyVotes(
                     App.ApiKeyProvider.getKey(), session.userId
                 )
             emit(responseVotes)
@@ -33,7 +35,7 @@ class RandomCatsRepository @Inject constructor(private val sessionStorage: UserI
     fun voteForCat(cat: Cat) = flow {
         session?.let {
             emit(
-                Api.getApi()
+                api
                     .votes(
                         App.ApiKeyProvider.getKey(),
                         VoteRequest(cat.id, cat.choice, it.userId)
@@ -44,7 +46,7 @@ class RandomCatsRepository @Inject constructor(private val sessionStorage: UserI
 
     fun deleteVote(cat: Cat) = flow {
         emit(
-            Api.getApi()
+            api
                 .deleteVote(
                     App.ApiKeyProvider.getKey(),
                     cat.voteId.toString()
@@ -55,7 +57,7 @@ class RandomCatsRepository @Inject constructor(private val sessionStorage: UserI
     fun addToFavorite(catId: String) = flow {
         session?.let { session ->
             emit(
-                Api.getApi().addCatToFavorites(
+                api.addCatToFavorites(
                     App.ApiKeyProvider.getKey(),
                     FavoritesRequest(catId, session.userId)
                 )

@@ -20,7 +20,8 @@ import javax.inject.Singleton
         MyCatsModule::class,
         SendCatModule::class,
         TakeAPhotoModule::class,
-        MainActivityModule::class]
+        MainActivityModule::class,
+        NetworkModule::class]
 )
 interface AppComponent : AndroidInjector<App> {
     @Component.Builder
