@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.ui.services.SendCatService
@@ -17,10 +16,6 @@ class TakePhotoActivity @Inject constructor() : AppCompatActivity(R.layout.photo
 
     @Inject
     lateinit var takePhotoRepository: TakeAPhotoRepository
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: TakeAPhotoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
