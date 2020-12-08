@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class MainModule {
+class LaunchModule {
 
     @Provides
     internal fun provideMainRepository(context: Context): MainRepository {

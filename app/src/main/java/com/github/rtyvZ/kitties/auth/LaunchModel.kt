@@ -5,7 +5,7 @@ import kotlinx.coroutines.channels.Channel
 import javax.inject.Inject
 
 
-class LaunchModel @Inject constructor(val authRepo: AuthRepository) {
+class LaunchModel @Inject constructor(private val authRepo: AuthRepository) {
 
     @ExperimentalCoroutinesApi
     fun getUserUid(channel: Channel<String>) = authRepo.getUser(channel)

@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.auth
+package com.github.rtyvZ.kitties.common
 
 import com.github.rtyvZ.kitties.common.models.UserSession
 

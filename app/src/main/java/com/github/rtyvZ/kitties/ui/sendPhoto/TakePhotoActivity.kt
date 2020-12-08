@@ -1,23 +1,29 @@
 package com.github.rtyvZ.kitties.ui.sendPhoto
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
-import androidx.core.net.toUri
+import androidx.lifecycle.ViewModelProvider
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
-import com.github.rtyvZ.kitties.ui.main.ImageHelper
 import com.github.rtyvZ.kitties.ui.services.SendCatService
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.photo_preview.*
-import java.io.File
+import javax.inject.Inject
 
-class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
-    private var resultIntent = Intent()
-    private val imageHelper = ImageHelper()
+class TakePhotoActivity @Inject constructor() : AppCompatActivity(R.layout.photo_preview) {
+
+    @Inject
+    lateinit var takePhotoRepository: TakeAPhotoRepository
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: TakeAPhotoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         sendPhotoFab.setOnClickListener {
@@ -31,7 +37,9 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == ACTIVITY_RESULT_CODE && resultCode == RESULT_OK) {
-            imageHelper.setPick(photoACat)
+            takePhotoRepository.getImage()?.let {
+                photoACat.setImageBitmap(it)
+            }
         } else {
             finish()
         }
@@ -39,18 +47,11 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
     }
 
     private fun takeFullPhoto() {
-        resultIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
-            intent.resolveActivity(packageManager).let {
-                val file: File? = try {
-                    this.filesDir
-                    imageHelper.createImageFile(this)
-                } catch (e: Exception) {
-                    null
-                }
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
+            intent.resolveActivity(packageManager)?.also {
+                val file = takePhotoRepository.createTempFile()
                 file?.also {
-                    val photoURI = FileProvider.getUriForFile(
-                        this, Strings.Const.AUTHORITY, it
-                    )
+                    val photoURI: Uri = takePhotoRepository.getPhotoUri(it)
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(intent, ACTIVITY_RESULT_CODE)
                 }
@@ -58,9 +59,10 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
         }
     }
 
+
     private fun startService() {
         val sentPhotoIntent = Intent(this, SendCatService::class.java)
-        sentPhotoIntent.data = imageHelper.getPhoto(this).path.toUri()
+        sentPhotoIntent.data = takePhotoRepository.getPhotoUri()
         startService(sentPhotoIntent)
     }
 
@@ -72,7 +74,6 @@ class TakePhotoActivity : AppCompatActivity(R.layout.photo_preview) {
         )
         setResult(ACTIVITY_RESULT_CODE, resultIntent)
     }
-
 
     companion object {
         const val ACTIVITY_RESULT_CODE = 1

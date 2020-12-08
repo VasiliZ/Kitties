@@ -9,6 +9,7 @@ class AppPreference @Inject constructor(
 ) : PreferenceHelper {
 
     private val prefs = context.getSharedPreferences(preferenceFileName, Context.MODE_PRIVATE)
+
     override fun getUserId() = prefs.getString(SESSION_USER_ID, null)
 
     override fun saveUserId(userId: String) {

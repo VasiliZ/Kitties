@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.github.rtyvZ.kitties.auth.LaunchViewModel
 import com.github.rtyvZ.kitties.base.ViewModelFactory
+import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsViewModel
 import com.github.rtyvZ.kitties.ui.main.MainActivityViewModel
+import com.github.rtyvZ.kitties.ui.myUploadedCats.MyCatsViewModel
 import com.github.rtyvZ.kitties.ui.randomCats.RandomCatsViewModel
 import dagger.Binds
 import dagger.Module
@@ -28,6 +30,16 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(RandomCatsViewModel::class)
     abstract fun bindRandomCatsViewModel(randomCatsViewModel: RandomCatsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FavoriteCatsViewModel::class)
+    abstract fun bindFavoriteCatsViewModel(randomCatsViewModel: FavoriteCatsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MyCatsViewModel::class)
+    abstract fun bindMyCatsViewModel(myCatsViewModel: MyCatsViewModel): ViewModel
 
     @Binds
     @Singleton

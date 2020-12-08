@@ -14,8 +14,13 @@ import javax.inject.Singleton
         ProvideContextModule::class,
         BuilderModule::class,
         FirebaseModule::class,
-        MainModule::class,
-        RandomCatsFragmentModule::class]
+        LaunchModule::class,
+        RandomCatsFragmentModule::class,
+        FavoriteCatsModule::class,
+        MyCatsModule::class,
+        SendCatModule::class,
+        TakeAPhotoModule::class,
+        MainActivityModule::class]
 )
 interface AppComponent : AndroidInjector<App> {
     @Component.Builder

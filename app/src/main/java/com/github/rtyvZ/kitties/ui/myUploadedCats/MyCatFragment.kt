@@ -4,18 +4,22 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.itemDecorators.RecyclerViewMargin
 import com.github.rtyvZ.kitties.common.models.Cat
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.my_cat_fragment.*
+import javax.inject.Inject
 
-class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
+class MyCatFragment @Inject constructor() : DaggerFragment(R.layout.my_cat_fragment) {
 
-    private val viewModel: MyCatsViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private lateinit var viewModel: MyCatsViewModel
     private val longClick: (cat: Cat, position: Int) -> (Unit) = { cat, position ->
         createDialog(cat, position)
     }
@@ -23,6 +27,7 @@ class MyCatFragment : Fragment(R.layout.my_cat_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MyCatsViewModel::class.java)
         setUpRecyclerView()
 
         viewModel.errorWhileDeletingCat.observe(viewLifecycleOwner, {

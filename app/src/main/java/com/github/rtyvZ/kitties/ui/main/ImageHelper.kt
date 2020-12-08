@@ -3,19 +3,16 @@ package com.github.rtyvZ.kitties.ui.main
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.max
-import kotlin.math.min
+import javax.inject.Inject
 
-class ImageHelper {
+class ImageHelper @Inject constructor() {
 
-    private val DATE_FORMAT = "yyyyMMdd_HHmmss"
+
     private lateinit var currentPhotoPath: String
 
     fun createImageFile(context: Context): File {
@@ -23,46 +20,25 @@ class ImageHelper {
         val storageDir: File = context.filesDir
         return File.createTempFile(
             "JPEG_${timeStamp}",
-            ".jpg",
+            SUFFIX_FILE,
             storageDir
         ).apply {
             currentPhotoPath = absolutePath
         }
     }
 
-    fun setPick(view: AppCompatImageView) {
-        val targetHeight = view.height
-        val targetWidth = view.width
+    fun getBitmap(): Bitmap? {
 
-        val bitmapOptions = BitmapFactory.Options().apply {
-            inJustDecodeBounds = true
-
-            val photoWidth = outWidth
-            val photoHeight = outHeight
-            var scaleFactor: Int = 0
-            try {
-
-                scaleFactor = max(1, min(photoWidth / targetWidth, photoHeight / targetHeight))
-            } catch (e: Exception) {
-                Log.d(
-                    "arithmeticException", """with value " +
-                            "$photoWidth " +
-                            "$photoHeight" +
-                            "$targetHeight" +
-                            "$targetHeight"""
-                )
-            }
-
-            inJustDecodeBounds = false
-            inSampleSize = scaleFactor
-        }
+        var resultBitmap: Bitmap?
+        val bitmapOptions = BitmapFactory.Options()
 
         BitmapFactory
             .decodeFile(currentPhotoPath, bitmapOptions).also {
                 it.let {
-                    view.setImageBitmap(rotateBitmap(it))
+                    resultBitmap = rotateBitmap(it)
                 }
             }
+        return resultBitmap
     }
 
     private fun rotateBitmap(bitmap: Bitmap): Bitmap? {
@@ -72,7 +48,7 @@ class ImageHelper {
             ExifInterface.ORIENTATION_UNDEFINED
         )
 
-        var rotatedBitmap: Bitmap? = null
+        val rotatedBitmap: Bitmap?
 
         rotatedBitmap = when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> {
@@ -91,7 +67,12 @@ class ImageHelper {
         return rotatedBitmap
     }
 
-    fun getPhoto(context: Context): File {
+    fun getFileWithPhoto(context: Context): File {
         return File(context.filesDir, File(currentPhotoPath).name)
+    }
+
+    companion object {
+        const val DATE_FORMAT = "yyyyMMdd_HHmmss"
+        const val SUFFIX_FILE = ".jpg"
     }
 }

@@ -2,7 +2,6 @@ package com.github.rtyvZ.kitties.di
 
 import android.content.Context
 import com.github.rtyvZ.kitties.App
-import com.github.rtyvZ.kitties.auth.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.*
 import dagger.Module
 import dagger.Provides

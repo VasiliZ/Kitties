@@ -1,5 +1,6 @@
 package com.github.rtyvZ.kitties.auth
 
+import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.models.UserSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

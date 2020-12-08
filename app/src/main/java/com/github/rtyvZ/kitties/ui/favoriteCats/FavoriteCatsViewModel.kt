@@ -7,19 +7,18 @@ import androidx.lifecycle.viewModelScope
 import com.github.rtyvZ.kitties.domain.favoriteCats.FavoriteCatsModel
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
-import com.github.rtyvZ.kitties.repositories.favoriteCats.FavoriteCatsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class FavoriteCatsViewModel : ViewModel() {
-
+class FavoriteCatsViewModel @Inject constructor() : ViewModel() {
+    @Inject
+    lateinit var favoriteCatsModel: FavoriteCatsModel
     private val mutableFavoriteCatList = MutableLiveData<List<FavoriteCatsResponse>>()
     private val receiveErrorFavoriteCats = MutableLiveData<Throwable>()
-    private val favoriteCatsRepository = FavoriteCatsRepository()
     private val errorDeleteFavoriteCat = MutableLiveData<Throwable>()
-    private val favoriteCatsModel = FavoriteCatsModel(favoriteCatsRepository)
     val getMyFavoriteCats: LiveData<List<FavoriteCatsResponse>> = mutableFavoriteCatList
     val getErrorReceiveCats = receiveErrorFavoriteCats
     val getErrorDeleteFavoriteCats = errorDeleteFavoriteCat

@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.dataBase
+package com.github.rtyvZ.kitties.db
 
 import android.content.Context
 import androidx.lifecycle.LiveData

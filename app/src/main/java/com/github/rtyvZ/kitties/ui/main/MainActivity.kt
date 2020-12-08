@@ -24,7 +24,7 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity @Inject constructor() : AppCompatActivity(R.layout.activity_main) {
 
     private var isRotateFab = false
 
@@ -114,9 +114,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED
                     && grantResults[2] == PackageManager.PERMISSION_GRANTED
                 ) {
-                    val takeAPhotoActivity =
-                        Intent(this, TakePhotoActivity::class.java)
-                    startActivityForResult(takeAPhotoActivity, ACTIVITY_RESULT_CODE)
+                    startActivityFromUpload()
                 }
             }
             GALLERY_REQUEST_CODE -> {

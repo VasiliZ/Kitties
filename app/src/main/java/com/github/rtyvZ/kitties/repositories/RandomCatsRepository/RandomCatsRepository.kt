@@ -1,8 +1,8 @@
 package com.github.rtyvZ.kitties.repositories.RandomCatsRepository
 
 import com.github.rtyvZ.kitties.App
-import com.github.rtyvZ.kitties.auth.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.Api
+import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest

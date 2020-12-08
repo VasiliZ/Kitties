@@ -11,11 +11,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class MyCatsViewModel : ViewModel() {
-
-    private val myCatsRepository = MyCatsRepository()
-    private val myCatsModel = MyCatsModel(myCatsRepository)
+class MyCatsViewModel @Inject constructor() : ViewModel() {
+    @Inject
+    lateinit var myCatsModel: MyCatsModel
     private val errorWhileGetsMyCats = MutableLiveData<Throwable>()
     private val errorDeletingMyCats = MutableLiveData<Throwable>()
     private val mutableSuccessDeleteCat = MutableLiveData<Unit>()
@@ -51,6 +51,6 @@ class MyCatsViewModel : ViewModel() {
     }
 
     fun getKittiesFromDB() =
-        myCatsRepository.getSavedCats()
+        myCatsModel.getLocalCats()
 
 }
