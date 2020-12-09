@@ -9,6 +9,7 @@ import com.github.rtyvZ.kitties.network.response.ApiErrorResponse
 import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav
 import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
 import com.github.rtyvZ.kitties.network.response.MyVoteResponse
+import com.github.rtyvZ.kitties.ui.breedCats.BreedCats
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -67,4 +68,9 @@ interface Api {
         @Header("x-api-key") apiKey: String,
         @Path("image_id") id: String
     ): NetworkResponse<Any, Any>
+
+    @GET
+    suspend fun getBreedCats(
+        @Header("x-api-key") apiKey: String
+    ): NetworkResponse<List<BreedCats>, Any>
 }
