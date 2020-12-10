@@ -7,7 +7,12 @@ import javax.inject.Inject
 
 class BreedCatsRepository @Inject constructor(private val api: Api) {
     private val key = App.ApiKeyProvider.getKey()
-    fun getBreedCatsFromNetwork() = flow {
-        emit(api.getBreedCats(key))
+    fun getBreedCatsFromNetwork(page: Int, limit: Int) = flow {
+        emit(api.getBreedCats(key, page, limit))
+    }
+
+    fun getBreedsPhotos(idImage: String) = flow {
+        emit(api.getSingleImage(key, idImage))
+
     }
 }

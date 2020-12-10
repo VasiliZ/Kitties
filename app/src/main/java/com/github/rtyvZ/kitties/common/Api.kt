@@ -69,8 +69,16 @@ interface Api {
         @Path("image_id") id: String
     ): NetworkResponse<Any, Any>
 
-    @GET
+    @GET("breeds")
     suspend fun getBreedCats(
-        @Header("x-api-key") apiKey: String
+        @Header("x-api-key") apiKey: String,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
     ): NetworkResponse<List<BreedCats>, Any>
+
+    @GET("images/{image_id}")
+    suspend fun getSingleImage(
+        @Header("x-api-key") apiKey: String,
+        @Path("image_id") id: String
+    ): NetworkResponse<Cat, Any>
 }

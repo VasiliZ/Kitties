@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.rtyvZ.kitties.common.models.Cat
+import com.github.rtyvZ.kitties.extentions.replaceElement
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -18,15 +20,32 @@ class BreedCatsViewModel @Inject constructor() : ViewModel() {
 
     private val mutableBreedCatsLiveData = MutableLiveData<List<BreedCats>>()
     private val mutableErrorBreedCatsLiveData = MutableLiveData<Throwable>()
+    private val limit = 10
+
     val getBreedsCatsLiveData: LiveData<List<BreedCats>> = mutableBreedCatsLiveData
     val getErrorBreedsCatsLiveData: LiveData<Throwable> = mutableErrorBreedCatsLiveData
-    fun getBreedCats() {
+
+    fun getBreedCats(page: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                viewModelModel.getBreedCats().collect {
+                viewModelModel.getBreedCats(page, limit).collect {
                     when (it) {
                         is NetworkResponse.Success -> {
-                            mutableBreedCatsLiveData.postValue(it.body)
+                            val mutableListWithBreeds = mutableListOf<BreedCats>()
+                            mutableBreedCatsLiveData.value?.let { listBreads ->
+                                mutableListWithBreeds.addAll(listBreads)
+                            }
+                            mutableListWithBreeds.addAll(it.body)
+                            mutableListWithBreeds.forEach { breed ->
+                                breed.imageId?.let { imageId ->
+                                    viewModelModel.getPhotoCatsForBreeds(imageId).collect { cat ->
+                                        if (cat is NetworkResponse.Success) {
+                                            breed.url = cat.body.url
+                                        }
+                                    }
+                                }
+                            }
+                            mutableBreedCatsLiveData.postValue(mutableListWithBreeds)
                         }
                         is NetworkResponse.NetworkError -> {
                             mutableErrorBreedCatsLiveData.postValue(it.error)
@@ -43,5 +62,19 @@ class BreedCatsViewModel @Inject constructor() : ViewModel() {
                 }
             }
         }
+    }
+
+    private fun getUrlsForBreeds(body: BreedCats) {
+
+    }
+
+    private fun changeBreedItem(breed: BreedCats, body: Cat): List<BreedCats> {
+        val listBreeds = mutableListOf<BreedCats>()
+        mutableBreedCatsLiveData.value?.let {
+            listBreeds.addAll(it)
+        }
+        breed.url = body.url
+        listBreeds.replaceElement(breed)
+        return listBreeds
     }
 }

@@ -9,6 +9,9 @@ class BreedCats(
     @SerializedName("name")
     val nameBreed: String,
     @SerializedName("description")
-    val description: String
+    val description: String,
+    @SerializedName("reference_image_id")
+    val imageId: String?,
+    var url: String = ""
 
 )
