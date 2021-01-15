@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "421561524477",
+    "firebase_url": "https://kitties-4f6d1.firebaseio.com",
+    "project_id": "kitties-4f6d1",
+    "storage_bucket": "kitties-4f6d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421561524477:android:265098c82721c80a809e94",
+        "android_client_info": {
+          "package_name": "com.github.rtyvZ.kitties"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "421561524477-q0d2i4n388ok1m224sjdq0tom13ma5hm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAek8AhP1dDJhWMKSD8YEYzA_fMBBAPtN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "421561524477-q0d2i4n388ok1m224sjdq0tom13ma5hm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
