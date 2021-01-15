@@ -9,4 +9,7 @@ class LaunchModel @Inject constructor(private val authRepo: AuthRepository) {
 
     @ExperimentalCoroutinesApi
     fun getUserUid(channel: Channel<String>) = authRepo.getUser(channel)
+    fun saveUserUid(uid: String) {
+        authRepo.saveUserUid(uid)
+    }
 }

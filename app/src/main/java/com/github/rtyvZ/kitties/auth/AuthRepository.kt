@@ -23,12 +23,7 @@ class AuthRepository @Inject constructor(
             }
         } else {
             GlobalScope.launch(Dispatchers.IO) {
-                val user =
-                    remoteUser.getUserUid()
-                user?.let { firebaseUser ->
-                    saveUser(UserSession(firebaseUser.uid))
-                    channel.send(firebaseUser.uid)
-                }
+                remoteUser.getUserUid(channel)
             }
         }
     }
@@ -36,6 +31,8 @@ class AuthRepository @Inject constructor(
     private fun getUserFromLocalStorage(): Boolean = sessionStorage.hasSession()
 
     private fun saveUser(userSession: UserSession) = sessionStorage.saveSession(userSession)
-
+    fun saveUserUid(uid: String) {
+        saveUser(UserSession(uid))
+    }
 }
 
