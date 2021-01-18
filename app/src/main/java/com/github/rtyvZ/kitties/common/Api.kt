@@ -1,6 +1,7 @@
 package com.github.rtyvZ.kitties.common
 
 import com.github.rtyvZ.kitties.common.models.Cat
+import com.github.rtyvZ.kitties.common.models.CatBreed
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.request.FavoritesRequest
@@ -67,4 +68,9 @@ interface Api {
         @Header("x-api-key") apiKey: String,
         @Path("image_id") id: String
     ): NetworkResponse<Any, Any>
+
+    @GET("breeds")
+    suspend fun getAllCatsBreeds(
+        @Header("x-api-key") apiKey: String
+    ):NetworkResponse<List<CatBreed>, Any>
 }

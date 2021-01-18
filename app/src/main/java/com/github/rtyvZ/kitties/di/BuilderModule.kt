@@ -1,6 +1,7 @@
 package com.github.rtyvZ.kitties.di
 
 import com.github.rtyvZ.kitties.auth.LaunchActivity
+import com.github.rtyvZ.kitties.ui.catsBreeds.CatsBreedsFragment
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsFragment
 import com.github.rtyvZ.kitties.ui.main.MainActivity
 import com.github.rtyvZ.kitties.ui.myUploadedCats.MyCatFragment
@@ -30,6 +31,9 @@ abstract class BuilderModule {
 
     @ContributesAndroidInjector(modules = [TakeAPhotoModule::class])
     internal abstract fun bindTakeAPhotoActivity(): TakePhotoActivity
+
+    @ContributesAndroidInjector(modules = [BreedsModule::class])
+    internal abstract fun bindBreedsCatsFragment(): CatsBreedsFragment
 
     @ContributesAndroidInjector(modules = [MainActivityModule::class])
     internal abstract fun bindMainActivity(): MainActivity

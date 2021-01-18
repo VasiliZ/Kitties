@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.github.rtyvZ.kitties.auth.LaunchViewModel
 import com.github.rtyvZ.kitties.base.ViewModelFactory
+import com.github.rtyvZ.kitties.ui.catsBreeds.CatsBreedsViewModel
 import com.github.rtyvZ.kitties.ui.favoriteCats.FavoriteCatsViewModel
 import com.github.rtyvZ.kitties.ui.main.MainActivityViewModel
 import com.github.rtyvZ.kitties.ui.myUploadedCats.MyCatsViewModel
@@ -42,6 +43,13 @@ abstract class ViewModelModule {
     abstract fun bindMyCatsViewModel(myCatsViewModel: MyCatsViewModel): ViewModel
 
     @Binds
+    @IntoMap
+    @ViewModelKey(CatsBreedsViewModel::class)
+    abstract fun bindCatsBreedsViewModel(breedsViewModel: CatsBreedsViewModel):ViewModel
+
+    @Binds
     @Singleton
     abstract fun funBindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
+
+
 }

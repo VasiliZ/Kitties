@@ -38,7 +38,7 @@
         tools:layout="@layout/no_connection_fragment" />
     <fragment
         android:id="@+id/cats_breeds"
-        android:name="com.github.rtyvZ.kitties.ui.catsBreeds.CatsBreeds"
+        android:name="com.github.rtyvZ.kitties.ui.catsBreeds.CatsBreedsFragment"
         android:label="CatsBreedFragment"
         tools:layout="@layout/cats_breeds_fragment">
         <action
