@@ -24,16 +24,25 @@
     </fragment>
     <fragment
         android:id="@+id/my_cats"
-        tools:layout="@layout/my_cat_fragment"
         android:name="com.github.rtyvZ.kitties.ui.myUploadedCats.MyCatFragment"
-        android:label="MyCatFragment">
+        android:label="MyCatFragment"
+        tools:layout="@layout/my_cat_fragment">
         <action
             android:id="@+id/action_my_cats_to_noInternetFragment"
             app:destination="@id/noInternetFragment" />
     </fragment>
     <fragment
         android:id="@+id/noInternetFragment"
-        tools:layout="@layout/no_connection_fragment"
         android:name="com.github.rtyvZ.kitties.network.NoInternetFragment"
-        android:label="NoInternetFragment" />
+        android:label="NoInternetFragment"
+        tools:layout="@layout/no_connection_fragment" />
+    <fragment
+        android:id="@+id/cats_breeds"
+        android:name="com.github.rtyvZ.kitties.ui.catsBreeds.CatsBreeds"
+        android:label="CatsBreedFragment"
+        tools:layout="@layout/cats_breeds_fragment">
+        <action
+            android:id="@id/action_favorite_cats_to_noInternetFragment"
+            app:destination="@id/noInternetFragment" />
+    </fragment>
 </navigation>

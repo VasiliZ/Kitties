@@ -25,7 +25,7 @@ class LaunchViewModel @Inject constructor(private val launchModel: LaunchModel) 
                 launchModel.getUserUid(channel)
 
                 try {
-                    channel.receive()?.also {
+                    channel.receive().also {
                         launchModel.saveUserUid(it)
                         launchSuccess.postValue(it)
                     }

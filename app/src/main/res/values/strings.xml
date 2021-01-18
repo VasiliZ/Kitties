@@ -26,4 +26,5 @@
     <string name="alert">Внимание</string>
     <string name="cat_was_deleted">Кот успешно удален</string>
     <string name="download">Скачать изображение</string>
+    <string name="Breeds">Породы</string>
 </resources>
