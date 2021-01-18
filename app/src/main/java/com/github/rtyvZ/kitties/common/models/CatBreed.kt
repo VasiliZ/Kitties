@@ -10,5 +10,7 @@ data class CatBreed(
     @SerializedName("life_span")
     val lifeSpan: String,
     @SerializedName("weight_imperial")
-    val weight_imperial: Int
+    val weight_imperial: Int,
+    @SerializedName("image")
+    val image: Image
 )

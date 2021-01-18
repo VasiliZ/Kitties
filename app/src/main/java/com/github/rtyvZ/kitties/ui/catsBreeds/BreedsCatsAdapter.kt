@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.models.CatBreed
 import kotlinx.android.extensions.LayoutContainer
@@ -28,6 +29,10 @@ class BreedsCatsAdapter :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
         fun setData(breed: CatBreed) {
             breedTitle.text = breed.name
+            Glide.with(breedImage.context)
+                .load(breed.image.url)
+                .centerCrop()
+                .into(breedImage)
         }
     }
 }
