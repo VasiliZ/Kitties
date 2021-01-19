@@ -11,7 +11,7 @@ import com.github.rtyvZ.kitties.common.models.CatBreed
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.breed_item.*
 
-class BreedsCatsAdapter :
+class BreedsCatsAdapter(private val itemClick: (CatBreed) -> (Unit)) :
     ListAdapter<CatBreed, BreedsCatsAdapter.BreedsCatsViewHolder>(BreedsCatsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BreedsCatsViewHolder {
@@ -22,17 +22,20 @@ class BreedsCatsAdapter :
 
     override fun onBindViewHolder(holder: BreedsCatsViewHolder, position: Int) {
         val breed = currentList[position]
-        holder.setData(breed)
+        holder.setData(breed, itemClick)
     }
 
     class BreedsCatsViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
-        fun setData(breed: CatBreed) {
+        fun setData(breed: CatBreed, itemClick: (CatBreed) -> Unit) {
             breedTitle.text = breed.name
             Glide.with(breedImage.context)
                 .load(breed.image.url)
                 .centerCrop()
                 .into(breedImage)
+            breedContainer.setOnClickListener {
+                itemClick.invoke(breed)
+            }
         }
     }
 }

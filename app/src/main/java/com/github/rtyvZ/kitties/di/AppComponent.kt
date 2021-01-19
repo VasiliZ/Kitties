@@ -23,7 +23,8 @@ import javax.inject.Singleton
         MainActivityModule::class,
         NetworkModule::class,
         DatabaseModule::class,
-        BreedsModule::class]
+        BreedsModule::class,
+        DescriptionBreeds::class]
 )
 interface AppComponent : AndroidInjector<App> {
     @Component.Builder

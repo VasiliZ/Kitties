@@ -44,5 +44,20 @@
         <action
             android:id="@id/action_favorite_cats_to_noInternetFragment"
             app:destination="@id/noInternetFragment" />
+
+        <action
+            android:id="@+id/to_details"
+            app:destination="@id/breedDetails" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/breedDetails"
+        android:name="com.github.rtyvZ.kitties.ui.catsBreeds.BreedDetailsFragment"
+        android:label="BreedDetails"
+        tools:layout="@layout/breed_inner_item">
+
+        <argument
+            android:name="details"
+            app:argType="com.github.rtyvZ.kitties.common.models.CatBreed" />
     </fragment>
 </navigation>

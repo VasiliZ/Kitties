@@ -13,6 +13,7 @@ object Strings {
         const val SEND_NO_CONNECTIVITY_INTENT_ACTION = "no.connection.action"
         const val SEND_NO_CONNECTIVITY_KEY = "no_connectivity_message"
         const val DOWNLOAD_IMAGE_KEY = "com.github.rtyvZ.kitties.DOWNLOAD_IMAGE_KEY"
+        const val DESCRIPTION_BREEDS = "details_breed"
     }
 
     object Notification {
