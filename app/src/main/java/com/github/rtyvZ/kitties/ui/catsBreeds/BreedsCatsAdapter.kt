@@ -30,7 +30,7 @@ class BreedsCatsAdapter(private val itemClick: (CatBreed) -> (Unit)) :
         fun setData(breed: CatBreed, itemClick: (CatBreed) -> Unit) {
             breedTitle.text = breed.name
             Glide.with(breedImage.context)
-                .load(breed.image.url)
+                .load(breed.image?.url)
                 .centerCrop()
                 .into(breedImage)
             breedContainer.setOnClickListener {

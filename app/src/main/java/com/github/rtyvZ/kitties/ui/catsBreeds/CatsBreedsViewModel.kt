@@ -25,7 +25,7 @@ class CatsBreedsViewModel @Inject constructor() : ViewModel() {
                 breedsModel.getBreeds().collect {
                     when (it) {
                         is NetworkResponse.Success -> {
-                         mutableBreedList.postValue(it.body)
+                            mutableBreedList.postValue(it.body)
                         }
                         is NetworkResponse.ApiError -> {
 //todo

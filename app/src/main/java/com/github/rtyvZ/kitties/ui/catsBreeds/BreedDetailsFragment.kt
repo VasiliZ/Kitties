@@ -1,6 +1,8 @@
 package com.github.rtyvZ.kitties.ui.catsBreeds
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.LeadingMarginSpan
 import android.view.View
 import com.bumptech.glide.Glide
 import com.github.rtyvZ.kitties.R
@@ -17,6 +19,21 @@ class BreedDetailsFragment @Inject constructor() : DaggerFragment(R.layout.breed
         activity?.let {
             Glide.with(it).load(breeds?.image?.url).centerCrop().into(breedCatImage)
         }
-        textDescription.text = breeds?.description
+        textDescription.text = createIndentedText(breeds?.description.toString(), 32, 0)
+    }
+
+    private fun createIndentedText(
+        text: String,
+        marginFirstLine: Int,
+        marginNextLine: Int
+    ): SpannableString {
+        val spannableString = SpannableString(text)
+        spannableString.setSpan(
+            LeadingMarginSpan.Standard(marginFirstLine, marginNextLine),
+            0,
+            text.length,
+            0
+        )
+        return spannableString
     }
 }

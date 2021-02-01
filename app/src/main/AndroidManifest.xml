@@ -15,7 +15,6 @@
 
     <queries>
         <provider android:authorities="com.example.settings.files" />
-
         <package android:name="com.github.rtyvZ.kitties" />
     </queries>
 

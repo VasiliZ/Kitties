@@ -15,7 +15,7 @@ data class CatBreed(
     @SerializedName("weight_imperial")
     val weight_imperial: Int,
     @SerializedName("image")
-    val image: Image,
+    val image: Image?,
     @SerializedName("description")
     val description: String
 ) : Parcelable

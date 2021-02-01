@@ -1,8 +1,7 @@
 package com.github.rtyvZ.kitties.ui.main
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import androidx.exifinterface.media.ExifInterface
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage
 import java.io.File
