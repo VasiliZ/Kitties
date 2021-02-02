@@ -50,7 +50,12 @@ class MyCatsViewModel @Inject constructor(private val db: CatDatabase) : ViewMod
         }
     }
 
-    fun getKittiesFromDB() =
-        myCatsModel.getLocalCats()
-
+    fun getKittiesFromDB() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                myCatsModel.getLocalCats()
+            }
+        }
+    }
 }
+
