@@ -74,13 +74,9 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
-    //dagger
-    // Dagger
-    implementation "com.google.dagger:dagger:$dagger_2_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_2_version"
-    kapt "com.google.dagger:dagger-android-processor:$dagger_2_version"
-    implementation "com.google.dagger:dagger-android:$dagger_2_version"
-    implementation "com.google.dagger:dagger-android-support:$dagger_2_version"
+    //hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
