@@ -11,20 +11,9 @@ class App : DaggerApplication() {
     override fun onCreate() {
         injector = DaggerAppComponent.builder().application(this).build()
         super.onCreate()
-        context = applicationContext
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         return injector
-    }
-
-    object ApiKeyProvider {
-        fun getKey() = "0506e17c-e910-4a31-87ab-f68eace36b7d"
-    }
-
-    companion object {
-
-        private lateinit var context: Context
-
     }
 }

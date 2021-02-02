@@ -37,7 +37,6 @@ class SendPhotoRepository @Inject constructor(
 
                 emit(
                     api.uploadImage(
-                        App.ApiKeyProvider.getKey(),
                         MultipartBody.Part
                             .createFormData(
                                 NAME_FOR_CREATE_FORM_DATA,

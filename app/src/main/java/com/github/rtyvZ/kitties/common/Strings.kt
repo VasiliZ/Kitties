@@ -1,10 +1,22 @@
 package com.github.rtyvZ.kitties.common
+
 object Strings {
 
     const val BASE_URL: String = "https://api.thecatapi.com/v1/"
 
+    object Crypt {
+        const val AES_ALGORITHM = "AES"
+        const val TRANSFORMATION = "AES/CBC/PKCS7Padding"
+        const val SHA_256_ALGORITHM = "SHA-256"
+
+    }
+
     object PreferenceConst {
         const val AUTH_USER_PREFERENCE = "prefs.for.auth.user"
+    }
+
+    object Charsets{
+        const val UTF_8 = "UTF-8"
     }
 
     object IntentConsts {

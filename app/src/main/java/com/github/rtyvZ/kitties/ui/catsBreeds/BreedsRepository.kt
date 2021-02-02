@@ -12,10 +12,9 @@ class BreedsRepository @Inject constructor(
 ) {
 
     private val session = sessionStorage.getSession()
-    private val key = App.ApiKeyProvider.getKey()
     fun getAllBreeds() = flow {
         session?.let {
-            emit(api.getAllCatsBreeds(key))
+            emit(api.getAllCatsBreeds())
         }
     }
 }

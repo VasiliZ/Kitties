@@ -53,60 +53,14 @@ class RandomCatsFragment : DaggerFragment(R.layout.random_cats_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(RandomCatsViewModel::class.java)
+        setUpViewModel()
         progress.show()
         viewModel.clear()
         viewModel.getCats()
         this.registerForContextMenu(listRandomCats)
 
-        viewModel.getRandomCats.observe(viewLifecycleOwner, {
-            progress.hide()
-            isLoading = true
-            catAdapter.submitList(it)
-        })
-
-        viewModel.getRandomCatsError.observe(viewLifecycleOwner, {
-            progress.hide()
-            findNavController().navigate(R.id.action_list_kitties_to_noInternetFragment)
-        })
-
-        viewModel.getErrorActionWithCat.observe(viewLifecycleOwner,
-            {
-                activity?.let {
-                    Toast.makeText(it, R.string.no_connection, Toast.LENGTH_SHORT).show()
-                }
-            })
-
-        activity?.let {
-            itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback))
-            itemTouchHelper.attachToRecyclerView(listRandomCats)
-        }
-
-        listRandomCats.apply {
-            activity?.let {
-                adapter = catAdapter
-                //disable blinks in recycler view
-                itemAnimator?.changeDuration = 0
-                manager = LinearLayoutManager(it)
-                layoutManager = manager
-
-                addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        if (dy > 0) {
-                            visibleItemCount = manager.childCount
-                            totalItemCount = manager.itemCount
-                            lastVisibleItem = manager.findLastVisibleItemPosition()
-                            if (isLoading) {
-                                if ((visibleItemCount + lastVisibleItem) >= totalItemCount) {
-                                    isLoading = false
-                                    viewModel.getCats()
-                                }
-                            }
-                        }
-                    }
-                })
-            }
-        }
+        initObservers()
+        initRecyclerView()
     }
 
     override fun onCreateContextMenu(
@@ -137,5 +91,62 @@ class RandomCatsFragment : DaggerFragment(R.layout.random_cats_fragment) {
         }
 
         return super.onContextItemSelected(item)
+    }
+
+    private fun setUpViewModel() {
+        viewModel = ViewModelProvider(this, viewModelFactory).get(RandomCatsViewModel::class.java)
+    }
+
+    private fun initRecyclerView() {
+        listRandomCats.apply {
+            activity?.let {
+                adapter = catAdapter
+                //disable blinks in recycler view
+                itemAnimator?.changeDuration = 0
+                manager = LinearLayoutManager(it)
+                layoutManager = manager
+
+                addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        if (dy > 0) {
+                            visibleItemCount = manager.childCount
+                            totalItemCount = manager.itemCount
+                            lastVisibleItem = manager.findLastVisibleItemPosition()
+                            if (isLoading) {
+                                if ((visibleItemCount + lastVisibleItem) >= totalItemCount) {
+                                    isLoading = false
+                                    viewModel.getCats()
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    private fun initObservers() {
+        viewModel.getRandomCats.observe(viewLifecycleOwner, {
+            progress.hide()
+            isLoading = true
+            catAdapter.submitList(it)
+        })
+
+        viewModel.getRandomCatsError.observe(viewLifecycleOwner, {
+            progress.hide()
+            findNavController().navigate(R.id.action_list_kitties_to_noInternetFragment)
+        })
+
+        viewModel.getErrorActionWithCat.observe(viewLifecycleOwner,
+            {
+                activity?.let {
+                    Toast.makeText(it, R.string.no_connection, Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        activity?.let {
+            itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback))
+            itemTouchHelper.attachToRecyclerView(listRandomCats)
+        }
     }
 }

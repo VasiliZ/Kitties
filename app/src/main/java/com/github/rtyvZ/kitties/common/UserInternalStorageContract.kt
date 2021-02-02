@@ -7,4 +7,6 @@ interface UserInternalStorageContract {
     fun hasSession(): Boolean
     fun restoreSession()
     fun getSession(): UserSession?
+    fun saveEncryptedToken(encryptedKey: String)
+    fun saveSecretKey(secretKey: String)
 }

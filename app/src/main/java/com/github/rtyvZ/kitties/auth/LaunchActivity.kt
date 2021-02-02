@@ -25,7 +25,7 @@ class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory).get(LaunchViewModel::class.java)
         progress.show()
-        viewModel.requestUid()
+        viewModel.getDataForAuth()
 
         viewModel.getUserUid.observe(this, {
             progress.hide()
@@ -41,6 +41,8 @@ class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
                 Snackbar.make(progress, charSequence, Snackbar.LENGTH_LONG).show()
             }
         })
+
+        viewModel
     }
 
     private fun startMainActivity() {

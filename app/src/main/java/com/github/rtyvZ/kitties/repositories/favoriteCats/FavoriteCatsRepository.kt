@@ -1,6 +1,5 @@
 package com.github.rtyvZ.kitties.repositories.favoriteCats
 
-import com.github.rtyvZ.kitties.App
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import kotlinx.coroutines.flow.flow
@@ -11,11 +10,10 @@ class FavoriteCatsRepository @Inject constructor(
     private val api: Api
 ) {
     private val session = sessionStorage.getSession()
-    private val keyProvider = App.ApiKeyProvider.getKey()
 
     fun getFavoriteCats() = flow {
         session?.let {
-            emit(api.getFavoritesCat(keyProvider, it.userId))
+            emit(api.getFavoritesCat(it.userId))
         }
     }
 
@@ -23,7 +21,7 @@ class FavoriteCatsRepository @Inject constructor(
         session?.let {
             emit(
                 api
-                    .deleteFavoriteCat(keyProvider, catId)
+                    .deleteFavoriteCat(catId)
             )
         }
     }

@@ -2,12 +2,17 @@ package com.github.rtyvZ.kitties.di
 
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.Strings
+import com.github.rtyvZ.kitties.common.UserInternalStorageContract
+import com.github.rtyvZ.kitties.common.cryptography.Cryptographer
+import com.github.rtyvZ.kitties.common.models.UserSession
 import com.github.rtyvZ.kitties.network.NetworkResponseFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,9 +22,33 @@ import javax.inject.Singleton
 class NetworkModule {
     @Provides
     @Singleton
-    internal fun provideHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
+    internal fun provideHttpClient(
+        interceptor: HttpLoggingInterceptor,
+        storage: UserInternalStorageContract
+    ): OkHttpClient {
         return OkHttpClient
             .Builder()
+            .addInterceptor(object : Interceptor {
+                override fun intercept(chain: Interceptor.Chain): Response {
+                    val cryptographer = Cryptographer<String, String>()
+                    var key = ""
+                    var secret = ""
+                    if (storage.hasSession()) {
+                        storage.restoreSession()
+                        storage.getSession()?.let {
+                            key = it.encryptedKey
+                            secret = it.encryptedKey
+                        }
+                    }
+                    val apikey =
+                        cryptographer.decrypt(key, secret)
+                    val request =
+                        chain.request().newBuilder()
+                            .addHeader("x-api-key", apikey.toString()).build()
+                    return chain.proceed(request)
+                }
+
+            })
             .addInterceptor(interceptor)
             .build()
     }
@@ -64,5 +93,4 @@ class NetworkModule {
     internal fun providesNetworkResponseFactory(): NetworkResponseFactory {
         return NetworkResponseFactory()
     }
-
 }

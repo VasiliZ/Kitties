@@ -13,15 +13,13 @@ class MyCatsRepository @Inject constructor(
     private val db: CatDatabase
 ) {
     private val session = sessionStorage.getSession()
-    private val keyProvider = App.ApiKeyProvider.getKey()
 
     fun deleteCat(idImage: String) = flow {
         session?.let {
-            emit(api.deleteUploadedImage(keyProvider, idImage))
+            emit(api.deleteUploadedImage(idImage))
         }
     }
 
     fun getSavedCats() =
         db.getCatDao().getAllCats()
-
 }

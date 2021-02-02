@@ -1,6 +1,5 @@
 package com.github.rtyvZ.kitties.repositories.RandomCatsRepository
 
-import com.github.rtyvZ.kitties.App
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.models.Cat
@@ -26,7 +25,7 @@ class RandomCatsRepository @Inject constructor(
         session?.let {
             val responseVotes =
                 api.getMyVotes(
-                    App.ApiKeyProvider.getKey(), session.userId
+                    session.userId
                 )
             emit(responseVotes)
         }
@@ -37,7 +36,6 @@ class RandomCatsRepository @Inject constructor(
             emit(
                 api
                     .votes(
-                        App.ApiKeyProvider.getKey(),
                         VoteRequest(cat.id, cat.choice, it.userId)
                     )
             )
@@ -48,7 +46,6 @@ class RandomCatsRepository @Inject constructor(
         emit(
             api
                 .deleteVote(
-                    App.ApiKeyProvider.getKey(),
                     cat.voteId.toString()
                 )
         )
@@ -58,7 +55,6 @@ class RandomCatsRepository @Inject constructor(
         session?.let { session ->
             emit(
                 api.addCatToFavorites(
-                    App.ApiKeyProvider.getKey(),
                     FavoritesRequest(catId, session.userId)
                 )
             )
