@@ -1,6 +1,7 @@
 package com.github.rtyvZ.kitties.ui.myUploadedCats
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,9 +20,13 @@ class MyCatsViewModel @Inject constructor(private val db: CatDatabase) : ViewMod
     private val errorWhileGetsMyCats = MutableLiveData<Throwable>()
     private val errorDeletingMyCats = MutableLiveData<Throwable>()
     private val mutableSuccessDeleteCat = MutableLiveData<Unit>()
+    private val mutableKittiesFromDb = MutableLiveData<List<Cat>>()
+
     val errorWhileDeletingCat = errorDeletingMyCats
     val getErrorMyCats = errorWhileGetsMyCats
     val getSuccessDeleteCat = mutableSuccessDeleteCat
+    val getKitties:LiveData<List<Cat>> = mutableKittiesFromDb
+
     fun deleteUploadedCat(cat: Cat) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -53,7 +58,8 @@ class MyCatsViewModel @Inject constructor(private val db: CatDatabase) : ViewMod
     fun getKittiesFromDB() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                myCatsModel.getLocalCats()
+                val list = myCatsModel.getLocalCats()
+                mutableKittiesFromDb.postValue(list)
             }
         }
     }

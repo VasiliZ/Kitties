@@ -7,7 +7,7 @@ import com.github.rtyvZ.kitties.common.models.Cat
 @Dao
 interface MyCatsDao {
     @Query("Select * from Cat")
-    fun getAllCats(): LiveData<List<Cat>?>?
+    fun getAllCats(): List<Cat>
 
     @Delete()
     fun delete(cat: Cat)

@@ -28,6 +28,7 @@ class MyCatFragment @Inject constructor() : DaggerFragment(R.layout.my_cat_fragm
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MyCatsViewModel::class.java)
+        viewModel.getKittiesFromDB()
         setUpRecyclerView()
 
         viewModel.errorWhileDeletingCat.observe(viewLifecycleOwner, {
@@ -38,11 +39,11 @@ class MyCatFragment @Inject constructor() : DaggerFragment(R.layout.my_cat_fragm
             findNavController().navigate(R.id.action_my_cats_to_noInternetFragment)
         })
 
-        viewModel.getKittiesFromDB()?.observe(viewLifecycleOwner, { cats ->
+        viewModel.getKitties.observe(viewLifecycleOwner) { cats ->
             cats?.let {
                 uploadedAdapter.submitList(cats)
             }
-        })
+        }
         viewModel.getSuccessDeleteCat.observe(viewLifecycleOwner, {
             Toast.makeText(activity, R.string.cat_was_deleted, Toast.LENGTH_SHORT).show()
         })
