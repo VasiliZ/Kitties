@@ -37,7 +37,7 @@ class NetworkModule {
                         storage.restoreSession()
                         storage.getSession()?.let {
                             key = it.encryptedKey
-                            secret = it.encryptedKey
+                            secret = it.secretKey
                         }
                     }
                     val apikey =
