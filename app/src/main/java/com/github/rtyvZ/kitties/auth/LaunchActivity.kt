@@ -2,28 +2,23 @@ package com.github.rtyvZ.kitties.auth
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import com.github.rtyvZ.kitties.ui.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.launch_activity.*
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class LaunchActivity : AppCompatActivity(R.layout.launch_activity) {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private lateinit var viewModel: LaunchViewModel
+    private val viewModel: LaunchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(LaunchViewModel::class.java)
         progress.show()
         viewModel.getDataForAuth()
 

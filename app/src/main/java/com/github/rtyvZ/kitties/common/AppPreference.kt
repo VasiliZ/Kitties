@@ -1,10 +1,11 @@
 package com.github.rtyvZ.kitties.common
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class AppPreference @Inject constructor(
-    context: Context,
+    @ApplicationContext context: Context,
     @PreferenceInfo val preferenceFileName: String
 ) : PreferenceHelper {
 
@@ -21,15 +22,15 @@ class AppPreference @Inject constructor(
             .apply()
     }
 
-    override fun saveEncryptKey(key: String) {
+    override fun saveEncryptKey(encrKey: String) {
         prefs.edit()
-            .putString(ENCRYPT_KEY_FOR_KITTY_APP, key)
+            .putString(ENCRYPT_KEY_FOR_KITTY_APP, encrKey)
             .apply()
     }
 
-    override fun saveSecretKey(key: String) {
+    override fun saveSecretKey(secretKey: String) {
         prefs.edit()
-            .putString(SECRET_KEY_ID, key)
+            .putString(SECRET_KEY_ID, secretKey)
             .apply()
     }
 

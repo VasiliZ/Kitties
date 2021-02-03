@@ -1,10 +1,7 @@
 package com.github.rtyvZ.kitties.auth
 
-import android.content.Context
-import android.util.Log
 import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.cryptography.Cryptographer
-import com.github.rtyvZ.kitties.common.cryptography.Encryptor
 import com.github.rtyvZ.kitties.common.models.UserSession
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

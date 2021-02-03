@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.rtyvZ.kitties.common.inlineFun.checkNull
 import com.github.rtyvZ.kitties.common.models.UserSession
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@HiltViewModel
 class LaunchViewModel @Inject constructor(private val launchModel: LaunchModel) : ViewModel() {
 
     private val launchSuccess = MutableLiveData<String>()

@@ -1,6 +1,5 @@
 package com.github.rtyvZ.kitties.common
 
-import com.github.rtyvZ.kitties.common.inlineFun.checkNull
 import com.github.rtyvZ.kitties.common.models.UserSession
 import javax.inject.Inject
 
@@ -22,7 +21,15 @@ class SessionStorage @Inject constructor(private val prefs: AppPreference) :
 
         if (userId != null) {
             userSession =
-                secretKey?.let { encryptedKey?.let { secretKey -> UserSession(userId, it, secretKey) } }
+                secretKey?.let {
+                    encryptedKey?.let { secretKey ->
+                        UserSession(
+                            userId,
+                            it,
+                            secretKey
+                        )
+                    }
+                }
         }
     }
 

@@ -10,6 +10,7 @@ import com.github.rtyvZ.kitties.extentions.replaceElement
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.response.MyVoteResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@HiltViewModel
 class RandomCatsViewModel @Inject constructor() : ViewModel() {
 
     private var mutableRandomCats = MutableLiveData<List<Cat>?>()

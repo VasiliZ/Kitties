@@ -8,17 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.ui.services.SendCatService
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.photo_preview.*
 import javax.inject.Inject
 
-class TakePhotoActivity @Inject constructor() : AppCompatActivity(R.layout.photo_preview) {
-
-    @Inject
-    lateinit var takePhotoRepository: TakeAPhotoRepository
+@AndroidEntryPoint
+class TakePhotoActivity @Inject constructor(val takePhotoRepository: TakeAPhotoRepository) : AppCompatActivity(R.layout.photo_preview) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         sendPhotoFab.setOnClickListener {

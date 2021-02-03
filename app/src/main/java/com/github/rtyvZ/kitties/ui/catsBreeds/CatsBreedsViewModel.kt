@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.rtyvZ.kitties.common.models.CatBreed
 import com.github.rtyvZ.kitties.network.NetworkResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@HiltViewModel
 class CatsBreedsViewModel @Inject constructor() : ViewModel() {
     @Inject
     lateinit var breedsModel: BreedsModel

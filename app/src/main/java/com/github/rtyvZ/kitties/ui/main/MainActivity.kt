@@ -7,11 +7,11 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.github.rtyvZ.kitties.R
@@ -20,27 +20,20 @@ import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
 import com.github.rtyvZ.kitties.ui.receivers.NoConnectivityMessageReceiver
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import com.github.rtyvZ.kitties.ui.services.SendCatService
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity @Inject constructor() : AppCompatActivity(R.layout.activity_main) {
 
     private var isRotateFab = false
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: MainActivityViewModel
+    private val viewModel: MainActivityViewModel by viewModels()
     private val noConnectivityMessageReceiver = NoConnectivityMessageReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(
-            this,
-            viewModelFactory
-        ).get(MainActivityViewModel::class.java)
 
         val host = supportFragmentManager
             .findFragmentById(R.id.content_container) as NavHostFragment

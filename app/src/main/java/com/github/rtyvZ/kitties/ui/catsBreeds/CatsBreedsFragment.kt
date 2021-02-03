@@ -2,6 +2,8 @@ package com.github.rtyvZ.kitties.ui.catsBreeds
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,14 +11,14 @@ import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.cats_breeds_fragment.*
 import javax.inject.Inject
 
-class CatsBreedsFragment @Inject constructor() : DaggerFragment(R.layout.cats_breeds_fragment) {
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: CatsBreedsViewModel
+@AndroidEntryPoint
+class CatsBreedsFragment @Inject constructor() : Fragment(R.layout.cats_breeds_fragment) {
+
+    private val viewModel: CatsBreedsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,7 +31,6 @@ class CatsBreedsFragment @Inject constructor() : DaggerFragment(R.layout.cats_br
 
         initRecyclerView(breedsAdapter)
         progressBreed.show()
-        viewModel = ViewModelProvider(this, viewModelFactory).get(CatsBreedsViewModel::class.java)
         viewModel.getBreeds()
         viewModel.listBreeds.observe(viewLifecycleOwner, {
             progressBreed.hide()

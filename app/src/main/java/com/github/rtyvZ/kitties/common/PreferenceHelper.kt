@@ -5,6 +5,6 @@ interface PreferenceHelper {
     fun getEncryptKey(): String?
     fun getSecretKey(): String?
     fun saveUserId(userId: String)
-    fun saveEncryptKey(userId: String)
-    fun saveSecretKey(userId: String)
+    fun saveEncryptKey(encrKey: String)
+    fun saveSecretKey(secretKey: String)
 }

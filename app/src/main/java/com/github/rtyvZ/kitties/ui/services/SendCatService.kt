@@ -2,6 +2,7 @@ package com.github.rtyvZ.kitties.ui.services
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -14,7 +15,6 @@ import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.repositories.sendPhoto.SendPhotoRepository
-import dagger.android.DaggerService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class SendCatService @Inject constructor() : DaggerService() {
+class SendCatService @Inject constructor() : Service() {
     @Inject
     lateinit var repo: SendPhotoRepository
 

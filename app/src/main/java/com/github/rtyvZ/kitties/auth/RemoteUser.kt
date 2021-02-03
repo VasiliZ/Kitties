@@ -8,13 +8,7 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
-class RemoteUser @Inject constructor() {
-
-    @Inject
-    lateinit var auth: FirebaseAuth
-
-    @Inject
-    lateinit var executor: Executor
+class RemoteUser @Inject constructor(var auth: FirebaseAuth, var executor: Executor) {
 
     @ExperimentalCoroutinesApi
     fun getUserUid(channel: Channel<String>) = getUserUIDFromFireBase(auth, channel)

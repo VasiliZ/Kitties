@@ -6,6 +6,8 @@ import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -18,15 +20,14 @@ import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import com.github.rtyvZ.kitties.ui.services.ImageDownloadService
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.random_cats_fragment.*
 import javax.inject.Inject
 
-class RandomCatsFragment : DaggerFragment(R.layout.random_cats_fragment) {
+@AndroidEntryPoint
+class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: RandomCatsViewModel
+    private val viewModel: RandomCatsViewModel by viewModels()
     private lateinit var manager: LinearLayoutManager
     private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var catForDownloadImage: Cat
@@ -43,6 +44,7 @@ class RandomCatsFragment : DaggerFragment(R.layout.random_cats_fragment) {
             activity.openContextMenu(view)
         }
     }
+    
     private val catAdapter = RandomCatAdapter(setLike, openContextMenu)
 
     private var visibleItemCount: Int = 0
@@ -53,7 +55,6 @@ class RandomCatsFragment : DaggerFragment(R.layout.random_cats_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpViewModel()
         progress.show()
         viewModel.clear()
         viewModel.getCats()
@@ -91,10 +92,6 @@ class RandomCatsFragment : DaggerFragment(R.layout.random_cats_fragment) {
         }
 
         return super.onContextItemSelected(item)
-    }
-
-    private fun setUpViewModel() {
-        viewModel = ViewModelProvider(this, viewModelFactory).get(RandomCatsViewModel::class.java)
     }
 
     private fun initRecyclerView() {

@@ -7,12 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.github.rtyvZ.kitties.domain.favoriteCats.FavoriteCatsModel
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@HiltViewModel
 class FavoriteCatsViewModel @Inject constructor() : ViewModel() {
     @Inject
     lateinit var favoriteCatsModel: FavoriteCatsModel

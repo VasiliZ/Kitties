@@ -8,12 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.db.CatDatabase
 import com.github.rtyvZ.kitties.network.NetworkResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@HiltViewModel
 class MyCatsViewModel @Inject constructor(private val db: CatDatabase) : ViewModel() {
     @Inject
     lateinit var myCatsModel: MyCatsModel
@@ -25,7 +27,7 @@ class MyCatsViewModel @Inject constructor(private val db: CatDatabase) : ViewMod
     val errorWhileDeletingCat = errorDeletingMyCats
     val getErrorMyCats = errorWhileGetsMyCats
     val getSuccessDeleteCat = mutableSuccessDeleteCat
-    val getKitties:LiveData<List<Cat>> = mutableKittiesFromDb
+    val getKitties: LiveData<List<Cat>> = mutableKittiesFromDb
 
     fun deleteUploadedCat(cat: Cat) {
         viewModelScope.launch {
