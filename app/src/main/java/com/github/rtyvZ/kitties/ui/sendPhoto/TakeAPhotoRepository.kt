@@ -24,7 +24,6 @@ class TakeAPhotoRepository @Inject constructor(
     fun getPhotoUri() =
         imageHelper.getFileWithPhoto(context).path.toUri()
 
-
     companion object {
         const val AUTHORITY = "com.github.rtyvZ.kitties.fileprovider"
     }

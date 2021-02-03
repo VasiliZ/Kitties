@@ -9,8 +9,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class ImageHelper @Inject constructor() {
-
+class ImageHelper {
 
     private lateinit var currentPhotoPath: String
 

@@ -10,13 +10,19 @@ import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.databinding.PhotoPreviewBinding
 import com.github.rtyvZ.kitties.ui.services.SendCatService
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class TakePhotoActivity(private val takePhotoRepository: TakeAPhotoRepository) : AppCompatActivity() {
+class TakePhotoActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var takePhotoRepository: TakeAPhotoRepository
+
     private lateinit var binding: PhotoPreviewBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = PhotoPreviewBinding.inflate(layoutInflater)
+        binding = PhotoPreviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.sendPhotoFab.setOnClickListener {
