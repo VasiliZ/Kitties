@@ -16,14 +16,13 @@ import com.github.rtyvZ.kitties.databinding.FavoriteCatsFragmentBinding
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class FavoriteCatsFragment : Fragment() {
-    private lateinit var _binding: FavoriteCatsFragmentBinding
-    private val binding get() = _binding
+    private var _binding: FavoriteCatsFragmentBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: FavoriteCatsViewModel by viewModels()
-    private val itemTouchHelper = ItemTouchHelper(DragItemHelper { position, direction ->
+    private val itemTouchHelper = ItemTouchHelper(DragItemHelper { position, _ ->
         viewModel.deleteFavoriteCat(position)
     })
 
@@ -66,5 +65,10 @@ class FavoriteCatsFragment : Fragment() {
                 Toast.makeText(it, R.string.no_connection, Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

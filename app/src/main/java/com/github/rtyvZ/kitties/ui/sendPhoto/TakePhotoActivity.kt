@@ -7,18 +7,19 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
+import com.github.rtyvZ.kitties.databinding.PhotoPreviewBinding
 import com.github.rtyvZ.kitties.ui.services.SendCatService
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.photo_preview.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class TakePhotoActivity @Inject constructor(val takePhotoRepository: TakeAPhotoRepository) : AppCompatActivity(R.layout.photo_preview) {
-
+class TakePhotoActivity(private val takePhotoRepository: TakeAPhotoRepository) : AppCompatActivity() {
+    private lateinit var binding: PhotoPreviewBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val binding = PhotoPreviewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        sendPhotoFab.setOnClickListener {
+        binding.sendPhotoFab.setOnClickListener {
             startService()
             sendResult()
             finish()
@@ -30,7 +31,7 @@ class TakePhotoActivity @Inject constructor(val takePhotoRepository: TakeAPhotoR
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == ACTIVITY_RESULT_CODE && resultCode == RESULT_OK) {
             takePhotoRepository.getImage()?.let {
-                photoACat.setImageBitmap(it)
+                binding.photoACat.setImageBitmap(it)
             }
         } else {
             finish()
@@ -50,7 +51,6 @@ class TakePhotoActivity @Inject constructor(val takePhotoRepository: TakeAPhotoR
             }
         }
     }
-
 
     private fun startService() {
         val sentPhotoIntent = Intent(this, SendCatService::class.java)

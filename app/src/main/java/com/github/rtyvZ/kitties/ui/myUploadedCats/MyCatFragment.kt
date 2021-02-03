@@ -88,4 +88,9 @@ class MyCatFragment : Fragment() {
                 .show()
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

@@ -1,24 +1,35 @@
 package com.github.rtyvZ.kitties.ui.catsBreeds
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
+import com.github.rtyvZ.kitties.databinding.CatsBreedsFragmentBinding
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.cats_breeds_fragment.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class CatsBreedsFragment @Inject constructor() : Fragment(R.layout.cats_breeds_fragment) {
+class CatsBreedsFragment : Fragment(R.layout.cats_breeds_fragment) {
 
     private val viewModel: CatsBreedsViewModel by viewModels()
+    private var _bindings: CatsBreedsFragmentBinding? = null
+    private val bindings get() = _bindings!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _bindings = CatsBreedsFragmentBinding.inflate(inflater, container, false)
+        return bindings.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,16 +41,16 @@ class CatsBreedsFragment @Inject constructor() : Fragment(R.layout.cats_breeds_f
         }
 
         initRecyclerView(breedsAdapter)
-        progressBreed.show()
+        bindings.progressBreed.show()
         viewModel.getBreeds()
         viewModel.listBreeds.observe(viewLifecycleOwner, {
-            progressBreed.hide()
+            bindings.progressBreed.hide()
             breedsAdapter.submitList(it)
         })
     }
 
     private fun initRecyclerView(breedsAdapter: BreedsCatsAdapter) {
-        breedsList.apply {
+        bindings.breedsList.apply {
             activity?.let { activity ->
                 adapter = breedsAdapter
                 layoutManager = LinearLayoutManager(activity)

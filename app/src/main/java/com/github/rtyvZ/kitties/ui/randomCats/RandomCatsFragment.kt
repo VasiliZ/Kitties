@@ -30,7 +30,7 @@ class RandomCatsFragment : Fragment() {
     private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var catForDownloadImage: Cat
 
-    private val swipeCallback: (Int, Int) -> Unit = { position, direction ->
+    private val swipeCallback: (Int, Int) -> Unit = { position, _ ->
         viewModel.addToFavorites(position)
     }
     private val setLike: (Cat, StateCatVote) -> Unit = { cat, choice ->
