@@ -16,10 +16,8 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.models.Cat
+import com.github.rtyvZ.kitties.databinding.CatItemBinding
 import com.github.rtyvZ.kitties.extentions.hide
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.cat_item.*
-import kotlinx.android.synthetic.main.cat_item.view.*
 
 class RandomCatAdapter(
     private val setLike: (Cat, StateCatVote) -> Unit,
@@ -28,11 +26,12 @@ class RandomCatAdapter(
     ListAdapter<Cat, RandomCatAdapter.RandomCatViewHolder>(RandomCatsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomCatViewHolder {
-
-        return RandomCatViewHolder(
+        val itemBinding = CatItemBinding.inflate(
             LayoutInflater
                 .from(parent.context)
-                .inflate(R.layout.cat_item, parent, false)
+        )
+        return RandomCatViewHolder(
+            itemBinding
         )
     }
 
@@ -42,57 +41,57 @@ class RandomCatAdapter(
     }
 
     class RandomCatViewHolder(
-        override val containerView: View
+        val binding: CatItemBinding
     ) :
-        RecyclerView.ViewHolder(containerView), LayoutContainer {
+        RecyclerView.ViewHolder(binding.root) {
 
         fun setData(
             cat: Cat,
             setLike: (Cat, StateCatVote) -> Unit,
             openContextMenu: (cat: Cat, view: View) -> Unit
         ) {
-            containerView.imageCat.setOnLongClickListener {
+            binding.imageCat.setOnLongClickListener {
                 openContextMenu.invoke(cat, it)
                 true
             }
             if (cat.choice == 1) {
-                thumb_up.background = ResourcesCompat.getDrawable(
-                    containerView.context.resources,
+                binding.thumbUp.background = ResourcesCompat.getDrawable(
+                    binding.root.context.resources,
                     R.drawable.thumb_up_green,
                     null
                 )
             } else {
-                thumb_up.background = ResourcesCompat.getDrawable(
-                    containerView.context.resources,
+                binding.thumbUp.background = ResourcesCompat.getDrawable(
+                    binding.root.context.resources,
                     R.drawable.ic_baseline_thumb_without_vote,
                     null
                 )
             }
 
             if (cat.choice == 0) {
-                thumb_down.background = ResourcesCompat.getDrawable(
-                    containerView.context.resources,
+                binding.thumbDown.background = ResourcesCompat.getDrawable(
+                    binding.root.context.resources,
                     R.drawable.thumb_down_64,
                     null
                 )
             } else {
-                thumb_down.background = ResourcesCompat.getDrawable(
-                    containerView.context.resources,
+                binding.thumbUp.background = ResourcesCompat.getDrawable(
+                    binding.root.context.resources,
                     R.drawable.ic_baseline_thumb_down_without_vote,
                     null
                 )
             }
 
-            thumb_up.setOnClickListener {
+            binding.thumbUp.setOnClickListener {
                 setLike(cat, StateCatVote.LIKE)
             }
 
-            thumb_down.setOnClickListener {
+            binding.thumbDown.setOnClickListener {
                 setLike(cat, StateCatVote.DISLIKE)
             }
 
             Glide
-                .with(imageCat.context)
+                .with(binding.imageCat.context)
                 .load(cat.url)
                 .centerCrop()
                 .listener(object : RequestListener<Drawable> {
@@ -102,7 +101,7 @@ class RandomCatAdapter(
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        loadItemProgress.hide()
+                        binding.loadItemProgress.hide()
                         return false
                     }
 
@@ -113,13 +112,13 @@ class RandomCatAdapter(
                         dataSource: DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        loadItemProgress.hide()
+                        binding.loadItemProgress.hide()
                         return false
                     }
 
                 })
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageCat)
+                .into(binding.imageCat)
         }
     }
 }

@@ -2,13 +2,10 @@ package com.github.rtyvZ.kitties.ui.randomCats
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.ContextMenu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,17 +14,18 @@ import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings.IntentConsts.DOWNLOAD_IMAGE_KEY
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
 import com.github.rtyvZ.kitties.common.models.Cat
+import com.github.rtyvZ.kitties.databinding.RandomCatsFragmentBinding
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import com.github.rtyvZ.kitties.ui.services.ImageDownloadService
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.random_cats_fragment.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
+class RandomCatsFragment : Fragment() {
 
     private val viewModel: RandomCatsViewModel by viewModels()
+    private var _binding: RandomCatsFragmentBinding? = null
+    private val binding get() = _binding!!
     private lateinit var manager: LinearLayoutManager
     private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var catForDownloadImage: Cat
@@ -44,7 +42,7 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
             activity.openContextMenu(view)
         }
     }
-    
+
     private val catAdapter = RandomCatAdapter(setLike, openContextMenu)
 
     private var visibleItemCount: Int = 0
@@ -52,13 +50,21 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
     private var totalItemCount: Int = 0
     private var isLoading = true
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = RandomCatsFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        progress.show()
+        binding.progress.show()
         viewModel.clear()
         viewModel.getCats()
-        this.registerForContextMenu(listRandomCats)
+        this.registerForContextMenu(binding.listRandomCats)
 
         initObservers()
         initRecyclerView()
@@ -95,7 +101,7 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
     }
 
     private fun initRecyclerView() {
-        listRandomCats.apply {
+        binding.listRandomCats.apply {
             activity?.let {
                 adapter = catAdapter
                 //disable blinks in recycler view
@@ -124,13 +130,13 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
     private fun initObservers() {
         viewModel.getRandomCats.observe(viewLifecycleOwner, {
-            progress.hide()
+            binding.progress.hide()
             isLoading = true
             catAdapter.submitList(it)
         })
 
         viewModel.getRandomCatsError.observe(viewLifecycleOwner, {
-            progress.hide()
+            binding.progress.hide()
             findNavController().navigate(R.id.action_list_kitties_to_noInternetFragment)
         })
 
@@ -143,7 +149,12 @@ class RandomCatsFragment : Fragment(R.layout.random_cats_fragment) {
 
         activity?.let {
             itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback))
-            itemTouchHelper.attachToRecyclerView(listRandomCats)
+            itemTouchHelper.attachToRecyclerView(binding.listRandomCats)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

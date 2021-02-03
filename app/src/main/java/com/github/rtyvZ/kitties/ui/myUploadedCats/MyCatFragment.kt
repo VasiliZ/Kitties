@@ -2,7 +2,9 @@ package com.github.rtyvZ.kitties.ui.myUploadedCats
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,19 +14,29 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.itemDecorators.RecyclerViewMargin
 import com.github.rtyvZ.kitties.common.models.Cat
+import com.github.rtyvZ.kitties.databinding.MyCatFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.my_cat_fragment.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyCatFragment @Inject constructor() : Fragment(R.layout.my_cat_fragment) {
+class MyCatFragment : Fragment() {
 
-
+    private var _binding: MyCatFragmentBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: MyCatsViewModel by viewModels()
     private val longClick: (cat: Cat) -> (Unit) = { cat ->
         createDialog(cat)
     }
     private val uploadedAdapter = UploadedCatAdapter(longClick)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = MyCatFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,7 +64,7 @@ class MyCatFragment @Inject constructor() : Fragment(R.layout.my_cat_fragment) {
     private fun setUpRecyclerView() {
         val decoration = RecyclerViewMargin(8, 2)
         activity?.let { activity ->
-            uploadedCatsRecyclerView.apply {
+            binding.uploadedCatsRecyclerView.apply {
                 this.addItemDecoration(decoration)
                 adapter = uploadedAdapter
                 layoutManager = GridLayoutManager(activity, 2)

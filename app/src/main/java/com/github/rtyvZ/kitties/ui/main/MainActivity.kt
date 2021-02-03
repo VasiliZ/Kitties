@@ -17,38 +17,36 @@ import androidx.navigation.ui.setupWithNavController
 import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.animations.RotateFabAnimation
+import com.github.rtyvZ.kitties.databinding.ActivityMainBinding
 import com.github.rtyvZ.kitties.ui.receivers.NoConnectivityMessageReceiver
 import com.github.rtyvZ.kitties.ui.sendPhoto.TakePhotoActivity
 import com.github.rtyvZ.kitties.ui.services.SendCatService
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity @Inject constructor() : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : AppCompatActivity() {
 
     private var isRotateFab = false
-
     private val viewModel: MainActivityViewModel by viewModels()
     private val noConnectivityMessageReceiver = NoConnectivityMessageReceiver()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        binding = ActivityMainBinding.inflate(layoutInflater)
         val host = supportFragmentManager
             .findFragmentById(R.id.content_container) as NavHostFragment
-
-        bottomNavigationView.setupWithNavController(host.navController)
+        binding.bottomNavigationView.setupWithNavController(host.navController)
 
         viewModel.getRealPath.observe(this, {
             startService(it)
         })
 
-        randomCatFab.setOnClickListener {
+        binding.randomCatFab.setOnClickListener {
             rotateFab(it)
         }
 
-        takeAPhotoFab.setOnClickListener {
+        binding.takeAPhotoFab.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.CAMERA
@@ -63,14 +61,14 @@ class MainActivity @Inject constructor() : AppCompatActivity(R.layout.activity_m
                     ),
                     CAMERA_REQUEST_CODE
                 )
-                rotateFab(randomCatFab)
+                rotateFab(binding.randomCatFab)
             } else {
                 startActivityFromUpload()
-                rotateFab(randomCatFab)
+                rotateFab(binding.randomCatFab)
             }
         }
 
-        selectPhoto.setOnClickListener {
+        binding.selectPhoto.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.READ_EXTERNAL_STORAGE
@@ -84,15 +82,15 @@ class MainActivity @Inject constructor() : AppCompatActivity(R.layout.activity_m
                     ),
                     GALLERY_REQUEST_CODE
                 )
-                rotateFab(randomCatFab)
+                rotateFab(binding.randomCatFab)
             } else {
-                rotateFab(randomCatFab)
+                rotateFab(binding.randomCatFab)
                 startActivityFromGallery()
             }
         }
 
-        RotateFabAnimation.init(takeAPhotoFab)
-        RotateFabAnimation.init(selectPhoto)
+        RotateFabAnimation.init(binding.takeAPhotoFab)
+        RotateFabAnimation.init(binding.selectPhoto)
     }
 
     override fun onRequestPermissionsResult(
@@ -145,11 +143,11 @@ class MainActivity @Inject constructor() : AppCompatActivity(R.layout.activity_m
     private fun rotateFab(view: View) {
         isRotateFab = RotateFabAnimation.rotateFab(view, !isRotateFab)
         if (isRotateFab) {
-            RotateFabAnimation.showIn(takeAPhotoFab)
-            RotateFabAnimation.showIn(selectPhoto)
+            RotateFabAnimation.showIn(binding.takeAPhotoFab)
+            RotateFabAnimation.showIn(binding.selectPhoto)
         } else {
-            RotateFabAnimation.showOut(takeAPhotoFab)
-            RotateFabAnimation.showOut(selectPhoto)
+            RotateFabAnimation.showOut(binding.takeAPhotoFab)
+            RotateFabAnimation.showOut(binding.selectPhoto)
         }
     }
 
