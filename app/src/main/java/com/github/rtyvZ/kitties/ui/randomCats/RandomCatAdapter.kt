@@ -26,12 +26,9 @@ class RandomCatAdapter(
     ListAdapter<Cat, RandomCatAdapter.RandomCatViewHolder>(RandomCatsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RandomCatViewHolder {
-        val itemBinding = CatItemBinding.inflate(
-            LayoutInflater
-                .from(parent.context)
-        )
+
         return RandomCatViewHolder(
-            itemBinding
+            CatItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -75,7 +72,7 @@ class RandomCatAdapter(
                     null
                 )
             } else {
-                binding.thumbUp.background = ResourcesCompat.getDrawable(
+                binding.thumbDown.background = ResourcesCompat.getDrawable(
                     binding.root.context.resources,
                     R.drawable.ic_baseline_thumb_down_without_vote,
                     null

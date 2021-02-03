@@ -1,15 +1,12 @@
 package com.github.rtyvZ.kitties.ui.favoriteCats
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.github.rtyvZ.kitties.R
+import com.github.rtyvZ.kitties.databinding.FavoriteCatItemBinding
 import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.cat_item.view.*
 
 class FavoriteCatsAdapter :
     ListAdapter<FavoriteCatsResponse, FavoriteCatsAdapter.FavoriteCatViewHolder>(
@@ -18,9 +15,9 @@ class FavoriteCatsAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteCatViewHolder {
         return FavoriteCatViewHolder(
-            LayoutInflater
-                .from(parent.context)
-                .inflate(R.layout.favorite_cat_item, parent, false)
+            FavoriteCatItemBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
         )
     }
 
@@ -30,13 +27,13 @@ class FavoriteCatsAdapter :
     }
 
     class FavoriteCatViewHolder(
-        override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+        private val binding: FavoriteCatItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun setData(favoriteCat: FavoriteCatsResponse?) {
-            Glide.with(containerView.imageCat)
+            Glide.with(binding.imageCat)
                 .load(favoriteCat?.catImage?.url)
                 .centerCrop()
-                .into(containerView.imageCat)
+                .into(binding.imageCat)
         }
     }
 }
