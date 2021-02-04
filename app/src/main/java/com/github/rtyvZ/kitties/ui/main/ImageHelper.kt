@@ -46,9 +46,7 @@ class ImageHelper {
             ExifInterface.ORIENTATION_UNDEFINED
         )
 
-        val rotatedBitmap: Bitmap?
-
-        rotatedBitmap = when (orientation) {
+        return when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> {
                 rotateImage(bitmap, 90)
             }
@@ -62,7 +60,6 @@ class ImageHelper {
                 bitmap
             }
         }
-        return rotatedBitmap
     }
 
     fun getFileWithPhoto(context: Context): File {
