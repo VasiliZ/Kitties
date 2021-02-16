@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.github.rtyvZ.kitties.common.models.CatBreed
 import com.github.rtyvZ.kitties.network.NetworkResponse
@@ -24,6 +25,7 @@ class CatsBreedsViewModel @Inject constructor(val breedsRepo: PagingBreedsRepo) 
     private val mutableBreedList = MutableLiveData<List<CatBreed>>()
     val listBreeds: LiveData<List<CatBreed>> = mutableBreedList
     val breeds = breedsRepo.fetchBreeds().cachedIn(viewModelScope)
+
     /*fun getBreeds() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

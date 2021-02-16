@@ -6,7 +6,7 @@ import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.models.CatBreed
 import com.github.rtyvZ.kitties.network.NetworkResponse
 
-class CatsBreedsDataSource(private val api: Api) : PagingSource<Int, CatBreed>() {
+class CatsBreedsDataSource(private val api: Api, val pageSize:Int) : PagingSource<Int, CatBreed>() {
     private var prevKey = 0
     private var nextKey = 0
 
@@ -22,7 +22,7 @@ class CatsBreedsDataSource(private val api: Api) : PagingSource<Int, CatBreed>()
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CatBreed> {
-        return when (val response = api.getAllCatsBreeds()) {
+        return when (val response = api.getAllCatsBreeds(nextKey, pageSize)) {
             is NetworkResponse.Success -> {
                 changeKeys()
                 LoadResult.Page(

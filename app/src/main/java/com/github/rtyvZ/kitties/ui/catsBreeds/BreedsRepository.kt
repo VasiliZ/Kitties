@@ -11,10 +11,10 @@ class BreedsRepository @Inject constructor(
 ) {
 
     private val session = sessionStorage.getSession()
-    fun getAllBreeds() = flow {
+    /*fun getAllBreeds() = flow {
         session?.let {
             emit(api.getAllCatsBreeds())
         }
-    }
+    }*/
 }
 

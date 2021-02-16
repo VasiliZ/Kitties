@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.rtyvZ.kitties.R
+import com.github.rtyvZ.kitties.common.DataLoadsStateAdapter
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.databinding.CatsBreedsFragmentBinding
 import com.github.rtyvZ.kitties.extentions.hide
@@ -37,11 +38,6 @@ class CatsBreedsFragment : Fragment(R.layout.cats_breeds_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val breedsAdapter = BreedsCatsAdapter {
-            val bundle = Bundle()
-            bundle.putParcelable(Strings.IntentConsts.DESCRIPTION_BREEDS, it)
-            findNavController().navigate(R.id.breedDetails, bundle)
-        }
         val breedsPagingAdapter = BreedsPagingCatsAdapter {
             val bundle = Bundle()
             bundle.putParcelable(Strings.IntentConsts.DESCRIPTION_BREEDS, it)
@@ -50,11 +46,6 @@ class CatsBreedsFragment : Fragment(R.layout.cats_breeds_fragment) {
 
         initRecyclerView(breedsPagingAdapter)
         bindings.progressBreed.show()
-        //viewModel.getBreeds()
-       /* viewModel.listBreeds.observe(viewLifecycleOwner, {
-            bindings.progressBreed.hide()
-            breedsAdapter.submitList(it)
-        })*/
 
         lifecycleScope.launch {
             viewModel.breeds.collectLatest {
@@ -63,19 +54,13 @@ class CatsBreedsFragment : Fragment(R.layout.cats_breeds_fragment) {
         }
     }
 
-
- /*   private fun initRecyclerView(breedsAdapter: BreedsCatsAdapter) {
-        bindings.breedsList.apply {
-            activity?.let { activity ->
-                adapter = breedsAdapter
-                layoutManager = LinearLayoutManager(activity)
-            }
-        }
-    } */
     private fun initRecyclerView(breedsAdapter: BreedsPagingCatsAdapter) {
         bindings.breedsList.apply {
             activity?.let { activity ->
-                adapter = breedsAdapter
+                adapter = breedsAdapter.withLoadStateHeaderAndFooter(
+                    header = DataLoadsStateAdapter(breedsAdapter),
+                    footer = DataLoadsStateAdapter(breedsAdapter)
+                )
                 layoutManager = LinearLayoutManager(activity)
             }
         }

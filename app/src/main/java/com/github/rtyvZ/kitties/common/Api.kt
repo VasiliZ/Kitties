@@ -65,5 +65,7 @@ interface Api {
 
     @GET("breeds")
     suspend fun getAllCatsBreeds(
+        @Query("page") page: Int,
+        @Query("limit") pageSize: Int
     ): NetworkResponse<List<CatBreed>, Any>
 }
