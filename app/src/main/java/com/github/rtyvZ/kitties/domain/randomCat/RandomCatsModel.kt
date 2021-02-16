@@ -5,6 +5,7 @@ import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav
 import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.RandomCatsRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

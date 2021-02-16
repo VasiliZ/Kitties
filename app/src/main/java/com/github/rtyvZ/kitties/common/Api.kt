@@ -17,7 +17,9 @@ import retrofit2.http.*
 interface Api {
 
     @GET("images/search?limit=10")
-    suspend fun getListKitties(): NetworkResponse<List<CatResponse>, Any>
+    suspend fun getListKitties(
+        @Query("page") page: Int
+    ): NetworkResponse<List<CatResponse>, Any>
 
     @POST("votes")
     suspend fun votes(
@@ -63,5 +65,5 @@ interface Api {
 
     @GET("breeds")
     suspend fun getAllCatsBreeds(
-    ):NetworkResponse<List<CatBreed>, Any>
+    ): NetworkResponse<List<CatBreed>, Any>
 }

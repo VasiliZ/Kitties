@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.rtyvZ.kitties.R
@@ -14,6 +15,8 @@ import com.github.rtyvZ.kitties.databinding.CatsBreedsFragmentBinding
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CatsBreedsFragment : Fragment(R.layout.cats_breeds_fragment) {
@@ -39,17 +42,37 @@ class CatsBreedsFragment : Fragment(R.layout.cats_breeds_fragment) {
             bundle.putParcelable(Strings.IntentConsts.DESCRIPTION_BREEDS, it)
             findNavController().navigate(R.id.breedDetails, bundle)
         }
+        val breedsPagingAdapter = BreedsPagingCatsAdapter {
+            val bundle = Bundle()
+            bundle.putParcelable(Strings.IntentConsts.DESCRIPTION_BREEDS, it)
+            findNavController().navigate(R.id.breedDetails, bundle)
+        }
 
-        initRecyclerView(breedsAdapter)
+        initRecyclerView(breedsPagingAdapter)
         bindings.progressBreed.show()
-        viewModel.getBreeds()
-        viewModel.listBreeds.observe(viewLifecycleOwner, {
+        //viewModel.getBreeds()
+       /* viewModel.listBreeds.observe(viewLifecycleOwner, {
             bindings.progressBreed.hide()
             breedsAdapter.submitList(it)
-        })
+        })*/
+
+        lifecycleScope.launch {
+            viewModel.breeds.collectLatest {
+                breedsPagingAdapter.submitData(it)
+            }
+        }
     }
 
-    private fun initRecyclerView(breedsAdapter: BreedsCatsAdapter) {
+
+ /*   private fun initRecyclerView(breedsAdapter: BreedsCatsAdapter) {
+        bindings.breedsList.apply {
+            activity?.let { activity ->
+                adapter = breedsAdapter
+                layoutManager = LinearLayoutManager(activity)
+            }
+        }
+    } */
+    private fun initRecyclerView(breedsAdapter: BreedsPagingCatsAdapter) {
         bindings.breedsList.apply {
             activity?.let { activity ->
                 adapter = breedsAdapter

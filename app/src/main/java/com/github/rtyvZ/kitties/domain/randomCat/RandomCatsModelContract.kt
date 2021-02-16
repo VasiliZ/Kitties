@@ -4,6 +4,7 @@ import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.response.CatResponseVoteAndFav
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 interface RandomCatsModelContract {

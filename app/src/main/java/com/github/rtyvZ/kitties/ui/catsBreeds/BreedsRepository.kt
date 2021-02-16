@@ -1,6 +1,5 @@
 package com.github.rtyvZ.kitties.ui.catsBreeds
 
-import com.github.rtyvZ.kitties.App
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import kotlinx.coroutines.flow.flow

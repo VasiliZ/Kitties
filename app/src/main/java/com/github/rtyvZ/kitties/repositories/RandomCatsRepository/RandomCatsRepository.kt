@@ -1,10 +1,17 @@
 package com.github.rtyvZ.kitties.repositories.RandomCatsRepository
 
+import android.util.Log
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.UserInternalStorageContract
 import com.github.rtyvZ.kitties.common.models.Cat
+import com.github.rtyvZ.kitties.network.CatsApiPagingSource
 import com.github.rtyvZ.kitties.network.request.FavoritesRequest
 import com.github.rtyvZ.kitties.network.request.VoteRequest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -16,8 +23,9 @@ class RandomCatsRepository @Inject constructor(
     private val session = sessionStorage.getSession()
 
     fun getKitties() = flow {
+
         val responseRandomCats = api
-            .getListKitties()
+            .getListKitties(1)
         emit(responseRandomCats)
     }
 

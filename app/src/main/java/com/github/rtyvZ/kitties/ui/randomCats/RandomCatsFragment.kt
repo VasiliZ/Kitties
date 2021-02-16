@@ -6,6 +6,10 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +23,8 @@ import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import com.github.rtyvZ.kitties.ui.services.ImageDownloadService
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RandomCatsFragment : Fragment() {
@@ -44,6 +50,7 @@ class RandomCatsFragment : Fragment() {
     }
 
     private val catAdapter = RandomCatAdapter(setLike, openContextMenu)
+    private val catAdapterPaging = RandomPagingCatAdapter(setLike, openContextMenu)
 
     private var visibleItemCount: Int = 0
     private var lastVisibleItem: Int = 0
@@ -146,6 +153,13 @@ class RandomCatsFragment : Fragment() {
                     Toast.makeText(it, R.string.no_connection, Toast.LENGTH_SHORT).show()
                 }
             })
+
+        lifecycleScope.launch {
+            viewModel.kitties.collectLatest {
+                //todo after implement both call
+                //catAdapterPaging.submitData(it)
+            }
+        }
 
         activity?.let {
             itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback))

@@ -1,36 +1,43 @@
 package com.github.rtyvZ.kitties.ui.randomCats
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import androidx.paging.cachedIn
+import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.domain.randomCat.RandomCatsModel
 import com.github.rtyvZ.kitties.extentions.replaceElement
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.response.MyVoteResponse
+import com.github.rtyvZ.kitties.repositories.randomKitties.KittiesPagingRepo
+import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 @HiltViewModel
-class RandomCatsViewModel @Inject constructor() : ViewModel() {
+class RandomCatsViewModel @Inject constructor( repo: KittiesPagingRepo) : ViewModel() {
+
 
     private var mutableRandomCats = MutableLiveData<List<Cat>?>()
     private var mutableRandomCatsError = MutableLiveData<Throwable>()
     private var mutableErrorActionWithCat = MutableLiveData<Throwable>()
+
 
     var getRandomCats: LiveData<List<Cat>?> = mutableRandomCats
         private set
     var getRandomCatsError: LiveData<Throwable> = mutableRandomCatsError
         private set
     var getErrorActionWithCat: LiveData<Throwable> = mutableErrorActionWithCat
+
+    val kitties = repo.fetchKitties().cachedIn(viewModelScope)
 
     @Inject
     lateinit var randomCatsModel: RandomCatsModel
