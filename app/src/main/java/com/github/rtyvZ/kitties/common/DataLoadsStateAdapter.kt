@@ -5,7 +5,7 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import com.github.rtyvZ.kitties.ui.catsBreeds.BreedsPagingCatsAdapter
 
-class DataLoadsStateAdapter(val adapter: BreedsPagingCatsAdapter) :
+class DataLoadsStateAdapter(private val adapter: BreedsPagingCatsAdapter) :
     LoadStateAdapter<NetworkStateViewHolder>() {
     override fun onBindViewHolder(holder: NetworkStateViewHolder, loadState: LoadState) {
         holder.bindTo(loadState)

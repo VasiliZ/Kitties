@@ -3,7 +3,6 @@ package com.github.rtyvZ.kitties.ui.catsBreeds
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.github.rtyvZ.kitties.common.models.CatBreed

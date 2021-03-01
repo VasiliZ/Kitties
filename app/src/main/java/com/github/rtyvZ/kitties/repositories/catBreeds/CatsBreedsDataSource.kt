@@ -6,25 +6,31 @@ import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.models.CatBreed
 import com.github.rtyvZ.kitties.network.NetworkResponse
 
-class CatsBreedsDataSource(private val api: Api, val pageSize:Int) : PagingSource<Int, CatBreed>() {
-    private var prevKey = 0
-    private var nextKey = 0
+class CatsBreedsDataSource(private val api: Api, private val pageSize: Int) :
+    PagingSource<Int, CatBreed>() {
+    private var prevKey: Int? = 0
+    private var nextKey: Int? = 0
 
     override fun getRefreshKey(state: PagingState<Int, CatBreed>): Int? {
         return state.anchorPosition?.let { position ->
-            state.closestPageToPosition(position)?.prevKey
+            val page = state.closestPageToPosition(position)
+            page?.prevKey?.plus(1) ?: page?.nextKey?.minus(1)
         }
     }
 
     private fun changeKeys() {
         prevKey = nextKey
-        nextKey++
+        nextKey = nextKey?.inc()
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CatBreed> {
         return when (val response = api.getAllCatsBreeds(nextKey, pageSize)) {
             is NetworkResponse.Success -> {
                 changeKeys()
+                if (response.body.isNotEmpty()) {
+                } else {
+                    nextKey = null
+                }
                 LoadResult.Page(
                     data = response.body.map { it },
                     prevKey = prevKey,
@@ -39,6 +45,9 @@ class CatsBreedsDataSource(private val api: Api, val pageSize:Int) : PagingSourc
             }
             is NetworkResponse.NetworkError -> {
                 LoadResult.Error(response.error)
+            }
+            else -> {
+                LoadResult.Error(Throwable())
             }
         }
     }

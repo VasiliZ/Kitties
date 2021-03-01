@@ -16,6 +16,7 @@ import com.github.rtyvZ.kitties.databinding.CatsBreedsFragmentBinding
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -49,6 +50,7 @@ class CatsBreedsFragment : Fragment(R.layout.cats_breeds_fragment) {
 
         lifecycleScope.launch {
             viewModel.breeds.collectLatest {
+                bindings.progressBreed.hide()
                 breedsPagingAdapter.submitData(it)
             }
         }
@@ -57,8 +59,7 @@ class CatsBreedsFragment : Fragment(R.layout.cats_breeds_fragment) {
     private fun initRecyclerView(breedsAdapter: BreedsPagingCatsAdapter) {
         bindings.breedsList.apply {
             activity?.let { activity ->
-                adapter = breedsAdapter.withLoadStateHeaderAndFooter(
-                    header = DataLoadsStateAdapter(breedsAdapter),
+                adapter = breedsAdapter.withLoadStateFooter(
                     footer = DataLoadsStateAdapter(breedsAdapter)
                 )
                 layoutManager = LinearLayoutManager(activity)

@@ -32,5 +32,4 @@ class NetworkStateViewHolder(
         errorMsg.isVisible = !(loadState as? LoadState.Error)?.error?.message.isNullOrBlank()
         errorMsg.text = (loadState as? LoadState.Error)?.error?.message
     }
-
 }
