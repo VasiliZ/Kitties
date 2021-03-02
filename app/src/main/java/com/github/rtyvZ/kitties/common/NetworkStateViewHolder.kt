@@ -20,7 +20,7 @@ class NetworkStateViewHolder(
     private val binding = NetworkStateItemLayoutBinding.bind(itemView)
     val progress = binding.progressPaging
     val errorMsg = binding.errorMsg
-    val retryButton = binding.retryButton.also {
+    private val retryButton = binding.retryButton.also {
         it.setOnClickListener {
             retryCallback()
         }
