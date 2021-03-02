@@ -5,18 +5,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.db.CatDatabase
 import com.github.rtyvZ.kitties.network.NetworkResponse
+import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.KittiesPagingRepo
+import com.github.rtyvZ.kitties.repositories.myKitties.MyKittiesPagingRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 @HiltViewModel
-class MyCatsViewModel @Inject constructor(private val db: CatDatabase) : ViewModel() {
+class MyCatsViewModel @Inject constructor(
+    private val db: CatDatabase,
+    private val repo: MyKittiesPagingRepo
+) : ViewModel() {
+
     @Inject
     lateinit var myCatsModel: MyCatsModel
     private val errorWhileGetsMyCats = MutableLiveData<Throwable>()
@@ -28,6 +36,8 @@ class MyCatsViewModel @Inject constructor(private val db: CatDatabase) : ViewMod
     val getErrorMyCats = errorWhileGetsMyCats
     val getSuccessDeleteCat = mutableSuccessDeleteCat
     val getKitties: LiveData<List<Cat>> = mutableKittiesFromDb
+
+    val myKitties = repo.getKittiesFromDB().cachedIn(viewModelScope)
 
     fun deleteUploadedCat(cat: Cat) {
         viewModelScope.launch {
@@ -53,15 +63,6 @@ class MyCatsViewModel @Inject constructor(private val db: CatDatabase) : ViewMod
                         }
                     }
                 }
-            }
-        }
-    }
-
-    fun getKittiesFromDB() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val list = myCatsModel.getLocalCats()
-                mutableKittiesFromDb.postValue(list)
             }
         }
     }

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.rtyvZ.kitties.R
@@ -16,6 +17,8 @@ import com.github.rtyvZ.kitties.common.itemDecorators.RecyclerViewMargin
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.databinding.MyCatFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -40,7 +43,6 @@ class MyCatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getKittiesFromDB()
         setUpRecyclerView()
 
         viewModel.errorWhileDeletingCat.observe(viewLifecycleOwner, {
@@ -51,11 +53,12 @@ class MyCatFragment : Fragment() {
             findNavController().navigate(R.id.action_my_cats_to_noInternetFragment)
         })
 
-        viewModel.getKitties.observe(viewLifecycleOwner) { cats ->
-            cats?.let {
-                uploadedAdapter.submitList(cats)
+        lifecycleScope.launch {
+            viewModel.myKitties.collectLatest {
+                uploadedAdapter.submitData(it)
             }
         }
+
         viewModel.getSuccessDeleteCat.observe(viewLifecycleOwner, {
             Toast.makeText(activity, R.string.cat_was_deleted, Toast.LENGTH_SHORT).show()
         })

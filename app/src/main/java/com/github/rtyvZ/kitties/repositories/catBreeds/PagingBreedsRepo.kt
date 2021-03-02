@@ -3,7 +3,6 @@ package com.github.rtyvZ.kitties.repositories.catBreeds
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.models.CatBreed
 import kotlinx.coroutines.flow.Flow

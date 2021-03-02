@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.repositories.randomKitties
+package com.github.rtyvZ.kitties.repositories.RandomCatsRepository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

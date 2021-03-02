@@ -1,16 +1,13 @@
-package com.github.rtyvZ.kitties.ui.myUploadedCats
+package com.github.rtyvZ.kitties.repositories.myKitties
 
-import com.github.rtyvZ.kitties.App
 import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.common.UserInternalStorageContract
-import com.github.rtyvZ.kitties.db.CatDatabase
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class MyCatsRepository @Inject constructor(
     sessionStorage: UserInternalStorageContract,
     private val api: Api,
-    private val db: CatDatabase
 ) {
     private val session = sessionStorage.getSession()
 
@@ -19,7 +16,4 @@ class MyCatsRepository @Inject constructor(
             emit(api.deleteUploadedImage(idImage))
         }
     }
-
-    fun getSavedCats() =
-        db.getCatDao().getAllCats()
 }

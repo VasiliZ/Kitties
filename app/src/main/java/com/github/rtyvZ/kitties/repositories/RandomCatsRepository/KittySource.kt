@@ -1,4 +1,4 @@
-package com.github.rtyvZ.kitties.repositories.randomKitties
+package com.github.rtyvZ.kitties.repositories.RandomCatsRepository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -20,7 +20,6 @@ class KittySource(private val api: Api) : PagingSource<Int, CatResponse>() {
                     prevKey = prevKey,
                     nextKey = nextKey
                 )
-
             }
             is NetworkResponse.ApiError -> {
                 LoadResult.Error(Throwable())

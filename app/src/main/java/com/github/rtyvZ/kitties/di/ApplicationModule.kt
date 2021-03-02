@@ -5,11 +5,11 @@ import androidx.room.Room
 import com.github.rtyvZ.kitties.common.*
 import com.github.rtyvZ.kitties.common.cryptography.Cryptographer
 import com.github.rtyvZ.kitties.db.CatDatabase
+import com.github.rtyvZ.kitties.db.MyCatsDao
 import com.github.rtyvZ.kitties.network.NetworkResponseFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +22,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Singleton
 
@@ -143,5 +142,11 @@ class ApplicationModule {
     @Singleton
     fun providesExecutor(): Executor {
         return Executors.newSingleThreadExecutor()
+    }
+
+    @Provides
+    @Singleton
+    fun providesDao(db: CatDatabase): MyCatsDao {
+        return db.getCatDao()
     }
 }
