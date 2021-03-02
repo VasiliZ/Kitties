@@ -12,7 +12,7 @@ class PagingBreedsRepo(val api: Api) {
 
     fun fetchBreeds(): Flow<PagingData<CatBreed>> {
         return Pager(
-            PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = true, prefetchDistance = 0)
+            PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false, prefetchDistance = 1)
         ) {
             CatsBreedsDataSource(api, PAGE_SIZE)
         }.flow

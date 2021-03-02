@@ -14,7 +14,4 @@ class CatsBreedsViewModel @Inject constructor(private val breedsRepo: PagingBree
 
     var breeds = breedsRepo.fetchBreeds().cachedIn(viewModelScope)
 
-    fun getMoreData(){
-        breeds = breedsRepo.fetchBreeds().cachedIn(viewModelScope)
-    }
 }
