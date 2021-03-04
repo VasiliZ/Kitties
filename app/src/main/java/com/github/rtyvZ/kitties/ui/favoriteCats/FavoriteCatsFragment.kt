@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,15 +17,15 @@ import com.github.rtyvZ.kitties.databinding.FavoriteCatsFragmentBinding
 import com.github.rtyvZ.kitties.extentions.hide
 import com.github.rtyvZ.kitties.extentions.show
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FavoriteCatsFragment : Fragment() {
     private var _binding: FavoriteCatsFragmentBinding? = null
     private val binding get() = _binding!!
     private val viewModel: FavoriteCatsViewModel by viewModels()
-    private val itemTouchHelper = ItemTouchHelper(DragItemHelper { position, _ ->
-        viewModel.deleteFavoriteCat(position)
-    })
+    private val adapterForFavCats = FavoriteCatsAdapter()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,19 +41,24 @@ class FavoriteCatsFragment : Fragment() {
 
         val adapterForFavCats = FavoriteCatsAdapter()
         binding.progressFavCat.show()
-        viewModel.getFavoriteCats()
-        itemTouchHelper.attachToRecyclerView(binding.listFavoriteCat)
 
         binding.listFavoriteCat.apply {
             activity?.let { activity ->
                 layoutManager = LinearLayoutManager(activity)
                 adapter = adapterForFavCats
+                ItemTouchHelper(DragItemHelper { position, _ ->
+                    this.adapter?.let {
+                        viewModel.deleteFavoriteCat((it as FavoriteCatsAdapter).getCat(position))
+                    }
+                }).attachToRecyclerView(this)
             }
         }
 
-        viewModel.getMyFavoriteCats.observe(viewLifecycleOwner, {
+        viewModel.fetchKitties.observe(viewLifecycleOwner, { data ->
             binding.progressFavCat.hide()
-            adapterForFavCats.submitList(it)
+            lifecycleScope.launch {
+                adapterForFavCats.submitData(data)
+            }
         })
 
         viewModel.getErrorReceiveCats.observe(viewLifecycleOwner, {
@@ -62,6 +68,7 @@ class FavoriteCatsFragment : Fragment() {
 
         viewModel.getErrorDeleteFavoriteCats.observe(viewLifecycleOwner, {
             activity?.let {
+                binding.listFavoriteCat.adapter?.notifyDataSetChanged()
                 Toast.makeText(it, R.string.no_connection, Toast.LENGTH_SHORT).show()
             }
         })

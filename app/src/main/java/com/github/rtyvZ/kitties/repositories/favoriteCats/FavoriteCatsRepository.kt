@@ -11,11 +11,11 @@ class FavoriteCatsRepository @Inject constructor(
 ) {
     private val session = sessionStorage.getSession()
 
-    fun getFavoriteCats() = flow {
+    /*fun getFavoriteCats() = flow {
         session?.let {
             emit(api.getFavoritesCat(it.userId))
         }
-    }
+    }*/
 
     fun deleteFavoriteCat(catId: Int) = flow {
         session?.let {

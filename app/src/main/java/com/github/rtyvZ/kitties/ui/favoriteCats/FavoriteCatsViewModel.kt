@@ -1,47 +1,67 @@
 package com.github.rtyvZ.kitties.ui.favoriteCats
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.map
 import com.github.rtyvZ.kitties.domain.favoriteCats.FavoriteCatsModel
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
+import com.github.rtyvZ.kitties.repositories.favoriteCats.FavoriteCatsPagingRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoriteCatsViewModel @Inject constructor() : ViewModel() {
+class FavoriteCatsViewModel @Inject constructor(
+    private val repo: FavoriteCatsPagingRepo
+) : ViewModel() {
+
     @Inject
     lateinit var favoriteCatsModel: FavoriteCatsModel
-    private val mutableFavoriteCatList = MutableLiveData<List<FavoriteCatsResponse>>()
     private val receiveErrorFavoriteCats = MutableLiveData<Throwable>()
     private val errorDeleteFavoriteCat = MutableLiveData<Throwable>()
-    val getMyFavoriteCats: LiveData<List<FavoriteCatsResponse>> = mutableFavoriteCatList
     val getErrorReceiveCats = receiveErrorFavoriteCats
     val getErrorDeleteFavoriteCats = errorDeleteFavoriteCat
+    private val randomKitties =
+        repo.fetchFavoriteKitties()
+            .cachedIn(viewModelScope)
+            .asLiveData().let {
+                it as MutableLiveData<PagingData<FavoriteCatsResponse>>
+            }
 
-    fun getFavoriteCats() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                favoriteCatsModel.getFavoriteCats().collect {
-                    when (it) {
-                        is NetworkResponse.Success -> {
-                            mutableFavoriteCatList.postValue(it.body)
-                        }
-                        is NetworkResponse.NetworkError -> {
-                            receiveErrorFavoriteCats.postValue(it.error)
-                        }
-                        is NetworkResponse.UnknownError -> {
-                            it.error?.let { error ->
-                                receiveErrorFavoriteCats.postValue(error)
+    var fetchKitties: LiveData<PagingData<FavoriteCatsResponse>> = randomKitties
+
+    fun deleteFavoriteCat(cat: FavoriteCatsResponse?) {
+        val data = fetchKitties.value ?: return
+        cat?.let { cat ->
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    favoriteCatsModel.deleteFavoriteCat(cat.id).collect {
+                        when (it) {
+                            is NetworkResponse.Success -> {
+                                data.filter {
+                                    it.id != cat.id
+                                }.let {
+                                    randomKitties.postValue(it)
+                                }
                             }
-                        }
-                        is NetworkResponse.ApiError -> {
+                            is NetworkResponse.NetworkError -> {
+                                getErrorDeleteFavoriteCats.postValue(it.error)
+                            }
+                            is NetworkResponse.ApiError -> {
+                                getErrorDeleteFavoriteCats.postValue(Throwable(SOME_API_ERROR))
+                            }
+                            is NetworkResponse.UnknownError -> {
+                                it.error?.let { error ->
+                                    getErrorDeleteFavoriteCats.postValue(error)
+                                }
+                            }
                         }
                     }
                 }
@@ -49,54 +69,7 @@ class FavoriteCatsViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun deleteFavoriteCat(position: Int) {
-
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                mutableFavoriteCatList.value?.let {
-                    val cat = it[position]
-                    deleteItem(cat)
-                    favoriteCatsModel
-                        .deleteFavoriteCat(it[position].id)
-                        .collect { response ->
-                            when (response) {
-                                is NetworkResponse.Success -> {
-                                    //nothing to do here
-                                }
-                                is NetworkResponse.NetworkError -> {
-                                    restoreCat(cat, position)
-                                    getErrorDeleteFavoriteCats.postValue(response.error)
-                                }
-                                is NetworkResponse.ApiError -> {
-
-                                }
-                                is NetworkResponse.UnknownError -> {
-                                    response.error?.let { error ->
-                                        getErrorDeleteFavoriteCats.postValue(error)
-                                    }
-                                }
-                            }
-                        }
-                }
-            }
-        }
-    }
-
-    private fun deleteItem(cat: FavoriteCatsResponse) {
-        val catList = mutableListOf<FavoriteCatsResponse>()
-        mutableFavoriteCatList.value?.let {
-            catList.addAll(it)
-        }
-        catList.remove(cat)
-        mutableFavoriteCatList.postValue(catList)
-    }
-
-    private fun restoreCat(cat: FavoriteCatsResponse, position: Int) {
-        val listFavCats = mutableListOf<FavoriteCatsResponse>()
-        mutableFavoriteCatList.value?.let {
-            listFavCats.addAll(it)
-        }
-        listFavCats.add(position, cat)
-        mutableFavoriteCatList.postValue(listFavCats)
+    companion object {
+        const val SOME_API_ERROR = "Sorry, we try to back in correct state own app"
     }
 }

@@ -50,7 +50,9 @@ interface Api {
 
     @GET("favourites")
     suspend fun getFavoritesCat(
-        @Query("sub_id") subId: String
+        @Query("sub_id") subId: String,
+        @Query("limit") limit: Int,
+        @Query("page") page: Int?
     ): NetworkResponse<List<FavoriteCatsResponse>, Any>
 
     @DELETE("favourites/{favourite_id}")
