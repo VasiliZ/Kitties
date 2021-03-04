@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
-import androidx.paging.map
 import com.github.rtyvZ.kitties.domain.favoriteCats.FavoriteCatsModel
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
@@ -12,7 +11,6 @@ import com.github.rtyvZ.kitties.repositories.favoriteCats.FavoriteCatsPagingRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -22,12 +20,8 @@ class FavoriteCatsViewModel @Inject constructor(
     private val repo: FavoriteCatsPagingRepo
 ) : ViewModel() {
 
-    @Inject
-    lateinit var favoriteCatsModel: FavoriteCatsModel
     private val receiveErrorFavoriteCats = MutableLiveData<Throwable>()
     private val errorDeleteFavoriteCat = MutableLiveData<Throwable>()
-    val getErrorReceiveCats = receiveErrorFavoriteCats
-    val getErrorDeleteFavoriteCats = errorDeleteFavoriteCat
     private val randomKitties =
         repo.fetchFavoriteKitties()
             .cachedIn(viewModelScope)
@@ -35,18 +29,23 @@ class FavoriteCatsViewModel @Inject constructor(
                 it as MutableLiveData<PagingData<FavoriteCatsResponse>>
             }
 
+    @Inject
+    lateinit var favoriteCatsModel: FavoriteCatsModel
     var fetchKitties: LiveData<PagingData<FavoriteCatsResponse>> = randomKitties
+
+    val getErrorReceiveCats = receiveErrorFavoriteCats
+    val getErrorDeleteFavoriteCats = errorDeleteFavoriteCat
 
     fun deleteFavoriteCat(cat: FavoriteCatsResponse?) {
         val data = fetchKitties.value ?: return
-        cat?.let { cat ->
+        cat?.let { kitty ->
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
                     favoriteCatsModel.deleteFavoriteCat(cat.id).collect {
                         when (it) {
                             is NetworkResponse.Success -> {
-                                data.filter {
-                                    it.id != cat.id
+                                data.filter { response ->
+                                    response.id != kitty.id
                                 }.let {
                                     randomKitties.postValue(it)
                                 }
