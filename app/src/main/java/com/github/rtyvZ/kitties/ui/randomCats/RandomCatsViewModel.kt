@@ -67,7 +67,6 @@ class RandomCatsViewModel @Inject constructor( repo: KittiesPagingRepo) : ViewMo
         }
     }
 
-
     private fun sendVoteRequest(cat: Cat) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
