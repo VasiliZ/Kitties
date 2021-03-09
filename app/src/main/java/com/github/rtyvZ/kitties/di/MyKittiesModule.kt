@@ -1,8 +1,6 @@
 package com.github.rtyvZ.kitties.di
 
-import com.github.rtyvZ.kitties.common.Api
 import com.github.rtyvZ.kitties.db.MyCatsDao
-import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.KittiesPagingRepo
 import com.github.rtyvZ.kitties.repositories.myKitties.MyKittiesPagingRepo
 import dagger.Module
 import dagger.Provides

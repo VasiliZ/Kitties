@@ -8,7 +8,7 @@ import com.github.rtyvZ.kitties.extentions.replaceElement
 import com.github.rtyvZ.kitties.network.NetworkResponse
 import com.github.rtyvZ.kitties.network.data.CatResponse
 import com.github.rtyvZ.kitties.network.response.MyVoteResponse
-import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.KittiesPagingRepo
+import com.github.rtyvZ.kitties.repositories.randomCatsRepository.KittiesPagingRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -17,9 +17,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 @HiltViewModel
-class RandomCatsViewModel @Inject constructor( repo: KittiesPagingRepo) : ViewModel() {
+class RandomCatsViewModel @Inject constructor(repo: KittiesPagingRepo) : ViewModel() {
 
     private var mutableRandomCats = MutableLiveData<List<Cat>?>()
     private var mutableRandomCatsError = MutableLiveData<Throwable>()
@@ -44,27 +45,6 @@ class RandomCatsViewModel @Inject constructor( repo: KittiesPagingRepo) : ViewMo
         getRandomCatsError = mutableRandomCatsError
         mutableErrorActionWithCat = MutableLiveData()
         getErrorActionWithCat = mutableErrorActionWithCat
-    }
-
-    fun getCats() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val randomKitties = randomCatsModel.getKittiesFromNet()
-                val getOwnLikes = randomCatsModel.getVotes()
-
-                randomKitties.combine(getOwnLikes) { kitties,
-                                                     likes ->
-                    mergeResponses(kitties, likes)
-                }.collect {
-                    val tempListWithOldValues = mutableListOf<Cat>()
-                    mutableRandomCats.value?.let { cats ->
-                        tempListWithOldValues.addAll(cats)
-                    }
-                    tempListWithOldValues.addAll(it)
-                    mutableRandomCats.postValue(tempListWithOldValues)
-                }
-            }
-        }
     }
 
     private fun sendVoteRequest(cat: Cat) {
@@ -215,63 +195,6 @@ class RandomCatsViewModel @Inject constructor( repo: KittiesPagingRepo) : ViewMo
         }
         listCat.replaceElement(cat)
         mutableRandomCats.postValue(listCat)
-    }
-
-    private fun mergeResponses(
-        kitties: NetworkResponse<List<CatResponse>, Any>,
-        likes: NetworkResponse<List<MyVoteResponse>, Any>
-    ): List<Cat> {
-        val listKitties = mutableListOf<Cat>()
-        val listVotes = mutableListOf<MyVoteResponse>()
-        when (kitties) {
-            is NetworkResponse.Success -> {
-                listKitties.addAll(kitties.body.map {
-                    it.toCat()
-                })
-            }
-            is NetworkResponse.NetworkError -> {
-                mutableRandomCatsError.postValue(kitties.error)
-            }
-            is NetworkResponse.UnknownError -> {
-                kitties.error?.let {
-                    mutableRandomCatsError.postValue(it)
-                }
-            }
-            is NetworkResponse.ApiError -> {
-                kitties.code
-            }
-        }
-
-        when (likes) {
-            is NetworkResponse.Success -> listVotes.addAll(likes.body)
-            is NetworkResponse.NetworkError -> {
-                //if kitties have got error here also will be error
-            }
-            is NetworkResponse.UnknownError -> {
-                likes.error?.let {
-                    //here the same story like above
-                }
-            }
-            is NetworkResponse.ApiError -> {
-                likes.code
-            }
-        }
-
-        listKitties.forEachIndexed { index, catResponse ->
-            listVotes.forEach { votes ->
-                if (catResponse.id == votes.imageId) {
-                    listKitties[index] = Cat(
-                        id = catResponse.id,
-                        url = catResponse.url,
-                        width = catResponse.width,
-                        height = catResponse.height,
-                        choice = votes.voteValue,
-                        voteId = votes.idVote.toInt()
-                    )
-                }
-            }
-        }
-        return listKitties
     }
 
     companion object {

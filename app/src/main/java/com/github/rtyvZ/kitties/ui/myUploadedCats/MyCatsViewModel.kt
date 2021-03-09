@@ -9,7 +9,6 @@ import androidx.paging.cachedIn
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.db.CatDatabase
 import com.github.rtyvZ.kitties.network.NetworkResponse
-import com.github.rtyvZ.kitties.repositories.RandomCatsRepository.KittiesPagingRepo
 import com.github.rtyvZ.kitties.repositories.myKitties.MyKittiesPagingRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 @HiltViewModel
 class MyCatsViewModel @Inject constructor(

@@ -49,13 +49,7 @@ class RandomCatsFragment : Fragment() {
         }
     }
 
-    private val catAdapter = RandomCatAdapter(setLike, openContextMenu)
     private val catAdapterPaging = RandomPagingCatAdapter(setLike, openContextMenu)
-
-    private var visibleItemCount: Int = 0
-    private var lastVisibleItem: Int = 0
-    private var totalItemCount: Int = 0
-    private var isLoading = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,7 +64,6 @@ class RandomCatsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.progress.show()
         viewModel.clear()
-        viewModel.getCats()
         this.registerForContextMenu(binding.listRandomCats)
 
         initObservers()
@@ -110,37 +103,16 @@ class RandomCatsFragment : Fragment() {
     private fun initRecyclerView() {
         binding.listRandomCats.apply {
             activity?.let {
-                adapter = catAdapter
+                adapter = catAdapterPaging
                 //disable blinks in recycler view
                 itemAnimator?.changeDuration = 0
                 manager = LinearLayoutManager(it)
                 layoutManager = manager
-
-                addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        if (dy > 0) {
-                            visibleItemCount = manager.childCount
-                            totalItemCount = manager.itemCount
-                            lastVisibleItem = manager.findLastVisibleItemPosition()
-                            if (isLoading) {
-                                if ((visibleItemCount + lastVisibleItem) >= totalItemCount) {
-                                    isLoading = false
-                                    viewModel.getCats()
-                                }
-                            }
-                        }
-                    }
-                })
             }
         }
     }
 
     private fun initObservers() {
-        viewModel.getRandomCats.observe(viewLifecycleOwner, {
-            binding.progress.hide()
-            isLoading = true
-            catAdapter.submitList(it)
-        })
 
         viewModel.getRandomCatsError.observe(viewLifecycleOwner, {
             binding.progress.hide()
@@ -156,8 +128,8 @@ class RandomCatsFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.kitties.collectLatest {
-                //todo after implement both call
-                //catAdapterPaging.submitData(it)
+                binding.progress.hide()
+                catAdapterPaging.submitData(it)
             }
         }
 

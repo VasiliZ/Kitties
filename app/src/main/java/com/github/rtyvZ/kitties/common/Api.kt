@@ -16,9 +16,10 @@ import retrofit2.http.*
 
 interface Api {
 
-    @GET("images/search?limit=10")
+    @GET("images/search")
     suspend fun getListKitties(
-        @Query("page") page: Int
+        @Query("page") page: Int?,
+        @Query("limit") limit: Int?
     ): NetworkResponse<List<CatResponse>, Any>
 
     @POST("votes")

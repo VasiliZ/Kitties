@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface RandomCatsModelContract {
 
-    fun getKittiesFromNet(): Flow<NetworkResponse<List<CatResponse>, Any>>
+  //  fun getKittiesFromNet(): Flow<NetworkResponse<List<CatResponse>, Any>>
 
     fun voteForCat(cat: Cat): Flow<NetworkResponse<CatResponseVoteAndFav, Any>>
 
