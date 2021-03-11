@@ -1,23 +1,21 @@
 package com.github.rtyvZ.kitties.ui.randomCats
 
 import androidx.lifecycle.*
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.map
 import com.github.rtyvZ.kitties.common.models.Cat
 import com.github.rtyvZ.kitties.domain.randomCat.RandomCatsModel
 import com.github.rtyvZ.kitties.extentions.replaceElement
 import com.github.rtyvZ.kitties.network.NetworkResponse
-import com.github.rtyvZ.kitties.network.data.CatResponse
-import com.github.rtyvZ.kitties.network.response.MyVoteResponse
 import com.github.rtyvZ.kitties.repositories.randomCatsRepository.KittiesPagingRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 @HiltViewModel
 class RandomCatsViewModel @Inject constructor(repo: KittiesPagingRepo) : ViewModel() {
@@ -26,17 +24,19 @@ class RandomCatsViewModel @Inject constructor(repo: KittiesPagingRepo) : ViewMod
     private var mutableRandomCatsError = MutableLiveData<Throwable>()
     private var mutableErrorActionWithCat = MutableLiveData<Throwable>()
 
-
     var getRandomCats: LiveData<List<Cat>?> = mutableRandomCats
         private set
     var getRandomCatsError: LiveData<Throwable> = mutableRandomCatsError
         private set
     var getErrorActionWithCat: LiveData<Throwable> = mutableErrorActionWithCat
 
-    val kitties = repo.fetchKitties().cachedIn(viewModelScope)
+    private val kitties = repo.fetchKitties().cachedIn(viewModelScope).asLiveData().let {
+        it as MutableLiveData<PagingData<Cat>>
+    }
 
     @Inject
     lateinit var randomCatsModel: RandomCatsModel
+    val listKitties: LiveData<PagingData<Cat>> = kitties
 
     fun clear() {
         mutableRandomCats = MutableLiveData()
@@ -51,16 +51,12 @@ class RandomCatsViewModel @Inject constructor(repo: KittiesPagingRepo) : ViewMod
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 randomCatsModel.voteForCat(cat)
-                    .catch { e ->
-                        mutableErrorActionWithCat.postValue(e)
-                    }
                     .collect {
                         when (it) {
                             is NetworkResponse.Success -> {
                                 cat.apply {
                                     voteId = it.body.id
                                 }
-                                changeCat(cat)
                             }
                             is NetworkResponse.ApiError -> {
                                 restoreStateCat(cat)
@@ -89,7 +85,6 @@ class RandomCatsViewModel @Inject constructor(repo: KittiesPagingRepo) : ViewMod
                         when (it) {
                             is NetworkResponse.Success -> {
                                 cat.choice = -1
-                                changeCat(cat)
                             }
                             is NetworkResponse.UnknownError -> {
                                 it.error?.let { throwable ->
@@ -111,52 +106,80 @@ class RandomCatsViewModel @Inject constructor(repo: KittiesPagingRepo) : ViewMod
     }
 
     fun voteForCat(cat: Cat, choice: StateCatVote) {
+        val data = kitties.value ?: return
+
         when (choice) {
             StateCatVote.LIKE -> {
                 if (cat.choice == LIKE) {
-                    cat.choice = WITHOUT_VOTE
-                    changeCat(cat)
-                    sendDeleteVoteRequest(cat)
+                    changeVote(data, cat, WITHOUT_VOTE) {
+                        sendDeleteVoteRequest(it)
+                    }
+
                 } else {
-                    cat.choice = LIKE
-                    sendVoteRequest(cat)
-                    changeCat(cat)
+                    changeVote(data, cat, LIKE) {
+                        sendVoteRequest(it)
+                    }
                 }
             }
 
             StateCatVote.DISLIKE -> {
                 if (cat.choice == DISLIKE) {
-                    cat.choice = WITHOUT_VOTE
-                    changeCat(cat)
-                    sendDeleteVoteRequest(cat)
+                    changeVote(data, cat, WITHOUT_VOTE) {
+                        sendDeleteVoteRequest(it)
+                    }
+
                 } else {
-                    cat.choice = DISLIKE
-                    sendVoteRequest(cat)
-                    changeCat(cat)
+                    changeVote(data, cat, DISLIKE) {
+                        sendVoteRequest(it)
+                    }
                 }
             }
         }
     }
 
-    fun addToFavorites(position: Int) {
-        mutableRandomCats.value?.let { localCat ->
+    private fun changeVote(data: PagingData<Cat>, cat: Cat, choice: Int, request: (Cat) -> Unit) {
+        data.map {
+            if (it.id == cat.id) {
+                val changeDCat = cat.copy(choice = choice)
+                request.invoke(changeDCat)
+                return@map changeDCat
+            } else return@map it
+        }
+            .let {
+                kitties.postValue(it)
+            }
+    }
+
+    fun addToFavorites(cat: Cat?) {
+        val data = kitties.value ?: return
+        cat?.let { kitty ->
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
-                    randomCatsModel.addCatToFavorite(localCat[position].id)
+                    randomCatsModel.addCatToFavorite(kitty.id)
                         .collect {
                             when (it) {
                                 is NetworkResponse.Success -> {
-                                    removeCat(localCat[position])
+                                    data.filter {
+                                        it.id != kitty.id
+                                    }.let {
+                                        kitties.postValue(it)
+                                    }
                                 }
                                 is NetworkResponse.ApiError -> {
-                                    restoreStateCat(localCat[position])
+                                    data.let {
+                                        kitties.postValue(it)
+                                    }
                                 }
                                 is NetworkResponse.NetworkError -> {
-                                    restoreStateCat(localCat[position])
+                                    data.let {
+                                        kitties.postValue(it)
+                                    }
                                     mutableErrorActionWithCat.postValue(it.error)
                                 }
                                 is NetworkResponse.UnknownError -> {
-                                    restoreStateCat(localCat[position])
+                                    data.let {
+                                        kitties.postValue(it)
+                                    }
                                     it.error?.let { throwable ->
                                         mutableErrorActionWithCat.postValue(throwable)
                                     }
@@ -168,15 +191,6 @@ class RandomCatsViewModel @Inject constructor(repo: KittiesPagingRepo) : ViewMod
         }
     }
 
-    private fun removeCat(cat: Cat) {
-        val listWithCats = mutableListOf<Cat>()
-        mutableRandomCats.value?.let {
-            listWithCats.addAll(it)
-        }
-        listWithCats.remove(cat)
-        mutableRandomCats.postValue(listWithCats)
-    }
-
     private fun restoreStateCat(cat: Cat) {
         val listCats = mutableListOf<Cat>()
         mutableRandomCats.value?.let {
@@ -186,15 +200,6 @@ class RandomCatsViewModel @Inject constructor(repo: KittiesPagingRepo) : ViewMod
             it.id == cat.id
         }?.choice = -1
         mutableRandomCats.postValue(listCats)
-    }
-
-    private fun changeCat(cat: Cat) {
-        val listCat = mutableListOf<Cat>()
-        mutableRandomCats.value?.let {
-            listCat.addAll(it)
-        }
-        listCat.replaceElement(cat)
-        mutableRandomCats.postValue(listCat)
     }
 
     companion object {

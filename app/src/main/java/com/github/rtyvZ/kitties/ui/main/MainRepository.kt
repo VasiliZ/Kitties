@@ -11,14 +11,18 @@ class MainRepository @Inject constructor(@ApplicationContext private val context
         var path = ""
         val cursor: Cursor?
         val columnIndexID: Int
-        val projection = arrayOf(MainActivity.DATA)
+        val projection = arrayOf(DATA)
         cursor = context.contentResolver.query(uri, projection, null, null, null)
         cursor?.let {
             it.moveToFirst()
-            columnIndexID = cursor.getColumnIndexOrThrow(MainActivity.DATA)
+            columnIndexID = cursor.getColumnIndexOrThrow(DATA)
             path = cursor.getString(columnIndexID)
         }
         cursor?.close()
         return path
+    }
+
+    companion object{
+        const val DATA = "_data"
     }
 }

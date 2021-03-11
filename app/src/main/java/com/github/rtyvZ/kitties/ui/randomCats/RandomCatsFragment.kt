@@ -11,10 +11,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.rtyvZ.kitties.R
+import com.github.rtyvZ.kitties.common.DataLoadsStateAdapter
 import com.github.rtyvZ.kitties.common.Strings.IntentConsts.DOWNLOAD_IMAGE_KEY
 import com.github.rtyvZ.kitties.common.helpers.DragItemHelper
 import com.github.rtyvZ.kitties.common.models.Cat
@@ -27,21 +29,14 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class RandomCatsFragment : Fragment() {
+class RandomCatsFragment() : Fragment() {
 
-    private val viewModel: RandomCatsViewModel by viewModels()
     private var _binding: RandomCatsFragmentBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: RandomCatsViewModel by viewModels()
     private lateinit var manager: LinearLayoutManager
-    private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var catForDownloadImage: Cat
 
-    private val swipeCallback: (Int, Int) -> Unit = { position, _ ->
-        viewModel.addToFavorites(position)
-    }
-    private val setLike: (Cat, StateCatVote) -> Unit = { cat, choice ->
-        viewModel.voteForCat(cat, choice)
-    }
     private val openContextMenu: (cat: Cat, view: View) -> Unit = { cat, view ->
         activity?.let { activity ->
             catForDownloadImage = cat
@@ -49,7 +44,7 @@ class RandomCatsFragment : Fragment() {
         }
     }
 
-    private val catAdapterPaging = RandomPagingCatAdapter(setLike, openContextMenu)
+    private lateinit var catAdapterPaging: RandomPagingCatAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,6 +59,7 @@ class RandomCatsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.progress.show()
         viewModel.clear()
+
         this.registerForContextMenu(binding.listRandomCats)
 
         initObservers()
@@ -103,11 +99,24 @@ class RandomCatsFragment : Fragment() {
     private fun initRecyclerView() {
         binding.listRandomCats.apply {
             activity?.let {
+                catAdapterPaging = RandomPagingCatAdapter(openContextMenu, viewModel)
                 adapter = catAdapterPaging
+                    .withLoadStateFooter(
+                        footer = DataLoadStateRandomKittiesAdapter(catAdapterPaging)
+                    )
                 //disable blinks in recycler view
-                itemAnimator?.changeDuration = 0
+                itemAnimator = null
                 manager = LinearLayoutManager(it)
                 layoutManager = manager
+                ItemTouchHelper(DragItemHelper { posiiton, _ ->
+                    this.adapter?.let { adapter ->
+                        viewModel
+                            .addToFavorites(
+                                (adapter as RandomPagingCatAdapter)
+                                    .getCat(posiiton)
+                            )
+                    }
+                }).attachToRecyclerView(this)
             }
         }
     }
@@ -122,20 +131,18 @@ class RandomCatsFragment : Fragment() {
         viewModel.getErrorActionWithCat.observe(viewLifecycleOwner,
             {
                 activity?.let {
+                    catAdapterPaging.notifyDataSetChanged()
                     Toast.makeText(it, R.string.no_connection, Toast.LENGTH_SHORT).show()
                 }
             })
 
         lifecycleScope.launch {
-            viewModel.kitties.collectLatest {
+            viewModel.listKitties.observe(viewLifecycleOwner, {
                 binding.progress.hide()
-                catAdapterPaging.submitData(it)
-            }
-        }
-
-        activity?.let {
-            itemTouchHelper = ItemTouchHelper(DragItemHelper(swipeCallback))
-            itemTouchHelper.attachToRecyclerView(binding.listRandomCats)
+                lifecycleScope.launch {
+                    catAdapterPaging.submitData(it)
+                }
+            })
         }
     }
 

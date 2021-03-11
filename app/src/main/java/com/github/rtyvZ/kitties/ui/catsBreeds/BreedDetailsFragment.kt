@@ -8,10 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.github.rtyvZ.kitties.R
 import com.github.rtyvZ.kitties.common.Strings
 import com.github.rtyvZ.kitties.common.models.CatBreed
-import com.github.rtyvZ.kitties.databinding.ActivityMainBinding
 import com.github.rtyvZ.kitties.databinding.BreedInnerItemBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,8 +24,7 @@ class BreedDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BreedInnerItemBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

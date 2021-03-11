@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.github.rtyvZ.kitties.databinding.FavoriteCatItemBinding
 import com.github.rtyvZ.kitties.network.response.FavoriteCatsResponse
 
-class FavoriteCatsAdapter() :
+class FavoriteCatsAdapter :
     PagingDataAdapter<FavoriteCatsResponse, FavoriteCatsAdapter.FavoriteCatViewHolder>(
         FavoriteCatsDiffCallBack()
     ) {

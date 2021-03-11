@@ -24,8 +24,6 @@ class FavoriteCatsFragment : Fragment() {
     private var _binding: FavoriteCatsFragmentBinding? = null
     private val binding get() = _binding!!
     private val viewModel: FavoriteCatsViewModel by viewModels()
-    private val adapterForFavCats = FavoriteCatsAdapter()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -21,8 +20,8 @@ import com.github.rtyvZ.kitties.databinding.CatItemBinding
 import com.github.rtyvZ.kitties.extentions.hide
 
 class RandomPagingCatAdapter(
-    private val setLike: (Cat, StateCatVote) -> Unit,
-    private val openContextMenu: (cat: Cat, view: View) -> Unit
+    private val openContextMenu: (cat: Cat, view: View) -> Unit,
+    private val viewModel:RandomCatsViewModel
 ) :
     PagingDataAdapter<Cat, RandomPagingCatAdapter.RandomCatViewHolder>(RandomCatsDiffCallback()) {
 
@@ -35,8 +34,10 @@ class RandomPagingCatAdapter(
 
     override fun onBindViewHolder(holder: RandomCatViewHolder, position: Int) {
         val cat = getItem(position)
-        holder.setData(cat, setLike, openContextMenu)
+        holder.setData(cat, openContextMenu, viewModel)
     }
+
+    fun getCat(position: Int) = getItem(position)
 
     class RandomCatViewHolder(
         val binding: CatItemBinding
@@ -45,8 +46,8 @@ class RandomPagingCatAdapter(
 
         fun setData(
             cat: Cat?,
-            setLike: (Cat, StateCatVote) -> Unit,
-            openContextMenu: (cat: Cat, view: View) -> Unit
+            openContextMenu: (cat: Cat, view: View) -> Unit,
+            viewModel: RandomCatsViewModel
         ) {
             cat?.let {
                 binding.imageCat.setOnLongClickListener {
@@ -82,11 +83,11 @@ class RandomPagingCatAdapter(
                 }
 
                 binding.thumbUp.setOnClickListener {
-                    setLike(cat, StateCatVote.LIKE)
+                    viewModel.voteForCat(cat, StateCatVote.LIKE)
                 }
 
                 binding.thumbDown.setOnClickListener {
-                    setLike(cat, StateCatVote.DISLIKE)
+                    viewModel.voteForCat(cat, StateCatVote.DISLIKE)
                 }
 
                 Glide

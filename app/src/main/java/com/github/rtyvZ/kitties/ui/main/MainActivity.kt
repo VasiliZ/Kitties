@@ -183,7 +183,6 @@ class MainActivity : AppCompatActivity() {
         const val GALLERY_REQUEST_CODE = 1000
         const val ACTIVITY_RESULT_CODE = 1
         const val PICK_IMAGE = 1
-        const val DATA = "_data"
     }
 
     override fun onResume() {
